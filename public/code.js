@@ -6,10 +6,15 @@
 // You can access browser APIs in the <script> tag inside "ui.html" which has a
 // full browser enviroment (see documentation).
 // This shows the HTML page in "ui.html".
-figma.showUI(__html__, { width: 320, height: 500 });
+figma.showUI(__html__, { width: 320, height: 500, themeColors: true });
 // Calls to "parent.postMessage" from within the HTML page will trigger this
 // callback. The callback will be passed the "pluginMessage" property of the
 // posted message.
+let documentNode = figma.root;
+let filterList = documentNode.getPluginData("filterList");
+if (filterList.length > 0) {
+    figma.ui.postMessage({ type: "loaded-plugin-filter-list", data: filterList });
+}
 figma.ui.onmessage = msg => {
     // One way of distinguishing between different types of messages sent from
     // your HTML page is to use an object with a "type" property like this.

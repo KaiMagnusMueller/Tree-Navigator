@@ -17,6 +17,7 @@
 	} from "figma-plugin-ds-svelte";
 
 	import FilterPill from "./components/FilterPill.svelte";
+	import FilterList from "./components/FilterList.svelte";
 
 	//menu items, this is an array of objects to populate to our select menus
 	let menuItems = [
@@ -73,10 +74,7 @@
 			<IconButton on:click iconName={IconForward} disabled />
 		</div>
 
-		<div class="filter-pill-group flex">
-			<FilterPill checked>All Types</FilterPill>
-			<FilterPill iconName={IconComponent}>Component</FilterPill>
-		</div>
+		<FilterList />
 	</div>
 
 	<Label>Shape</Label>
@@ -97,10 +95,6 @@
 	/* Add additional global or scoped styles here */
 	.header-group {
 		gap: 12px;
-	}
-
-	.filter-pill-group {
-		gap: 8px;
 	}
 
 	.main-section {

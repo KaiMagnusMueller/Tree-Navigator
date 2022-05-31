@@ -1,7 +1,7 @@
 <script>
     import { GlobalCSS, Icon } from "figma-plugin-ds-svelte";
 
-    import { onMount } from "svelte";
+    import { createEventDispatcher, onMount } from "svelte";
     import IconFlexible from "./IconFlexible";
 
     export let variant = "primary";
@@ -16,17 +16,21 @@
     import SVGComponent from "../assets/icons/SVGComponent.svg";
 
     export let checked = false;
+    export let nodeType = "";
 
     let className = "";
 
+    let dispatch = createEventDispatcher();
+
     function handleClick(event) {
+        //TODO: disabled state, event stoppen
         checked = !checked;
     }
 </script>
 
 <div
-    on:click
     on:click={handleClick}
+    on:click={() => dispatch("selectFilter", [nodeType, checked])}
     on:submit|preventDefault
     onclick="this.blur();"
     {variant}
@@ -34,6 +38,7 @@
     class:destructive
     class="{variant} {className}"
     class:checked
+    data-node-type={nodeType}
 >
     {#if iconName}
         <IconFlexible
@@ -44,7 +49,7 @@
         />
     {/if}
 
-    <label on:click|preventDefault>
+    <label>
         <input type="checkbox" bind:checked />
         <slot />
     </label>
@@ -79,5 +84,9 @@
     input[type="checkbox"] {
         display: none;
         /* visibility: hidden; */
+    }
+
+    label {
+        pointer-events: none;
     }
 </style>
