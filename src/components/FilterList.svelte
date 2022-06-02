@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import { afterUpdate, onMount } from "svelte";
     import { tweened } from "svelte/motion";
     import { cubicOut } from "svelte/easing";
@@ -70,19 +70,23 @@
     let allTypesChecked = true;
     let allTypesDisabled = false;
 
-    let filterListElem;
-    let scrollMinMax = [];
+    let filterListElem: HTMLElement;
+    let scrollMinMax: number[];
 
     onMount(() => {
         console.log(filterListElem);
-        scrollMinMax = [0, filterListElem.scrollWidth];
+        scrollMinMax = [
+            0,
+            filterListElem.scrollWidth -
+                filterListElem.parentElement.clientWidth,
+        ];
         console.log(scrollMinMax);
     });
 
-    const scrollPos = tweened(0, { duration: 400, easing: cubicOut });
+    let scrollPos = 0;
 
     afterUpdate(() => {
-        filterListElem.scrollLeft = $scrollPos;
+        filterListElem.scrollLeft = scrollPos;
         // Math.max(0, filterListElem);
         // Math.min(scrollMinMax[1], filterListElem);
     });
@@ -94,13 +98,25 @@
         // console.log(event.clientY);
         // console.log(event.deltaX);
 
-        console.log(filterListElem.scrollLeft);
+        console.log(filterListElem);
 
-        console.log($scrollPos);
+        console.log(scrollPos);
         console.log(event.deltaY);
 
-        $scrollPos += event.deltaY;
-        if ($scrollPos >= scrollMinMax[0] && $scrollPos <= scrollMinMax[1]) {
+        let targetPos = (scrollPos += event.deltaY);
+
+        // Math.min(scrollMinMax[1], filterListElem);
+
+        if (targetPos <= scrollMinMax) {
+            targetPos = Math.max(0, targetPos);
+        }
+
+        if (targetPos <= scrollMinMax) {
+            targetPos = Math.max(0, targetPos);
+        }
+
+        if (scrollPos >= scrollMinMax[0] || scrollPos <= scrollMinMax[1]) {
+            scrollPos += event.deltaY;
         }
 
         // filterListElem.scrollLeft = pos;
@@ -118,33 +134,42 @@
     }
 </script>
 
-<p>{Math.floor($scrollPos)}</p>
-
-<div
-    id="filterList"
-    bind:this={filterListElem}
-    class="filter-pill-group flex"
-    on:wheel|stopPropagation={handleScroll}
->
-    <FilterPill
-        on:selectFilter={handleFilter}
-        nodeType={"ALL"}
-        checked={allTypesChecked}
-        disabled={allTypesDisabled}>All Types</FilterPill
+<p>{Math.floor(scrollPos)}</p>
+<div class="scroll-wrapper">
+    <div
+        id="filterList"
+        bind:this={filterListElem}
+        class="filter-pill-group flex"
+        on:wheel|stopPropagation={handleScroll}
+        style="left: {scrollPos}px;"
     >
-
-    {#each savedFilters as filter}
-        <FilterPill on:selectFilter={handleFilter} nodeType={filter.node_type}
-            >{filter.name}</FilterPill
+        <FilterPill
+            on:selectFilter={handleFilter}
+            nodeType={"ALL"}
+            checked={allTypesChecked}
+            disabled={allTypesDisabled}>All Types</FilterPill
         >
 
-        <!-- <FilterPill iconName={IconComponent}>Component</FilterPill> -->
-    {/each}
+        {#each savedFilters as filter}
+            <FilterPill
+                on:selectFilter={handleFilter}
+                nodeType={filter.node_type}>{filter.name}</FilterPill
+            >
+
+            <!-- <FilterPill iconName={IconComponent}>Component</FilterPill> -->
+        {/each}
+    </div>
 </div>
 
 <style>
     .filter-pill-group {
         gap: 8px;
         /* overflow-x: hidden; */
+        position: absolute;
+        transition: left 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+    }
+
+    .scroll-wrapper {
+        position: relative;
     }
 </style>
