@@ -70,26 +70,23 @@
     let allTypesChecked = true;
     let allTypesDisabled = false;
 
-    let filterListElem: HTMLElement;
-    let scrollMinMax: number[];
+    let filterListElem;
+    let scrollMinMax;
 
     onMount(() => {
         console.log(filterListElem);
         scrollMinMax = [
             0,
-            filterListElem.scrollWidth -
-                filterListElem.parentElement.clientWidth,
+            -1 *
+                (filterListElem.scrollWidth -
+                    filterListElem.parentElement.clientWidth),
         ];
         console.log(scrollMinMax);
     });
 
     let scrollPos = 0;
 
-    afterUpdate(() => {
-        filterListElem.scrollLeft = scrollPos;
-        // Math.max(0, filterListElem);
-        // Math.min(scrollMinMax[1], filterListElem);
-    });
+    afterUpdate(() => {});
 
     function handleScroll(event) {
         // console.log(event);
@@ -98,26 +95,24 @@
         // console.log(event.clientY);
         // console.log(event.deltaX);
 
-        console.log(filterListElem);
-
-        console.log(scrollPos);
-        console.log(event.deltaY);
+        // console.log(filterListElem);
 
         let targetPos = (scrollPos += event.deltaY);
 
-        // Math.min(scrollMinMax[1], filterListElem);
+        // console.log("-----");
+        // console.log(event.deltaY);
 
-        if (targetPos <= scrollMinMax) {
-            targetPos = Math.max(0, targetPos);
+        if (targetPos >= scrollMinMax[0]) {
+            targetPos = Math.min(0, targetPos);
         }
 
-        if (targetPos <= scrollMinMax) {
-            targetPos = Math.max(0, targetPos);
+        if (targetPos <= scrollMinMax[1]) {
+            targetPos = Math.max(scrollMinMax[1], targetPos);
         }
 
-        if (scrollPos >= scrollMinMax[0] || scrollPos <= scrollMinMax[1]) {
-            scrollPos += event.deltaY;
-        }
+        // console.log(targetPos);
+
+        scrollPos = targetPos;
 
         // filterListElem.scrollLeft = pos;
         // console.log(event.layerX);
@@ -171,5 +166,6 @@
 
     .scroll-wrapper {
         position: relative;
+        overflow-x: clip;
     }
 </style>
