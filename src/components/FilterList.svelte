@@ -1,4 +1,8 @@
 <script>
+    import { afterUpdate, onMount } from "svelte";
+    import { tweened } from "svelte/motion";
+    import { cubicOut } from "svelte/easing";
+
     import { filterList } from "../stores";
     import FilterPill from "./FilterPill.svelte";
 
@@ -32,6 +36,12 @@
     function handleFilter(event) {
         //detail: [NODE_TYPE, checked]
 
+        // if (event.detail[0] == "ALL") {
+        //     [...filterMap.keys()].forEach((key) => {
+        //         filterMap.set(key, false);
+        //     });
+        // }
+
         filterMap.set(event.detail[0], event.detail[1]);
         // console.log(filterMap);
         checkedFilters = 0;
@@ -59,9 +69,63 @@
 
     let allTypesChecked = true;
     let allTypesDisabled = false;
+
+    let filterListElem;
+    let scrollMinMax = [];
+
+    onMount(() => {
+        console.log(filterListElem);
+        scrollMinMax = [0, filterListElem.scrollWidth];
+        console.log(scrollMinMax);
+    });
+
+    const scrollPos = tweened(0, { duration: 400, easing: cubicOut });
+
+    afterUpdate(() => {
+        filterListElem.scrollLeft = $scrollPos;
+        // Math.max(0, filterListElem);
+        // Math.min(scrollMinMax[1], filterListElem);
+    });
+
+    function handleScroll(event) {
+        // console.log(event);
+        // console.log(event.bubbles);
+        // console.log(event.clientX);
+        // console.log(event.clientY);
+        // console.log(event.deltaX);
+
+        console.log(filterListElem.scrollLeft);
+
+        console.log($scrollPos);
+        console.log(event.deltaY);
+
+        $scrollPos += event.deltaY;
+        if ($scrollPos >= scrollMinMax[0] && $scrollPos <= scrollMinMax[1]) {
+        }
+
+        // filterListElem.scrollLeft = pos;
+        // console.log(event.layerX);
+        // console.log(event.layerY);
+        // console.log(event.movementX);
+        // console.log(event.movementY);
+        // console.log(event.offsetX);
+        // console.log(event.offsetY);
+        // console.log(event.pageX);
+        // console.log(event.pageY);
+        // console.log(event.rangeOffset);
+        // console.log(event.screenX);
+        // console.log(event.screenY);
+    }
 </script>
 
-<div class="filter-pill-group flex">
+<p>{Math.floor($scrollPos)}</p>
+
+<div
+    id="filterList"
+    bind:this={filterListElem}
+    class="filter-pill-group flex"
+    on:wheel|stopPropagation={handleScroll}
+>
     <FilterPill
         on:selectFilter={handleFilter}
         nodeType={"ALL"}
@@ -81,6 +145,6 @@
 <style>
     .filter-pill-group {
         gap: 8px;
-        overflow-x: scroll;
+        /* overflow-x: hidden; */
     }
 </style>

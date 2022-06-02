@@ -76,19 +76,6 @@
 
 		<FilterList />
 	</div>
-
-	<Label>Shape</Label>
-	<SelectMenu bind:menuItems bind:value={selectedShape} class="mb-xxsmall" />
-
-	<Label>Count</Label>
-	<Input iconText="#" bind:value={count} class="mb-xxsmall" />
-
-	<div class="flex p-xxsmall mb-xsmall">
-		<Button on:click={cancel} variant="secondary" class="mr-xsmall"
-			>Cancel</Button
-		>
-		<Button on:click={createShapes} bind:disabled>Create shapes</Button>
-	</div>
 </div>
 
 <style>
