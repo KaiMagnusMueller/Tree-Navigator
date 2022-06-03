@@ -36,11 +36,19 @@
     function handleFilter(event) {
         //detail: [NODE_TYPE, checked]
 
-        // if (event.detail[0] == "ALL") {
-        //     [...filterMap.keys()].forEach((key) => {
-        //         filterMap.set(key, false);
-        //     });
-        // }
+        console.log(event.detail);
+
+        if (event.detail[0] == "ALL") {
+            console.log("reset all");
+
+            [...filterMap.keys()].forEach((key) => {
+                console.log(key);
+
+                filterMap.set(key, false);
+            });
+
+            console.log(filterMap);
+        }
 
         filterMap.set(event.detail[0], event.detail[1]);
         // console.log(filterMap);
@@ -89,52 +97,26 @@
     afterUpdate(() => {});
 
     function handleScroll(event) {
-        // console.log(event);
-        // console.log(event.bubbles);
-        // console.log(event.clientX);
-        // console.log(event.clientY);
-        // console.log(event.deltaX);
-
-        // console.log(filterListElem);
-
         let targetPos = (scrollPos += event.deltaY);
-
-        // console.log("-----");
-        // console.log(event.deltaY);
 
         if (targetPos >= scrollMinMax[0]) {
             targetPos = Math.min(0, targetPos);
         }
 
         if (targetPos <= scrollMinMax[1]) {
-            targetPos = Math.max(scrollMinMax[1], targetPos);
+            // +8 is a hack to simulate a padding right of 8 pixels for the filter list
+            targetPos = Math.max(scrollMinMax[1] - 8, targetPos);
         }
 
-        // console.log(targetPos);
-
         scrollPos = targetPos;
-
-        // filterListElem.scrollLeft = pos;
-        // console.log(event.layerX);
-        // console.log(event.layerY);
-        // console.log(event.movementX);
-        // console.log(event.movementY);
-        // console.log(event.offsetX);
-        // console.log(event.offsetY);
-        // console.log(event.pageX);
-        // console.log(event.pageY);
-        // console.log(event.rangeOffset);
-        // console.log(event.screenX);
-        // console.log(event.screenY);
     }
 </script>
 
-<p>{Math.floor(scrollPos)}</p>
 <div class="scroll-wrapper">
     <div
         id="filterList"
         bind:this={filterListElem}
-        class="filter-pill-group flex"
+        class="filter-pill-group flex pl-xxsmall"
         on:wheel|stopPropagation={handleScroll}
         style="left: {scrollPos}px;"
     >
@@ -167,5 +149,6 @@
     .scroll-wrapper {
         position: relative;
         overflow-x: clip;
+        height: 28px;
     }
 </style>

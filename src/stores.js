@@ -73,3 +73,26 @@ export let filterList = writable([
     },
 
 ]);
+
+export let recentSearches = writable([
+    {
+        node_type: "COMPONENT",
+        query_text: "Icon"
+    },
+    {
+        node_type: "INSTANCE",
+        query_text: "Placeholder"
+    },
+    {
+        node_type: "TEXT",
+        query_text: "Heading"
+    },
+    {
+        node_type: "TEXT",
+        query_text: "Label"
+    },
+    {
+        node_type: "RECTANGLE",
+        query_text: "Background"
+    }
+])

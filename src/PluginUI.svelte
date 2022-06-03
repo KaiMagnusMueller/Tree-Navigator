@@ -14,10 +14,12 @@
 		IconBack,
 		IconComponent,
 		IconForward,
+		Section,
 	} from "figma-plugin-ds-svelte";
 
 	import FilterPill from "./components/FilterPill.svelte";
 	import FilterList from "./components/FilterList.svelte";
+	import RecentSearchList from "./components/RecentSearchList.svelte";
 
 	//menu items, this is an array of objects to populate to our select menus
 	let menuItems = [
@@ -61,9 +63,9 @@
 	function navBack(params) {}
 </script>
 
-<div class="wrapper p-xxsmall">
+<div class="wrapper">
 	<div class="main-section">
-		<div class="header-group flex">
+		<div class="header-group flex pr-xxsmall pl-xxsmall pt-xxsmall">
 			<IconButton on:click={navBack} iconName={IconBack} disabled />
 			<Input
 				iconName={IconSearch}
@@ -73,8 +75,9 @@
 			/>
 			<IconButton on:click iconName={IconForward} disabled />
 		</div>
-
 		<FilterList />
+		<Section class="">Recent Searches</Section>
+		<RecentSearchList />
 	</div>
 </div>
 

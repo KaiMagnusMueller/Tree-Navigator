@@ -85,7 +85,6 @@
         display: none;
         /* visibility: hidden; */
     }
-
     label {
         pointer-events: none;
     }
