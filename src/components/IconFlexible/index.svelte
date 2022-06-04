@@ -11,8 +11,6 @@
 
 <div
     class:spin
-    {iconText}
-    {iconName}
     class="icon-component {className}"
     style="color: var(--{color}); fill: var(--{color}); width: {size}px; height: {size}px"
     on:click

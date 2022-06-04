@@ -1,10 +1,9 @@
-<script lang="ts">
+<script>
     import { afterUpdate, onMount } from "svelte";
-    import { tweened } from "svelte/motion";
-    import { cubicOut } from "svelte/easing";
 
     import { filterList } from "../stores";
     import FilterPill from "./FilterPill.svelte";
+    import FilterScrollButton from "./FilterScrollButton.svelte";
 
     let savedFilters = [];
 
@@ -79,40 +78,69 @@
     let allTypesDisabled = false;
 
     let filterListElem;
-    let scrollMinMax;
+    let scrollMinMax = [];
 
     onMount(() => {
         console.log(filterListElem);
+        initScrollPosition();
+    });
+
+    function initScrollPosition() {
         scrollMinMax = [
             0,
+
             -1 *
                 (filterListElem.scrollWidth -
-                    filterListElem.parentElement.clientWidth),
+                    filterListElem.parentElement.clientWidth) -
+                8,
         ];
         console.log(scrollMinMax);
-    });
+    }
 
     let scrollPos = 0;
 
     afterUpdate(() => {});
 
     function handleScroll(event) {
-        let targetPos = (scrollPos += event.deltaY);
+        moveFilterList(event.deltaY);
+    }
 
+    function moveFilterList(delta) {
+        // multiply by -1 to reverse scroll direction (to make it conform to standard mouse wheel behavior)
+        let targetPos = (scrollPos += delta * -1);
+
+        // scrollMinMax[0] is 0
         if (targetPos >= scrollMinMax[0]) {
             targetPos = Math.min(0, targetPos);
         }
 
+        //scrollMinMax[1] is the negative width of the scroll wrapper
         if (targetPos <= scrollMinMax[1]) {
             // +8 is a hack to simulate a padding right of 8 pixels for the filter list
-            targetPos = Math.max(scrollMinMax[1] - 8, targetPos);
+            targetPos = Math.max(scrollMinMax[1], targetPos);
         }
 
         scrollPos = targetPos;
+
+        console.log(scrollPos, scrollMinMax);
+    }
+
+    function handleManualScroll(value) {
+        moveFilterList(value);
     }
 </script>
 
+<svelte:window on:resize={initScrollPosition} />
+
 <div class="scroll-wrapper">
+    <!-- {#if scrollPos != scrollMinMax[0]}
+        <FilterScrollButton
+            on:scrollButton={() => handleManualScroll(-180)}
+            left
+            class="button--left">←</FilterScrollButton
+        >
+    {/if} -->
+
     <div
         id="filterList"
         bind:this={filterListElem}
@@ -136,6 +164,13 @@
             <!-- <FilterPill iconName={IconComponent}>Component</FilterPill> -->
         {/each}
     </div>
+    <!-- {#if scrollPos != scrollMinMax[1]}
+        <FilterScrollButton
+            on:scrollButton={() => handleManualScroll(180)}
+            right
+            class="button--right">→</FilterScrollButton
+        >
+    {/if} -->
 </div>
 
 <style>
