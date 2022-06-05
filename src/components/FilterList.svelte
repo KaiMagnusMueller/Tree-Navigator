@@ -22,60 +22,77 @@
     };
 
     let filterMap = new Map();
+    let filterArray = [];
 
     // filterMap.set("ALL", true);
 
-    savedFilters.forEach((element) => {
+    let stickyFilters = savedFilters.filter((elem) => elem.sticky == true);
+    let regularFilters = savedFilters.filter(
+        (elem) => elem.sticky == false || undefined
+    );
+
+    stickyFilters.forEach((element) => {
+        const enabled = element.default ? true : false;
+        filterMap.set(element.node_type, enabled);
+    });
+
+    regularFilters.forEach((element) => {
         filterMap.set(element.node_type, false);
     });
 
+    filterArray = stickyFilters.concat(regularFilters);
+
     console.log(filterMap);
+    console.log(filterArray);
+
+    filterArray.forEach((element) => {
+        const enabled = element.default ? true : false;
+        element.checked = enabled;
+    });
+
     let checkedFilters = 0;
 
     function handleFilter(event) {
         //detail: [NODE_TYPE, checked]
 
-        console.log(event.detail);
+        // console.log(event.detail);
 
         if (event.detail[0] == "ALL") {
             console.log("reset all");
-
-            [...filterMap.keys()].forEach((key) => {
-                console.log(key);
-
-                filterMap.set(key, false);
+            filterArray.forEach((elem) => {
+                elem.checked = false;
             });
-
-            console.log(filterMap);
         }
 
+        //TODO: cleanup
         filterMap.set(event.detail[0], event.detail[1]);
         // console.log(filterMap);
         checkedFilters = 0;
 
-        filterMap.forEach(isFilterChecked);
+        checkedFilters = filterArray.filter(
+            (elem) => elem.checked == true && elem.node_type != "ALL"
+        );
 
-        if (checkedFilters > 0) {
-            allTypesChecked = false;
-            allTypesDisabled = true;
+        console.log(checkedFilters);
+        let ALL_FILTER_I = filterArray.findIndex(
+            (elem) => elem.node_type == "ALL"
+        );
+        if (checkedFilters.length > 0) {
+            filterArray[ALL_FILTER_I].checked = false;
         } else {
-            allTypesChecked = true;
-            allTypesDisabled = false;
+            filterArray[ALL_FILTER_I].checked = true;
         }
     }
 
-    function isFilterChecked(value, key) {
-        if (key == "ALL") {
+    function isAFilterChecked(elem) {
+        if (elem.node_type == "ALL") {
             return;
         }
 
-        if (value == true) {
+        if (elem.checked == true) {
             checkedFilters++;
         }
     }
-
-    let allTypesChecked = true;
-    let allTypesDisabled = false;
 
     let filterListElem;
     let scrollMinMax = [];
@@ -148,17 +165,18 @@
         on:wheel|stopPropagation={handleScroll}
         style="left: {scrollPos}px;"
     >
-        <FilterPill
+        <!-- <FilterPill
             on:selectFilter={handleFilter}
             nodeType={"ALL"}
             checked={allTypesChecked}
             disabled={allTypesDisabled}>All Types</FilterPill
-        >
+        > -->
 
-        {#each savedFilters as filter}
+        {#each filterArray as filter}
             <FilterPill
                 on:selectFilter={handleFilter}
-                nodeType={filter.node_type}>{filter.name}</FilterPill
+                nodeType={filter.node_type}
+                bind:checked={filter.checked}>{filter.name}</FilterPill
             >
 
             <!-- <FilterPill iconName={IconComponent}>Component</FilterPill> -->
