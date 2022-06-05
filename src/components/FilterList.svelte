@@ -1,7 +1,8 @@
 <script>
-    import { afterUpdate, onMount } from "svelte";
+    import { afterUpdate, onMount, createEventDispatcher } from "svelte";
+    import { element } from "svelte/internal";
 
-    import { filterList } from "../stores";
+    import { filterList, searchQuery } from "../stores";
     import FilterPill from "./FilterPill.svelte";
     import FilterScrollButton from "./FilterScrollButton.svelte";
 
@@ -50,7 +51,14 @@
         element.checked = enabled;
     });
 
-    let checkedFilters = 0;
+    let activeFilters = [];
+    //array with all checked filters
+    let _activeFilterObj = filterArray.filter((elem) => elem.checked == true);
+
+    // array with checked filters excluding ALL
+    let checkedLayerFilters;
+
+    const dispatch = createEventDispatcher();
 
     function handleFilter(event) {
         //detail: [NODE_TYPE, checked]
@@ -67,21 +75,33 @@
         //TODO: cleanup
         filterMap.set(event.detail[0], event.detail[1]);
         // console.log(filterMap);
-        checkedFilters = 0;
+        checkedLayerFilters = 0;
 
-        checkedFilters = filterArray.filter(
+        checkedLayerFilters = filterArray.filter(
             (elem) => elem.checked == true && elem.node_type != "ALL"
         );
 
-        console.log(checkedFilters);
+        console.log(checkedLayerFilters);
         let ALL_FILTER_I = filterArray.findIndex(
             (elem) => elem.node_type == "ALL"
         );
-        if (checkedFilters.length > 0) {
+        if (checkedLayerFilters.length > 0) {
             filterArray[ALL_FILTER_I].checked = false;
+
+            dispatch("filterChanged", true);
         } else {
             filterArray[ALL_FILTER_I].checked = true;
+            dispatch("filterChanged", false);
         }
+
+        const _activeFilterObj = filterArray.filter(
+            (elem) => elem.checked == true
+        );
+
+        activeFilters = [];
+        _activeFilterObj.forEach((element) => {
+            activeFilters.push(element.node_type);
+        });
     }
 
     function isAFilterChecked(elem) {
@@ -90,7 +110,7 @@
         }
 
         if (elem.checked == true) {
-            checkedFilters++;
+            checkedLayerFilters++;
         }
     }
 
@@ -145,6 +165,16 @@
     function handleManualScroll(value) {
         moveFilterList(value);
     }
+
+    let _searchQuery;
+
+    searchQuery.subscribe((value) => {
+        _searchQuery = value;
+    });
+
+    $: _searchQuery.node_types = activeFilters;
+
+    //TODO: check what activeFilters contains, especially when no layer filter is selected and an ALL filer should be in there
 </script>
 
 <svelte:window on:resize={initScrollPosition} />
@@ -162,7 +192,7 @@
         id="filterList"
         bind:this={filterListElem}
         class="filter-pill-group flex pl-xxsmall"
-        on:wheel|stopPropagation={handleScroll}
+        on:wheel|preventDefault|stopPropagation={handleScroll}
         style="left: {scrollPos}px;"
     >
         <!-- <FilterPill

@@ -6,14 +6,20 @@
         IconForward,
     } from "figma-plugin-ds-svelte";
 
-    export let node_type;
+    export let node_types;
 </script>
 
 <div class="recent-search-item p-xxsmall flex">
     <Icon iconName={IconSearch} />
     <div class="item-content flex column">
         <h4><slot /></h4>
-        <p>{node_type}</p>
+        <p>
+            {#each node_types as type}
+                {type}
+            {:else}
+                All Types
+            {/each}
+        </p>
     </div>
     <div class="search-button">
         <IconButton iconName={IconForward} />
