@@ -29,7 +29,9 @@
 </script>
 
 <div class="recent-search-wrapper flex-grow ">
-    <div class="recent-search-list pr-xxsmall pl-xxsmall flex column flex-grow">
+    <div
+        class="recent-search-list pr-xxsmall pl-xxsmall pb-xxxsmall flex column flex-grow"
+    >
         {#each _recentSearches as search}
             <RecentSearchItem node_types={getNodeName(search.node_types)}
                 >{search.query_text}
@@ -41,7 +43,7 @@
 <style>
     .recent-search-list {
         gap: 2px;
-        overflow: scroll;
+        overflow: hidden scroll;
         height: 100%;
     }
 

@@ -41,6 +41,7 @@
     .item-content {
         gap: 4px;
         pointer-events: none;
+        min-width: 0;
     }
 
     .item-content h4 {
@@ -49,11 +50,17 @@
         font-weight: var(--font-weight-normal);
     }
     .item-content p {
+        display: -webkit-box;
+        -webkit-line-clamp: 2; /* number of lines to show */
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
         margin: 0;
         font-size: var(--font-size-small);
         font-weight: var(--font-weight-normal);
         text-transform: capitalize;
         color: #9e9e9e;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .search-button {
