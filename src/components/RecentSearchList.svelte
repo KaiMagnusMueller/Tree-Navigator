@@ -28,17 +28,46 @@
     }
 </script>
 
-<div class="recent-search-wrapper pr-xxsmall pl-xxsmall flex column-reverse">
-    {#each _recentSearches as search}
-        <RecentSearchItem node_types={getNodeName(search.node_types)}
-            >{search.query_text}
-        </RecentSearchItem>
-    {/each}
+<div class="recent-search-wrapper flex-grow ">
+    <div class="recent-search-list pr-xxsmall pl-xxsmall flex column flex-grow">
+        {#each _recentSearches as search}
+            <RecentSearchItem node_types={getNodeName(search.node_types)}
+                >{search.query_text}
+            </RecentSearchItem>
+        {/each}
+    </div>
 </div>
 
 <style>
-    .recent-search-wrapper {
+    .recent-search-list {
         gap: 2px;
         overflow: scroll;
+        height: 100%;
+    }
+
+    .recent-search-wrapper {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .recent-search-wrapper:after {
+        content: "";
+        background: linear-gradient(
+            0deg,
+            rgba(255, 255, 255) 0%,
+            rgb(255, 255, 255, 0) 40%
+        );
+        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        pointer-events: none;
+        transition: 0.15s all ease-out;
+    }
+
+    .recent-search-wrapper:hover:after {
+        opacity: 0;
+        visibility: hidden;
     }
 </style>

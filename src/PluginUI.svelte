@@ -10,6 +10,7 @@
 		Input,
 		Label,
 		SelectMenu,
+		IconAdjust,
 		IconSearch,
 		IconButton,
 		IconBack,
@@ -22,6 +23,7 @@
 	import FilterList from "./components/FilterList.svelte";
 	import RecentSearchList from "./components/RecentSearchList.svelte";
 	import { now } from "svelte/internal";
+	import IconInfo from "./assets/icons/information.svg";
 
 	//current input of search field
 	let searchString = "";
@@ -58,7 +60,7 @@
 			query_submit_time: $searchQuery.query_submit_time,
 		};
 
-		$recentSearches = [...$recentSearches, localQuery];
+		$recentSearches = [localQuery, ...$recentSearches];
 		console.log($recentSearches);
 	}
 
@@ -104,6 +106,13 @@
 		/>
 		<Section class="flex-no-shrink">Recent Searches</Section>
 		<RecentSearchList />
+		<div
+			class="section--footer flex row justify-content-end pr-xxsmall pl-xxsmall pb-xxsmall"
+		>
+			<!-- TODO: make IconButton accept flexible color -->
+			<IconButton iconName={IconInfo} color={"black3"} />
+			<IconButton iconName={IconAdjust} color={"black3"} />
+		</div>
 	</div>
 </div>
 
@@ -123,5 +132,9 @@
 	/* Variable for svg fill in flexible icon */
 	:global(:root) {
 		--transparent: transparent;
+	}
+
+	.section--footer {
+		gap: 8px;
 	}
 </style>
