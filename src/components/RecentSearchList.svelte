@@ -39,5 +39,6 @@
 <style>
     .recent-search-wrapper {
         gap: 2px;
+        overflow: scroll;
     }
 </style>

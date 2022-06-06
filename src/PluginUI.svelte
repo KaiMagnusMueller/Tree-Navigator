@@ -99,9 +99,10 @@
 			/>
 		</div>
 		<FilterList
+			class="flex-no-shrink"
 			on:filterChanged={(event) => (filterChanged = event.detail)}
 		/>
-		<Section class="">Recent Searches</Section>
+		<Section class="flex-no-shrink">Recent Searches</Section>
 		<RecentSearchList />
 	</div>
 </div>
@@ -116,6 +117,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: 12px;
+		height: 100vh;
 	}
 
 	/* Variable for svg fill in flexible icon */

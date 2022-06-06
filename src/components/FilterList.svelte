@@ -6,6 +6,9 @@
     import FilterPill from "./FilterPill.svelte";
     import FilterScrollButton from "./FilterScrollButton.svelte";
 
+    export { className as class };
+    let className = "";
+
     let savedFilters = [];
 
     filterList.subscribe((value) => {
@@ -179,7 +182,7 @@
 
 <svelte:window on:resize={initScrollPosition} />
 
-<div class="scroll-wrapper">
+<div class="scroll-wrapper {className}">
     <!-- {#if scrollPos != scrollMinMax[0]}
         <FilterScrollButton
             on:scrollButton={() => handleManualScroll(-180)}
