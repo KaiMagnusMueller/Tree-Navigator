@@ -5,6 +5,7 @@
     import { filterList, searchQuery } from "../stores";
     import FilterPill from "./FilterPill.svelte";
     import FilterScrollButton from "./FilterScrollButton.svelte";
+    import { Checkbox } from "figma-plugin-ds-svelte";
 
     export { className as class };
     let className = "";
@@ -178,12 +179,16 @@
     $: _searchQuery.node_types = activeFilters;
 
     //TODO: check what activeFilters contains, especially when no layer filter is selected and an ALL filer should be in there
+
+    let selOnlyCheck = false;
+    $: _searchQuery.restrict_to_selection = selOnlyCheck;
+    $: console.log(selOnlyCheck);
 </script>
 
 <svelte:window on:resize={initScrollPosition} />
-
-<div class="scroll-wrapper {className}">
-    <!-- {#if scrollPos != scrollMinMax[0]}
+<div class="filter-wrapper pl-xxsmall">
+    <div class="scroll-wrapper {className}">
+        <!-- {#if scrollPos != scrollMinMax[0]}
         <FilterScrollButton
             on:scrollButton={() => handleManualScroll(-180)}
             left
@@ -191,37 +196,39 @@
         >
     {/if} -->
 
-    <div
-        id="filterList"
-        bind:this={filterListElem}
-        class="filter-pill-group flex pl-xxsmall"
-        on:wheel|preventDefault|stopPropagation={handleScroll}
-        style="left: {scrollPos}px;"
-    >
-        <!-- <FilterPill
+        <div
+            id="filterList"
+            bind:this={filterListElem}
+            class="filter-pill-group flex "
+            on:wheel|preventDefault|stopPropagation={handleScroll}
+            style="left: {scrollPos}px;"
+        >
+            <!-- <FilterPill
             on:selectFilter={handleFilter}
             nodeType={"ALL"}
             checked={allTypesChecked}
             disabled={allTypesDisabled}>All Types</FilterPill
         > -->
 
-        {#each filterArray as filter}
-            <FilterPill
-                on:selectFilter={handleFilter}
-                nodeType={filter.node_type}
-                bind:checked={filter.checked}>{filter.name}</FilterPill
-            >
+            {#each filterArray as filter}
+                <FilterPill
+                    on:selectFilter={handleFilter}
+                    nodeType={filter.node_type}
+                    bind:checked={filter.checked}>{filter.name}</FilterPill
+                >
 
-            <!-- <FilterPill iconName={IconComponent}>Component</FilterPill> -->
-        {/each}
-    </div>
-    <!-- {#if scrollPos != scrollMinMax[1]}
+                <!-- <FilterPill iconName={IconComponent}>Component</FilterPill> -->
+            {/each}
+        </div>
+        <!-- {#if scrollPos != scrollMinMax[1]}
         <FilterScrollButton
             on:scrollButton={() => handleManualScroll(180)}
             right
             class="button--right">→</FilterScrollButton
         >
     {/if} -->
+    </div>
+    <Checkbox bind:checked={selOnlyCheck}>Limit to selection</Checkbox>
 </div>
 
 <style>

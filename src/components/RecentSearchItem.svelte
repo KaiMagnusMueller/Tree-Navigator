@@ -35,7 +35,7 @@
 
     .recent-search-item:hover {
         border: 1px solid #e3e3e3;
-        box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.15);
+        box-shadow: 0px 0.5px 4px rgba(0, 0, 0, 0.15);
     }
 
     .item-content {
