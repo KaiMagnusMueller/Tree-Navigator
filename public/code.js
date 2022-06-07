@@ -5,6 +5,7 @@
 // This file holds the main code for the plugins. It has access to the *document*.
 // You can access browser APIs in the <script> tag inside "ui.html" which has a
 // full browser enviroment (see documentation).
+console.clear();
 // This shows the HTML page in "ui.html".
 figma.showUI(__html__, { width: 320, height: 500, themeColors: false });
 // Calls to "parent.postMessage" from within the HTML page will trigger this
@@ -39,7 +40,25 @@ figma.ui.onmessage = msg => {
         figma.currentPage.selection = nodes;
         figma.viewport.scrollAndZoomIntoView(nodes);
     }
+    if (msg.type === 'search-layers') {
+        console.log("got message, searching");
+        console.log(msg.parameters);
+        const query = msg.parameters;
+        const node = figma.currentPage;
+        let nodes = [];
+        if (query.node_types.length > 0) {
+            nodes = node.findAllWithCriteria({
+                types: query.node_types
+            });
+        }
+        console.log('Found ' + nodes.length + ' nodes');
+        // for (let index = 0; index < nodes.length; index++) {
+        // 	const element = nodes[index];
+        // 	console.log(nodes[index].name);
+        // 	console.log(nodes[index]);
+        // }
+    }
     // Make sure to close the plugin when you're done. Otherwise the plugin will
     // keep running, which shows the cancel button at the bottom of the screen.
-    figma.closePlugin();
+    // figma.closePlugin();
 };

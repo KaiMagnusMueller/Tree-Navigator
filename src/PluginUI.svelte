@@ -37,44 +37,41 @@
 	//the select menu, its value is bound to the primary buttons disabled prop
 
 	function handleQuerySubmit(event) {
+		//true because event comes from recent list item
+		console.log(event.detail);
+		const isNew = event.detail;
+
 		const queryTime = new Date(now);
 
 		$searchQuery.query_submit_time = queryTime;
 
 		console.log($searchQuery);
+
+		const queryToSend = $searchQuery;
+
 		parent.postMessage(
 			{
 				pluginMessage: {
 					type: "search-layers",
-					parameters: $searchQuery,
+					parameters: queryToSend,
 				},
 			},
 			"*"
 		);
 
-		let localQuery = {
-			node_types: $searchQuery.node_types,
-			query_text: $searchQuery.query_text,
-			restrict_to_selection: $searchQuery.restrict_to_selection,
-			selected_node_ids: $searchQuery.selected_node_ids,
-			query_submit_time: $searchQuery.query_submit_time,
-		};
+		//only add to recentlist if the item is not already on the list
+		if (isNew == true) {
+			let localQuery = {
+				node_types: $searchQuery.node_types,
+				query_text: $searchQuery.query_text,
+				restrict_to_selection: $searchQuery.restrict_to_selection,
+				selected_node_ids: $searchQuery.selected_node_ids,
+				query_submit_time: $searchQuery.query_submit_time,
+			};
 
-		$recentSearches = [localQuery, ...$recentSearches];
-		console.log($recentSearches);
-	}
-
-	function createShapes() {
-		parent.postMessage(
-			{
-				pluginMessage: {
-					type: "create-shapes",
-					count: count,
-					shape: selectedShape.value,
-				},
-			},
-			"*"
-		);
+			$recentSearches = [localQuery, ...$recentSearches];
+			console.log($recentSearches);
+		}
 	}
 
 	function cancel() {
@@ -109,7 +106,10 @@
 			class="section--recent flex column flex-grow pr-xxsmall pl-xxsmall"
 		>
 			<Section class="flex-no-shrink">Recent Searches</Section>
-			<RecentSearchList class="flex-grow" />
+			<RecentSearchList
+				class="flex-grow"
+				on:recentSearch={handleQuerySubmit}
+			/>
 		</div>
 		<div
 			class="section--footer flex row justify-content-end pr-xxsmall pl-xxsmall pb-xxsmall"

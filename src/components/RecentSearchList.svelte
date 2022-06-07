@@ -34,7 +34,10 @@
 <div class="recent-search-wrapper {classList}">
     <div class="recent-search-list pb-xxxsmall flex column flex-grow">
         {#each _recentSearches as search}
-            <RecentSearchItem node_types={getNodeName(search.node_types)}
+            <RecentSearchItem
+                {search}
+                node_types={getNodeName(search.node_types)}
+                on:recentSearch
                 >{search.query_text}
             </RecentSearchItem>
         {/each}

@@ -97,6 +97,13 @@ export let filterList = writable([
 
 export let recentSearches = writable([
     {
+        node_types: [],
+        query_submit_time: {},
+        query_text: "Filter Type",
+        restrict_to_selection: false,
+        selected_node_ids: []
+    },
+    {
         node_types: ["COMPONENT"],
         query_text: "Icon"
     },

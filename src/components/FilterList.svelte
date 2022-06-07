@@ -135,6 +135,15 @@
                     filterListElem.parentElement.clientWidth) -
                 8,
         ];
+
+        //TODO: fix figma not correctly assigning scrolllWidth
+        // scrollWidth: 1051
+        //         1007
+        // VM111974:2852 320
+        // VM111974:2853 (2) [0, -695]
+
+        console.log(filterListElem.scrollWidth);
+        console.log(filterListElem.parentElement.clientWidth);
         console.log(scrollMinMax);
     }
 

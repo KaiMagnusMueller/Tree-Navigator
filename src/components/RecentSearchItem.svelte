@@ -6,7 +6,28 @@
         IconForward,
     } from "figma-plugin-ds-svelte";
 
+    import { searchQuery } from "../stores";
+    import { createEventDispatcher } from "svelte";
+    let dispatch = createEventDispatcher();
+
     export let node_types;
+
+    export let search = {};
+    console.log(search);
+
+    // node_types: [],
+    // query_text: "",
+    // restrict_to_selection: false,
+    // selected_node_ids: [],
+    // query_submit_time: "",
+
+    function handleClick() {
+        console.log("start recent search");
+        $searchQuery = search;
+
+        //isNew = false
+        dispatch("recentSearch", false);
+    }
 </script>
 
 <div class="recent-search-item p-xxsmall flex">
@@ -22,7 +43,7 @@
         </p>
     </div>
     <div class="search-button">
-        <IconButton iconName={IconForward} />
+        <IconButton iconName={IconForward} on:click={handleClick} />
     </div>
 </div>
 
