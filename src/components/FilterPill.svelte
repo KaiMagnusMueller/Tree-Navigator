@@ -80,18 +80,24 @@
         text-decoration: none;
         outline: none;
         border: 1px solid #9c2ac3;
-        background: #c27cda;
+        background: #d791ef;
         user-select: none;
+        transition: all 0.15s;
     }
 
-    div:focus {
+    div:focus,
+    :hover {
         /* outline: 2px solid var(--blue);
         outline-offset: -2px; */
         box-shadow: 0 1px 6px rgba(128, 46, 111, 0.51);
     }
 
+    div:active {
+        background: #c484da;
+    }
+
     div.checked {
-        background: #e3aef6;
+        background: #efcbfc;
     }
 
     input[type="checkbox"] {
