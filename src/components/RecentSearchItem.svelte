@@ -51,8 +51,8 @@
     }
     .item-content p {
         display: -webkit-box;
-        -webkit-line-clamp: 2; /* number of lines to show */
-        line-clamp: 2;
+        -webkit-line-clamp: 1; /* number of lines to show */
+        line-clamp: 1;
         -webkit-box-orient: vertical;
         margin: 0;
         font-size: var(--font-size-small);
@@ -61,6 +61,7 @@
         color: #9e9e9e;
         overflow: hidden;
         text-overflow: ellipsis;
+        line-break: anywhere;
     }
 
     .search-button {

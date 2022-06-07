@@ -186,7 +186,7 @@
 </script>
 
 <svelte:window on:resize={initScrollPosition} />
-<div class="filter-wrapper pl-xxsmall">
+<div class="filter-wrapper">
     <div class="scroll-wrapper {className}">
         <!-- {#if scrollPos != scrollMinMax[0]}
         <FilterScrollButton
@@ -199,9 +199,10 @@
         <div
             id="filterList"
             bind:this={filterListElem}
-            class="filter-pill-group flex "
+            class="filter-pill-group flex pl-xxsmall"
             on:wheel|preventDefault|stopPropagation={handleScroll}
             style="left: {scrollPos}px;"
+            tabindex="0"
         >
             <!-- <FilterPill
             on:selectFilter={handleFilter}
@@ -228,7 +229,9 @@
         >
     {/if} -->
     </div>
-    <Checkbox bind:checked={selOnlyCheck}>Limit to selection</Checkbox>
+    <Checkbox class="pl-xxsmall" bind:checked={selOnlyCheck}
+        >Limit to selection</Checkbox
+    >
 </div>
 
 <style>

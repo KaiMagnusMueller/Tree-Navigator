@@ -22,7 +22,7 @@
 
     let dispatch = createEventDispatcher();
 
-    function handleClick(event) {
+    function handleClick() {
         //TODO: disabled state, event stoppen
         checked = !checked;
     }
@@ -32,6 +32,12 @@
     on:click={handleClick}
     on:click={() => dispatch("selectFilter", [nodeType, checked])}
     on:submit|preventDefault
+    on:keydown={(event) => {
+        if (event.key == "Enter") {
+            handleClick();
+            dispatch("selectFilter", [nodeType, checked]);
+        }
+    }}
     onclick="this.blur();"
     {variant}
     {disabled}
@@ -39,6 +45,7 @@
     class="{variant} {className}"
     class:checked
     data-node-type={nodeType}
+    tabindex="0"
 >
     {#if iconName}
         <IconFlexible
@@ -75,6 +82,12 @@
         border: 1px solid #9c2ac3;
         background: #c27cda;
         user-select: none;
+    }
+
+    div:focus {
+        /* outline: 2px solid var(--blue);
+        outline-offset: -2px; */
+        box-shadow: 0 1px 6px rgba(128, 46, 111, 0.51);
     }
 
     div.checked {

@@ -19,7 +19,7 @@
 		Section,
 	} from "figma-plugin-ds-svelte";
 
-	import FilterPill from "./components/FilterPill.svelte";
+	import InputFlexible from "./components/InputFlexible";
 	import FilterList from "./components/FilterList.svelte";
 	import RecentSearchList from "./components/RecentSearchList.svelte";
 	import { now } from "svelte/internal";
@@ -88,11 +88,12 @@
 	<div class="main-section">
 		<div class="header-group flex pr-xxsmall pl-xxsmall pt-xxsmall">
 			<IconButton on:click={navBack} iconName={IconBack} disabled />
-			<Input
+			<InputFlexible
 				iconName={IconSearch}
 				placeholder="Search"
 				bind:value={searchString}
 				class="flex-grow"
+				autofocus
 			/>
 			<IconButton
 				on:click={handleQuerySubmit}
@@ -104,8 +105,12 @@
 			class="flex-no-shrink"
 			on:filterChanged={(event) => (filterChanged = event.detail)}
 		/>
-		<Section class="flex-no-shrink">Recent Searches</Section>
-		<RecentSearchList />
+		<div
+			class="section--recent flex column flex-grow pr-xxsmall pl-xxsmall"
+		>
+			<Section class="flex-no-shrink">Recent Searches</Section>
+			<RecentSearchList class="flex-grow" />
+		</div>
 		<div
 			class="section--footer flex row justify-content-end pr-xxsmall pl-xxsmall pb-xxsmall"
 		>
@@ -132,6 +137,10 @@
 	/* Variable for svg fill in flexible icon */
 	:global(:root) {
 		--transparent: transparent;
+	}
+
+	.section--recent {
+		overflow: hidden;
 	}
 
 	.section--footer {
