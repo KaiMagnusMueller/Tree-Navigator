@@ -74,11 +74,23 @@
 		}
 	}
 
+	let searchResults = [];
+
+	onmessage = (event) => {
+		if (event.data.pluginMessage.type == "search-results") {
+			searchResults = event.data.pluginMessage.data;
+			displayResults();
+		}
+	};
+
 	function cancel() {
 		parent.postMessage({ pluginMessage: { type: "cancel" } }, "*");
 	}
 
 	function navBack(params) {}
+
+	let showMainMenu = true;
+	let showSearchResults = false;
 </script>
 
 <div class="wrapper">
@@ -98,26 +110,30 @@
 				bind:disabled
 			/>
 		</div>
-		<FilterList
-			class="flex-no-shrink"
-			on:filterChanged={(event) => (filterChanged = event.detail)}
-		/>
-		<div
-			class="section--recent flex column flex-grow pr-xxsmall pl-xxsmall"
-		>
-			<Section class="flex-no-shrink">Recent Searches</Section>
-			<RecentSearchList
-				class="flex-grow"
-				on:recentSearch={handleQuerySubmit}
+		{#if showMainMenu}
+			<FilterList
+				class="flex-no-shrink"
+				on:filterChanged={(event) => (filterChanged = event.detail)}
 			/>
-		</div>
-		<div
-			class="section--footer flex row justify-content-end pr-xxsmall pl-xxsmall pb-xxsmall"
-		>
-			<!-- TODO: make IconButton accept flexible color -->
-			<IconButton iconName={IconInfo} color={"black3"} />
-			<IconButton iconName={IconAdjust} color={"black3"} />
-		</div>
+			<div
+				class="section--recent flex column flex-grow pr-xxsmall pl-xxsmall"
+			>
+				<Section class="flex-no-shrink">Recent Searches</Section>
+				<RecentSearchList
+					class="flex-grow"
+					on:recentSearch={handleQuerySubmit}
+				/>
+			</div>
+			<div
+				class="section--footer flex row justify-content-end pr-xxsmall pl-xxsmall pb-xxsmall"
+			>
+				<!-- TODO: make IconButton accept flexible color -->
+				<IconButton iconName={IconInfo} color={"black3"} />
+				<IconButton iconName={IconAdjust} color={"black3"} />
+			</div>
+		{:else if showSearchResults}
+			<p>Results go here</p>
+		{/if}
 	</div>
 </div>
 

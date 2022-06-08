@@ -99,7 +99,7 @@ export let recentSearches = writable([
     {
         node_types: [],
         query_submit_time: {},
-        query_text: "Filter Type",
+        query_text: "Filter Pill",
         restrict_to_selection: false,
         selected_node_ids: []
     },

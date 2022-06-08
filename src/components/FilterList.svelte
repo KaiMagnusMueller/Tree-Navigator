@@ -129,7 +129,6 @@
     function initScrollPosition() {
         scrollMinMax = [
             0,
-
             -1 *
                 (filterListElem.scrollWidth -
                     filterListElem.parentElement.clientWidth) -

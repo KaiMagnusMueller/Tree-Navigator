@@ -51,7 +51,12 @@ figma.ui.onmessage = msg => {
                 types: query.node_types
             });
         }
+        else {
+            nodes = node.findAll();
+        }
+        let filteredNodes = nodes.filter(elem => elem.name === query.query_text);
         console.log('Found ' + nodes.length + ' nodes');
+        console.log('Found ' + filteredNodes.length + ' nodes after filtering names');
         // for (let index = 0; index < nodes.length; index++) {
         // 	const element = nodes[index];
         // 	console.log(nodes[index].name);
