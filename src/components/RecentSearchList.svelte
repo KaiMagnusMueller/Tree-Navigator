@@ -32,7 +32,9 @@
 </script>
 
 <div class="recent-search-wrapper {classList}">
-    <div class="recent-search-list pb-xxxsmall flex column flex-grow">
+    <div
+        class="recent-search-list pb-xlarge pr-xxsmall pl-xxsmall flex column flex-grow"
+    >
         {#each _recentSearches as search}
             <RecentSearchItem
                 {search}

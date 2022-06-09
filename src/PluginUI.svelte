@@ -115,9 +115,7 @@
 				class="flex-no-shrink"
 				on:filterChanged={(event) => (filterChanged = event.detail)}
 			/>
-			<div
-				class="section--recent flex column flex-grow pr-xxsmall pl-xxsmall"
-			>
+			<div class="section--recent flex column flex-grow">
 				<Section class="flex-no-shrink">Recent Searches</Section>
 				<RecentSearchList
 					class="flex-grow"
@@ -161,5 +159,13 @@
 
 	.section--footer {
 		gap: 8px;
+		position: absolute;
+		bottom: 0;
+		right: 0;
+		background: radial-gradient(
+			ellipse farthest-corner at bottom right,
+			#fff,
+			#fff0
+		);
 	}
 </style>
