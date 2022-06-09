@@ -2,8 +2,7 @@
 
 A plugin to filter and find nodes. 
 
-![Start screen of the Find Nodes plugin showing search bar, filter pills and recent search list]("https://github.com/KaiMagnusMueller/Find-Nodes/blob/main/media/Screenshot-2022-06-09-at-22-57-45-Screenshot.png?raw=true")
-
+![Start screen of the Find Nodes plugin showing search bar, filter pills and recent search list](https://user-images.githubusercontent.com/24393597/172944895-6e1e92e1-d039-46ff-9b72-649eb8b335c7.png)
 
 ## To get started with development:
 
