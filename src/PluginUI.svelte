@@ -30,6 +30,11 @@
 	//value provided by filter list, if there is a specific layer filter set
 	let filterChanged = false;
 
+	let querySendTime = Date.now();
+	let queryDuration;
+
+	console.log(querySendTime);
+
 	$: $searchQuery.query_text = searchString;
 
 	$: disabled = searchString === '' && filterChanged == false;
@@ -41,9 +46,7 @@
 		// console.log(event.detail);
 		const isNew = event.detail;
 
-		const queryTime = new Date(now);
-
-		$searchQuery.query_submit_time = queryTime;
+		$searchQuery.query_submit_time = querySendTime;
 
 		// console.log($searchQuery);
 
@@ -80,6 +83,8 @@
 				searchResults = event.data.pluginMessage.data;
 				// console.log('got results');
 				displayResults();
+				queryDuration = Date.now() - querySendTime;
+				console.log('elapsed Time:' + queryDuration);
 			}
 		};
 	});
@@ -135,6 +140,11 @@
 				<IconButton iconName={IconAdjust} color={'black3'} />
 			</div>
 		{:else if $UIState.showSearchResults}
+			<p>
+				Found {searchResults.length} nodes in {Math.round(
+					queryDuration / 100
+				) / 10} seconds.
+			</p>
 			{#each searchResults as result}
 				<p>{result.name}, {result.id}, {result.type}</p>
 			{/each}
