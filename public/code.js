@@ -55,15 +55,31 @@ figma.ui.onmessage = msg => {
             nodes = node.findAll();
         }
         let filteredNodes = nodes.filter(elem => elem.name === query.query_text);
+        //TODO: Make case-insensitive
         console.log('Found ' + nodes.length + ' nodes');
+        console.log(filteredNodes);
         console.log('Found ' + filteredNodes.length + ' nodes after filtering names');
         // for (let index = 0; index < nodes.length; index++) {
         // 	const element = nodes[index];
         // 	console.log(nodes[index].name);
         // 	console.log(nodes[index]);
         // }
+        let nodesToSend = [];
+        filteredNodes.forEach(element => {
+            nodesToSend.push({
+                id: element.id,
+                name: element.name,
+                parent: element.parent,
+                children: element.children,
+                type: element.type
+            });
+        });
+        sendResultsList(nodesToSend);
     }
     // Make sure to close the plugin when you're done. Otherwise the plugin will
     // keep running, which shows the cancel button at the bottom of the screen.
     // figma.closePlugin();
 };
+function sendResultsList(results) {
+    figma.ui.postMessage({ type: "search-results", data: results });
+}

@@ -99,6 +99,20 @@ export let recentSearches = writable([
     {
         node_types: [],
         query_submit_time: {},
+        query_text: "Test",
+        restrict_to_selection: false,
+        selected_node_ids: []
+    },
+    {
+        node_types: ["INSTANCE"],
+        query_submit_time: {},
+        query_text: "Test",
+        restrict_to_selection: false,
+        selected_node_ids: []
+    },
+    {
+        node_types: [],
+        query_submit_time: {},
         query_text: "Filter Pill",
         restrict_to_selection: false,
         selected_node_ids: []
@@ -132,4 +146,9 @@ export let searchQuery = writable({
     selected_node_ids: [],
     query_submit_time: "",
 
+})
+
+export let UIState = writable({
+    showMainMenu: true,
+    showSearchResults: false,
 })

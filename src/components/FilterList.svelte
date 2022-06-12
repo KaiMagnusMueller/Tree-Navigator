@@ -1,14 +1,14 @@
 <script>
-    import { afterUpdate, onMount, createEventDispatcher } from "svelte";
-    import { element } from "svelte/internal";
+    import { afterUpdate, onMount, createEventDispatcher } from 'svelte';
+    import { element } from 'svelte/internal';
 
-    import { filterList, searchQuery } from "../stores";
-    import FilterPill from "./FilterPill.svelte";
-    import FilterScrollButton from "./FilterScrollButton.svelte";
-    import { Checkbox } from "figma-plugin-ds-svelte";
+    import { filterList, searchQuery } from '../stores';
+    import FilterPill from './FilterPill.svelte';
+    import FilterScrollButton from './FilterScrollButton.svelte';
+    import { Checkbox } from 'figma-plugin-ds-svelte';
 
     export { className as class };
-    let className = "";
+    let className = '';
 
     let savedFilters = [];
 
@@ -17,9 +17,9 @@
     });
 
     onmessage = (event) => {
-        if (event.data.pluginMessage.type == "loaded-plugin-filter-list") {
+        if (event.data.pluginMessage.type == 'loaded-plugin-filter-list') {
             if (event.data.pluginMessage.data.length == 0) {
-                console.log("no filters used previously");
+                console.log('no filters used previously');
                 return;
             }
             let loadedFilters = event.data.pluginMessage.data;
@@ -47,8 +47,8 @@
 
     filterArray = stickyFilters.concat(regularFilters);
 
-    console.log(filterMap);
-    console.log(filterArray);
+    // console.log(filterMap);
+    // console.log(filterArray);
 
     filterArray.forEach((element) => {
         const enabled = element.default ? true : false;
@@ -69,8 +69,8 @@
 
         // console.log(event.detail);
 
-        if (event.detail[0] == "ALL") {
-            console.log("reset all");
+        if (event.detail[0] == 'ALL') {
+            console.log('reset all');
             filterArray.forEach((elem) => {
                 elem.checked = false;
             });
@@ -82,20 +82,20 @@
         checkedLayerFilters = 0;
 
         checkedLayerFilters = filterArray.filter(
-            (elem) => elem.checked == true && elem.node_type != "ALL"
+            (elem) => elem.checked == true && elem.node_type != 'ALL'
         );
 
         console.log(checkedLayerFilters);
         let ALL_FILTER_I = filterArray.findIndex(
-            (elem) => elem.node_type == "ALL"
+            (elem) => elem.node_type == 'ALL'
         );
         if (checkedLayerFilters.length > 0) {
             filterArray[ALL_FILTER_I].checked = false;
 
-            dispatch("filterChanged", true);
+            dispatch('filterChanged', true);
         } else {
             filterArray[ALL_FILTER_I].checked = true;
-            dispatch("filterChanged", false);
+            dispatch('filterChanged', false);
         }
 
         const _activeFilterObj = filterArray.filter(
@@ -109,7 +109,7 @@
     }
 
     function isAFilterChecked(elem) {
-        if (elem.node_type == "ALL") {
+        if (elem.node_type == 'ALL') {
             return;
         }
 
@@ -188,9 +188,9 @@
 
     //TODO: check what activeFilters contains, especially when no layer filter is selected and an ALL filer should be in there
 
-    let selOnlyCheck = false;
-    $: _searchQuery.restrict_to_selection = selOnlyCheck;
-    $: console.log(selOnlyCheck);
+    let selectionCheck = false;
+    $: _searchQuery.restrict_to_selection = selectionCheck;
+    $: console.log(selectionCheck);
 </script>
 
 <svelte:window on:resize={initScrollPosition} />
@@ -237,7 +237,7 @@
         >
     {/if} -->
     </div>
-    <Checkbox class="pl-xxsmall" bind:checked={selOnlyCheck}
+    <Checkbox class="pl-xxsmall" bind:checked={selectionCheck}
         >Limit to selection</Checkbox
     >
 </div>

@@ -1,8 +1,8 @@
 <script>
 	//import Global CSS from the svelte boilerplate
 	//contains Figma color vars, spacing vars, utility classes and more
-	import { GlobalCSS } from "figma-plugin-ds-svelte";
-	import { searchQuery, recentSearches } from "./stores";
+	import { GlobalCSS } from 'figma-plugin-ds-svelte';
+	import { searchQuery, recentSearches, UIState } from './stores';
 
 	//import some Svelte Figma UI components
 	import {
@@ -17,46 +17,46 @@
 		IconComponent,
 		IconForward,
 		Section,
-	} from "figma-plugin-ds-svelte";
+	} from 'figma-plugin-ds-svelte';
 
-	import InputFlexible from "./components/InputFlexible";
-	import FilterList from "./components/FilterList.svelte";
-	import RecentSearchList from "./components/RecentSearchList.svelte";
-	import { now } from "svelte/internal";
-	import IconInfo from "./assets/icons/information.svg";
+	import InputFlexible from './components/InputFlexible';
+	import FilterList from './components/FilterList.svelte';
+	import RecentSearchList from './components/RecentSearchList.svelte';
+	import { each, now, onMount } from 'svelte/internal';
+	import IconInfo from './assets/icons/information.svg';
 
 	//current input of search field
-	let searchString = "";
+	let searchString = '';
 	//value provided by filter list, if there is a specific layer filter set
 	let filterChanged = false;
 
 	$: $searchQuery.query_text = searchString;
 
-	$: disabled = searchString === "" && filterChanged == false;
+	$: disabled = searchString === '' && filterChanged == false;
 	//this is a reactive variable that will return false when a value is selected from
 	//the select menu, its value is bound to the primary buttons disabled prop
 
 	function handleQuerySubmit(event) {
 		//true because event comes from recent list item
-		console.log(event.detail);
+		// console.log(event.detail);
 		const isNew = event.detail;
 
 		const queryTime = new Date(now);
 
 		$searchQuery.query_submit_time = queryTime;
 
-		console.log($searchQuery);
+		// console.log($searchQuery);
 
 		const queryToSend = $searchQuery;
 
 		parent.postMessage(
 			{
 				pluginMessage: {
-					type: "search-layers",
+					type: 'search-layers',
 					parameters: queryToSend,
 				},
 			},
-			"*"
+			'*'
 		);
 
 		//only add to recentlist if the item is not already on the list
@@ -70,27 +70,32 @@
 			};
 
 			$recentSearches = [localQuery, ...$recentSearches];
-			console.log($recentSearches);
+			// console.log($recentSearches);
 		}
 	}
+
+	onMount(() => {
+		onmessage = (event) => {
+			if (event.data.pluginMessage.type == 'search-results') {
+				searchResults = event.data.pluginMessage.data;
+				// console.log('got results');
+				displayResults();
+			}
+		};
+	});
 
 	let searchResults = [];
 
-	onmessage = (event) => {
-		if (event.data.pluginMessage.type == "search-results") {
-			searchResults = event.data.pluginMessage.data;
-			displayResults();
-		}
-	};
+	function displayResults() {
+		$UIState.showMainMenu = false;
+		$UIState.showSearchResults = true;
+	}
 
 	function cancel() {
-		parent.postMessage({ pluginMessage: { type: "cancel" } }, "*");
+		parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*');
 	}
 
 	function navBack(params) {}
-
-	let showMainMenu = true;
-	let showSearchResults = false;
 </script>
 
 <div class="wrapper">
@@ -110,7 +115,7 @@
 				bind:disabled
 			/>
 		</div>
-		{#if showMainMenu}
+		{#if $UIState.showMainMenu}
 			<FilterList
 				class="flex-no-shrink"
 				on:filterChanged={(event) => (filterChanged = event.detail)}
@@ -126,11 +131,13 @@
 				class="section--footer flex row justify-content-end pr-xxsmall pl-xxsmall pb-xxsmall"
 			>
 				<!-- TODO: make IconButton accept flexible color -->
-				<IconButton iconName={IconInfo} color={"black3"} />
-				<IconButton iconName={IconAdjust} color={"black3"} />
+				<IconButton iconName={IconInfo} color={'black3'} />
+				<IconButton iconName={IconAdjust} color={'black3'} />
 			</div>
-		{:else if showSearchResults}
-			<p>Results go here</p>
+		{:else if $UIState.showSearchResults}
+			{#each searchResults as result}
+				<p>{result.name}, {result.id}, {result.type}</p>
+			{/each}
 		{/if}
 	</div>
 </div>
