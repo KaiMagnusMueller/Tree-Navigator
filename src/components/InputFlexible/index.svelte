@@ -1,5 +1,5 @@
 <script>
-    import { Icon } from "figma-plugin-ds-svelte";
+    import { Icon } from 'figma-plugin-ds-svelte';
 
     export let id = null;
     export let value = null;
@@ -10,12 +10,12 @@
     export let iconName = null;
     export let spin = false;
     export let invalid = false;
-    export let errorMessage = "Error message";
-    export let placeholder = "Input something here...";
+    export let errorMessage = 'Error message';
+    export let placeholder = 'Input something here...';
     export let autofocus = false;
     export { className as class };
 
-    let className = "";
+    let className = '';
 </script>
 
 {#if iconName || iconText}
