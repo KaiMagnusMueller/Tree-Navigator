@@ -31,9 +31,7 @@
 	//value provided by filter list, if there is a specific layer filter set
 	let filterChanged = false;
 
-	let querySendTime = Date.now();
-
-	console.log(querySendTime);
+	let querySendTime;
 
 	$: $searchQuery.query_text = searchString;
 
@@ -46,6 +44,7 @@
 		// console.log(event.detail);
 		const isNew = event.detail;
 
+		querySendTime = Date.now();
 		$searchQuery.query_submit_time = querySendTime;
 
 		// console.log($searchQuery);
