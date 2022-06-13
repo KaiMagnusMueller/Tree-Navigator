@@ -24,6 +24,7 @@
 	import RecentSearchList from './components/RecentSearchList.svelte';
 	import { each, now, onMount } from 'svelte/internal';
 	import IconInfo from './assets/icons/information.svg';
+	import ResultsList from './components/ResultsList.svelte';
 
 	//current input of search field
 	let searchString = '';
@@ -140,14 +141,7 @@
 				<IconButton iconName={IconAdjust} color={'black3'} />
 			</div>
 		{:else if $UIState.showSearchResults}
-			<p>
-				Found {searchResults.length} nodes in {Math.round(
-					queryDuration / 100
-				) / 10} seconds.
-			</p>
-			{#each searchResults as result}
-				<p>{result.name}, {result.id}, {result.type}</p>
-			{/each}
+			<ResultsList {queryDuration} {searchResults} />
 		{/if}
 	</div>
 </div>
