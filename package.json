@@ -23,7 +23,7 @@
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript": "*",
     "svelte": "^3.48.0",
-    "tslib": "^1.14.1",
+    "tslib": "^2.4.0",
     "typescript": "^3.9.10"
   },
   "dependencies": {
