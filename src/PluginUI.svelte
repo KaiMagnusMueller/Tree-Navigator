@@ -32,7 +32,6 @@
 	let filterChanged = false;
 
 	let querySendTime = Date.now();
-	let queryDuration;
 
 	console.log(querySendTime);
 
@@ -76,21 +75,9 @@
 			$recentSearches = [localQuery, ...$recentSearches];
 			// console.log($recentSearches);
 		}
+
+		displayResults();
 	}
-
-	onMount(() => {
-		onmessage = (event) => {
-			if (event.data.pluginMessage.type == 'search-results') {
-				searchResults = event.data.pluginMessage.data;
-				// console.log('got results');
-				displayResults();
-				queryDuration = Date.now() - querySendTime;
-				console.log('elapsed Time:' + queryDuration);
-			}
-		};
-	});
-
-	let searchResults = [];
 
 	function displayResults() {
 		$UIState.showMainMenu = false;
@@ -121,11 +108,11 @@
 				bind:disabled
 			/>
 		</div>
+		<FilterList
+			class="flex-no-shrink"
+			on:filterChanged={(event) => (filterChanged = event.detail)}
+		/>
 		{#if $UIState.showMainMenu}
-			<FilterList
-				class="flex-no-shrink"
-				on:filterChanged={(event) => (filterChanged = event.detail)}
-			/>
 			<div class="section--recent flex column flex-grow">
 				<Section class="flex-no-shrink">Recent Searches</Section>
 				<RecentSearchList
@@ -141,7 +128,7 @@
 				<IconButton iconName={IconAdjust} color={'black3'} />
 			</div>
 		{:else if $UIState.showSearchResults}
-			<ResultsList {queryDuration} {searchResults} />
+			<ResultsList {querySendTime} />
 		{/if}
 	</div>
 </div>
@@ -178,5 +165,25 @@
 			#fff,
 			#fff0
 		);
+	}
+
+	:global(html) {
+		--scrollbarBG: #cfd8dc;
+		--thumbBG: #90a4ae;
+	}
+	:global(body)::-webkit-scrollbar {
+		width: 11px;
+	}
+	:global(body) {
+		scrollbar-width: thin;
+		scrollbar-color: var(--thumbBG) var(--scrollbarBG);
+	}
+	:global(body)::-webkit-scrollbar-track {
+		background: var(--scrollbarBG);
+	}
+	:global(body)::-webkit-scrollbar-thumb {
+		background-color: var(--thumbBG);
+		border-radius: 6px;
+		border: 3px solid var(--scrollbarBG);
 	}
 </style>
