@@ -95,6 +95,8 @@ figma.ui.onmessage = msg => {
 			})
 		});
 
+		figma.currentPage.selection = filteredNodes
+
 		sendResultsList(nodesToSend)
 	}
 

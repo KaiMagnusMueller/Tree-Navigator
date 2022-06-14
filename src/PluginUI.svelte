@@ -50,16 +50,21 @@
 		// console.log($searchQuery);
 
 		const queryToSend = $searchQuery;
+		console.log('loading');
+		displayResults();
 
-		parent.postMessage(
-			{
-				pluginMessage: {
-					type: 'search-layers',
-					parameters: queryToSend,
+		setTimeout(() => {
+			parent.postMessage(
+				{
+					pluginMessage: {
+						type: 'search-layers',
+						parameters: queryToSend,
+					},
 				},
-			},
-			'*'
-		);
+				'*'
+			);
+			//prevent the postMessage function from locking up the main plugin by delaying it a few milliseconds
+		}, 50);
 
 		//only add to recentlist if the item is not already on the list
 		if (isNew == true) {
@@ -74,8 +79,6 @@
 			$recentSearches = [localQuery, ...$recentSearches];
 			// console.log($recentSearches);
 		}
-
-		displayResults();
 	}
 
 	function displayResults() {
