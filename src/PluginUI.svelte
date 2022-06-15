@@ -1,8 +1,8 @@
 <script>
 	//import Global CSS from the svelte boilerplate
 	//contains Figma color vars, spacing vars, utility classes and more
-	import { GlobalCSS } from "figma-plugin-ds-svelte";
-	import { searchQuery, recentSearches } from "./stores";
+	import { GlobalCSS } from 'figma-plugin-ds-svelte';
+	import { searchQuery, recentSearches, UIState } from './stores';
 
 	//import some Svelte Figma UI components
 	import {
@@ -17,47 +17,54 @@
 		IconComponent,
 		IconForward,
 		Section,
-	} from "figma-plugin-ds-svelte";
+	} from 'figma-plugin-ds-svelte';
 
-	import InputFlexible from "./components/InputFlexible";
-	import FilterList from "./components/FilterList.svelte";
-	import RecentSearchList from "./components/RecentSearchList.svelte";
-	import { now } from "svelte/internal";
-	import IconInfo from "./assets/icons/information.svg";
+	import InputFlexible from './components/InputFlexible';
+	import FilterList from './components/FilterList.svelte';
+	import RecentSearchList from './components/RecentSearchList.svelte';
+	import { each, now, onMount } from 'svelte/internal';
+	import IconInfo from './assets/icons/information.svg';
+	import ResultsList from './components/ResultsList.svelte';
 
 	//current input of search field
-	let searchString = "";
+	let searchString = '';
 	//value provided by filter list, if there is a specific layer filter set
 	let filterChanged = false;
 
+	let querySendTime;
+
 	$: $searchQuery.query_text = searchString;
 
-	$: disabled = searchString === "" && filterChanged == false;
+	$: disabled = searchString === '' && filterChanged == false;
 	//this is a reactive variable that will return false when a value is selected from
 	//the select menu, its value is bound to the primary buttons disabled prop
 
 	function handleQuerySubmit(event) {
 		//true because event comes from recent list item
-		console.log(event.detail);
+		// console.log(event.detail);
 		const isNew = event.detail;
 
-		const queryTime = new Date(now);
+		querySendTime = Date.now();
+		$searchQuery.query_submit_time = querySendTime;
 
-		$searchQuery.query_submit_time = queryTime;
-
-		console.log($searchQuery);
+		// console.log($searchQuery);
 
 		const queryToSend = $searchQuery;
+		console.log('loading');
+		displayResults();
 
-		parent.postMessage(
-			{
-				pluginMessage: {
-					type: "search-layers",
-					parameters: queryToSend,
+		setTimeout(() => {
+			parent.postMessage(
+				{
+					pluginMessage: {
+						type: 'search-layers',
+						parameters: queryToSend,
+					},
 				},
-			},
-			"*"
-		);
+				'*'
+			);
+			//prevent the postMessage function from locking up the main plugin by delaying it a few milliseconds
+		}, 50);
 
 		//only add to recentlist if the item is not already on the list
 		if (isNew == true) {
@@ -70,27 +77,20 @@
 			};
 
 			$recentSearches = [localQuery, ...$recentSearches];
-			console.log($recentSearches);
+			// console.log($recentSearches);
 		}
 	}
 
-	let searchResults = [];
-
-	onmessage = (event) => {
-		if (event.data.pluginMessage.type == "search-results") {
-			searchResults = event.data.pluginMessage.data;
-			displayResults();
-		}
-	};
+	function displayResults() {
+		$UIState.showMainMenu = false;
+		$UIState.showSearchResults = true;
+	}
 
 	function cancel() {
-		parent.postMessage({ pluginMessage: { type: "cancel" } }, "*");
+		parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*');
 	}
 
 	function navBack(params) {}
-
-	let showMainMenu = true;
-	let showSearchResults = false;
 </script>
 
 <div class="wrapper">
@@ -110,11 +110,11 @@
 				bind:disabled
 			/>
 		</div>
-		{#if showMainMenu}
-			<FilterList
-				class="flex-no-shrink"
-				on:filterChanged={(event) => (filterChanged = event.detail)}
-			/>
+		<FilterList
+			class="flex-no-shrink"
+			on:filterChanged={(event) => (filterChanged = event.detail)}
+		/>
+		{#if $UIState.showMainMenu}
 			<div class="section--recent flex column flex-grow">
 				<Section class="flex-no-shrink">Recent Searches</Section>
 				<RecentSearchList
@@ -126,11 +126,11 @@
 				class="section--footer flex row justify-content-end pr-xxsmall pl-xxsmall pb-xxsmall"
 			>
 				<!-- TODO: make IconButton accept flexible color -->
-				<IconButton iconName={IconInfo} color={"black3"} />
-				<IconButton iconName={IconAdjust} color={"black3"} />
+				<IconButton iconName={IconInfo} color={'black3'} />
+				<IconButton iconName={IconAdjust} color={'black3'} />
 			</div>
-		{:else if showSearchResults}
-			<p>Results go here</p>
+		{:else if $UIState.showSearchResults}
+			<ResultsList {querySendTime} />
 		{/if}
 	</div>
 </div>
@@ -167,5 +167,25 @@
 			#fff,
 			#fff0
 		);
+	}
+
+	:global(html) {
+		--scrollbarBG: #cfd8dc;
+		--thumbBG: #90a4ae;
+	}
+	:global(body)::-webkit-scrollbar {
+		width: 11px;
+	}
+	:global(body) {
+		scrollbar-width: thin;
+		scrollbar-color: var(--thumbBG) var(--scrollbarBG);
+	}
+	:global(body)::-webkit-scrollbar-track {
+		background: var(--scrollbarBG);
+	}
+	:global(body)::-webkit-scrollbar-thumb {
+		background-color: var(--thumbBG);
+		border-radius: 6px;
+		border: 3px solid var(--scrollbarBG);
 	}
 </style>

@@ -4,16 +4,16 @@
         IconSearch,
         IconButton,
         IconForward,
-    } from "figma-plugin-ds-svelte";
+    } from 'figma-plugin-ds-svelte';
 
-    import { searchQuery } from "../stores";
-    import { createEventDispatcher } from "svelte";
+    import { searchQuery } from '../stores';
+    import { createEventDispatcher } from 'svelte';
     let dispatch = createEventDispatcher();
 
     export let node_types;
 
     export let search = {};
-    console.log(search);
+    // console.log(search);
 
     // node_types: [],
     // query_text: "",
@@ -22,11 +22,11 @@
     // query_submit_time: "",
 
     function handleClick() {
-        console.log("start recent search");
+        console.log('start recent search');
         $searchQuery = search;
 
         //isNew = false
-        dispatch("recentSearch", false);
+        dispatch('recentSearch', false);
     }
 </script>
 

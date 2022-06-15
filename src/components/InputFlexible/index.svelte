@@ -23,6 +23,7 @@
         <div class="icon">
             <Icon {iconName} {iconText} {spin} color="black3" />
         </div>
+        <!-- svelte-ignore a11y-autofocus -->
         <input
             type="input"
             on:input

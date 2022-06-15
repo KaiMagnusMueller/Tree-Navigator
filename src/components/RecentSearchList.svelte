@@ -1,11 +1,11 @@
 <script>
-    import { Section } from "figma-plugin-ds-svelte";
-    import { recentSearches, filterList } from "../stores.js";
-    import RecentSearchItem from "./RecentSearchItem.svelte";
+    import { Section } from 'figma-plugin-ds-svelte';
+    import { recentSearches, filterList } from '../stores.js';
+    import RecentSearchItem from './RecentSearchItem.svelte';
 
     export { classList as class };
 
-    let classList = "";
+    let classList = '';
 
     //TODO: delete .subscribe and add $ notation
     let _recentSearches = [];
@@ -59,7 +59,7 @@
     }
 
     .recent-search-wrapper:after {
-        content: "";
+        content: '';
         background: linear-gradient(
             0deg,
             rgba(255, 255, 255) 0%,
