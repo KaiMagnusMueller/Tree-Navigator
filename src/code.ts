@@ -68,6 +68,7 @@ figma.ui.onmessage = msg => {
 			nodes = node.findAll()
 		}
 
+		nodes.reverse()
 
 		let filteredNodes = nodes.filter(elem => elem.name === query.query_text)
 		//TODO: Make case-insensitive
@@ -103,6 +104,14 @@ figma.ui.onmessage = msg => {
 	// Make sure to close the plugin when you're done. Otherwise the plugin will
 	// keep running, which shows the cancel button at the bottom of the screen.
 	// figma.closePlugin();
+
+	if (msg.type === 'select-layers') {
+		let nodesToSelect = []
+		msg.parameters.forEach(element => {
+			nodesToSelect.push(figma.getNodeById(element.id))
+		});
+		figma.currentPage.selection = nodesToSelect
+	}
 };
 
 function sendResultsList(results) {

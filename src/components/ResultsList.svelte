@@ -1,22 +1,54 @@
 <script>
     import { IconButton } from 'figma-plugin-ds-svelte';
-    import AppIcon from '../assets/icons/AppIcon.svg';
-    import IconFlexible from './IconFlexible';
+    import ResultsListItem from './ResultsListItem.svelte';
 
     export let querySendTime;
-
     let queryDuration;
+    let searchResults = [];
 
     onmessage = (event) => {
         if (event.data.pluginMessage.type == 'search-results') {
             searchResults = event.data.pluginMessage.data;
             // console.log('got results');
             queryDuration = Date.now() - querySendTime;
-            console.log('elapsed Time:' + queryDuration);
+
+            //  result:
+            // ---------
+            //  id,
+            // 	name,
+            // 	parent,
+            // 	children,
+            // 	type
         }
     };
 
-    let searchResults = [];
+    let selection = [];
+
+    function handleClick(e) {
+        console.log(e);
+
+        let addToSelection = searchResults.filter(
+            (elem) => elem.id === e.detail.resultID
+        );
+
+        selection = [...addToSelection];
+
+        console.log(selection);
+
+        sendSelection(selection);
+    }
+
+    function sendSelection(params) {
+        parent.postMessage(
+            {
+                pluginMessage: {
+                    type: 'select-layers',
+                    parameters: params,
+                },
+            },
+            '*'
+        );
+    }
 </script>
 
 <div class="results-container pr-xxsmall pl-xxsmall">
@@ -34,12 +66,7 @@
 
         <div>
             {#each searchResults as result}
-                <div class="result-list-elem">
-                    <div class="result-content">
-                        <IconFlexible iconName={AppIcon} color="black" />
-                        <span class="text--results-title">{result.name}</span>
-                    </div>
-                </div>
+                <ResultsListItem {result} on:result-clicked={handleClick} />
             {/each}
             <!-- TODO: select layer on click -->
         </div>
@@ -64,26 +91,6 @@
 
     .text--results-info {
         color: var(--black8-opaque);
-    }
-
-    .text--results-title {
-    }
-
-    .result-list-elem {
-        border-radius: 4px;
-        /* TODO: finalize styling */
-    }
-
-    .result-content {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: 12px;
-        pointer-events: none;
-    }
-
-    .result-list-elem:hover {
-        background-color: var(--silver);
     }
 
     .loading-spinner-container {
