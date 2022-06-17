@@ -111,9 +111,19 @@ figma.ui.onmessage = msg => {
 			nodesToSelect.push(figma.getNodeById(element.id))
 		});
 		figma.currentPage.selection = nodesToSelect
+		//TODO: what if user changes the selection in figma? Notify plugin to match selection.
 	}
 };
 
 function sendResultsList(results) {
 	figma.ui.postMessage({ type: "search-results", data: results })
+}
+
+
+figma.on("selectionchange", handleSelectionChange)
+
+function handleSelectionChange() {
+	const currentSelection = figma.currentPage.selection
+
+	figma.ui.postMessage({ type: "selection-changed", data: currentSelection })
 }

@@ -1,5 +1,6 @@
 <script>
     import { IconButton } from 'figma-plugin-ds-svelte';
+    import { element } from 'svelte/internal';
     import ResultsListItem from './ResultsListItem.svelte';
 
     export let querySendTime;
@@ -19,12 +20,21 @@
             // 	parent,
             // 	children,
             // 	type
+            // TODO: add "selected" as property
+        }
+
+        if (event.data.pluginMessage.type == 'selection-changed') {
+            console.log('selection changed in figma');
         }
     };
 
     let selection = [];
 
     function handleClick(e) {
+        // TODO: create function that merges selections in figma and selections in the plugin and updates the selected state
+
+        searchResults.forEach((element) => (element.selected = false));
+
         console.log(e);
 
         let addToSelection = searchResults.filter(
@@ -36,6 +46,15 @@
         console.log(selection);
 
         sendSelection(selection);
+
+        // TODO: create function for searchResults.filter, that adds the element to selection and updates the selected state at the same time
+        addToSelection.forEach((element) => {
+            let selectedElemIndex = searchResults.findIndex(
+                (el) => el.id === element.id
+            );
+
+            searchResults[selectedElemIndex].selected = true;
+        });
     }
 
     function sendSelection(params) {
@@ -49,6 +68,8 @@
             '*'
         );
     }
+
+    function updateSelection(newItems) {}
 </script>
 
 <div class="results-container pr-xxsmall pl-xxsmall">
@@ -64,7 +85,7 @@
             <p>{result.name}, {result.id}, {result.type}</p>
         {/each} -->
 
-        <div>
+        <div class="results-list">
             {#each searchResults as result}
                 <ResultsListItem {result} on:result-clicked={handleClick} />
             {/each}
@@ -93,8 +114,13 @@
         color: var(--black8-opaque);
     }
 
-    .loading-spinner-container {
+    .results-list {
         display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .loading-spinner-container {
     }
 
     .loading-spinner-wrapper {

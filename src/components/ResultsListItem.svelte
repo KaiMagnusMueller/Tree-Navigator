@@ -1,11 +1,33 @@
 <script>
     import { createEventDispatcher } from 'svelte';
 
-    import AppIcon from '../assets/icons/AppIcon.svg';
+    import Text from '../assets/icons/NodeTypes/Text.svg';
+    import Instance from '../assets/icons/NodeTypes/Instance.svg';
+    import Component from '../assets/icons/NodeTypes/Component.svg';
     import IconFlexible from './IconFlexible';
 
     const dispatch = createEventDispatcher();
     export let result;
+
+    let Icon;
+    function returnIcon() {
+        console.log(result.type);
+        console.log(Instance);
+
+        switch (result.type) {
+            case 'INSTANCE':
+                return Instance;
+
+            case 'COMPONENT':
+                return Component;
+
+            case 'TEXT':
+                return Text;
+
+            default:
+                break;
+        }
+    }
 
     function handleClick(e) {
         dispatch('result-clicked', {
@@ -15,9 +37,13 @@
     }
 </script>
 
-<div class="result-list-elem" on:click={handleClick}>
+<div
+    class="result-list-elem"
+    class:selected={result.selected}
+    on:click={handleClick}
+>
     <div class="result-content">
-        <IconFlexible iconName={AppIcon} color="black" />
+        <IconFlexible iconName={returnIcon()} color="black" />
         <span class="text--results-title">{result.name}</span>
     </div>
 </div>
@@ -41,5 +67,9 @@
 
     .result-list-elem:hover {
         background-color: var(--silver);
+    }
+
+    .result-list-elem.selected {
+        background-color: var(--blue);
     }
 </style>
