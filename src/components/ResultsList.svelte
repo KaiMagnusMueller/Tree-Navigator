@@ -1,12 +1,12 @@
 <script>
     import { IconButton } from 'figma-plugin-ds-svelte';
-    import { element } from 'svelte/internal';
     import ResultsListItem from './ResultsListItem.svelte';
 
     export let querySendTime;
     let queryDuration;
     let searchResults = [];
 
+    let ignoreSelection = false;
     onmessage = (event) => {
         if (event.data.pluginMessage.type == 'search-results') {
             searchResults = event.data.pluginMessage.data;
@@ -24,34 +24,45 @@
         }
 
         if (event.data.pluginMessage.type == 'selection-changed') {
+            if (ignoreSelection) {
+                ignoreSelection = false;
+
+                return;
+            }
             console.log('selection changed in figma');
         }
     };
 
+    // #####################################
+    // #####################################
+
     let selection = [];
 
     function handleClick(e) {
-        // TODO: create function that merges selections in figma and selections in the plugin and updates the selected state
+        updateSelection([e.detail.resultID]);
+    }
 
-        searchResults.forEach((element) => (element.selected = false));
+    function updateSelection(newItemIDs) {
+        let selectedNodes = [];
 
-        let addToSelection = searchResults.filter(
-            (elem) => elem.id === e.detail.resultID
-        );
-
-        selection = [...addToSelection];
-
-        sendSelection(selection);
-
-        // TODO: create function for searchResults.filter, that adds the element to selection and updates the selected state at the same time
-        addToSelection.forEach((element) => {
-            let selectedElemIndex = searchResults.findIndex(
-                (el) => el.id === element.id
+        searchResults.forEach((result, i) => {
+            let addToSelection = newItemIDs.filter(
+                (newItem) => newItem === result.id
             );
 
-            searchResults[selectedElemIndex].selected = true;
+            if (addToSelection.length > 0) {
+                searchResults[i].selected = true;
+                selectedNodes.push(result);
+            } else if (result.selected === true) {
+                searchResults[i].selected = false;
+            }
         });
+
+        sendSelection(selectedNodes);
     }
+
+    // #####################################
+    // #####################################
 
     function sendSelection(params) {
         parent.postMessage(
@@ -63,13 +74,13 @@
             },
             '*'
         );
-    }
 
-    function updateSelection(newItems) {}
+        ignoreSelection = true;
+    }
 </script>
 
 <div class="results-container pr-xxsmall pl-xxsmall">
-    {#if searchResults.length > 0}
+    {#if searchResults.length > 0 && queryDuration != undefined}
         <p class="text--results-info">
             Found {searchResults.length} nodes in {Math.round(
                 queryDuration / 100
@@ -85,9 +96,10 @@
             {#each searchResults as result}
                 <ResultsListItem {result} on:result-clicked={handleClick} />
             {/each}
-            <!-- TODO: select layer on click -->
         </div>
-    {:else}
+    {:else if searchResults.length === 0 && queryDuration != undefined}
+        <p>no results</p>
+    {:else if searchResults.length === 0}
         <div class="loading-spinner-container">
             <div class="loading-spinner-wrapper">
                 <span class="loading-spinner">Loading...</span>
@@ -113,7 +125,6 @@
     .results-list {
         display: flex;
         flex-direction: column;
-        gap: 2px;
     }
 
     .loading-spinner-container {

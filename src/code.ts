@@ -91,7 +91,8 @@ figma.ui.onmessage = msg => {
 				name: element.name,
 				parent: element.parent,
 				children: element.children,
-				type: element.type
+				type: element.type,
+				selected: true
 
 			})
 		});

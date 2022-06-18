@@ -10,7 +10,6 @@
     const dispatch = createEventDispatcher();
     export let result;
 
-    let Icon;
     function returnIcon() {
         switch (result.type) {
             case 'INSTANCE':
@@ -38,21 +37,26 @@
     on:click={handleClick}
 >
     <div class="result-content">
-        <IconFlexible
-            iconName={returnIcon()}
-            color={result.selected ? 'white' : 'black'}
-        />
+        <IconFlexible iconName={returnIcon()} color="black" />
         <span class="text--results-title">{result.name}</span>
     </div>
 </div>
 
 <style>
     .text--results-title {
+        /* user-select: none; */
     }
 
     .result-list-elem {
-        border-radius: 4px;
-        /* TODO: finalize styling */
+        padding: 2px 0;
+    }
+
+    .result-list-elem:first-of-type {
+        border-radius: 4px 4px 0 0;
+    }
+
+    .result-list-elem:last-of-type {
+        border-radius: 0 0 4px 4px;
     }
 
     .result-content {
@@ -68,10 +72,10 @@
     }
 
     .result-list-elem.selected {
-        background-color: var(--blue);
+        background-color: #daebf7;
     }
 
-    .result-list-elem.selected .text--results-title {
+    /* .result-list-elem.selected .text--results-title {
         color: var(--white);
-    }
+    } */
 </style>
