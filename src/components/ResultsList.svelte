@@ -6,11 +6,15 @@
     let queryDuration;
     let searchResults = [];
 
-    let ignoreSelection = false;
+    // Set to true so the plugin ignores the first time the selection change event is fired
+    // Otherwise when parents and children are matched, the children would immediately get deselected
+    let ignoreSelection = true;
+
     onmessage = (event) => {
         if (event.data.pluginMessage.type == 'search-results') {
             searchResults = event.data.pluginMessage.data;
             // console.log('got results');
+            // console.log(searchResults);
             queryDuration = Date.now() - querySendTime;
 
             //  result:
@@ -24,12 +28,20 @@
         }
 
         if (event.data.pluginMessage.type == 'selection-changed') {
+            // If the event is triggered by a selection change that originated in the plugin (see the select layers postmessage), ignore the event and reset the toggle so that events triggered by the user are not ignored
             if (ignoreSelection) {
                 ignoreSelection = false;
-
                 return;
             }
             console.log('selection changed in figma');
+
+            let newSelectionIDs = [];
+            //[104:2508], [113:3692]
+
+            event.data.pluginMessage.data.forEach((selection) => {
+                newSelectionIDs.push(selection.id);
+            });
+            updateSelection(newSelectionIDs, true);
         }
     };
 
@@ -42,7 +54,8 @@
         updateSelection([e.detail.resultID]);
     }
 
-    function updateSelection(newItemIDs) {
+    function updateSelection(newItemIDs, fromFigma) {
+        // console.log(newItemIDs);
         let selectedNodes = [];
 
         searchResults.forEach((result, i) => {
@@ -58,6 +71,10 @@
             }
         });
 
+        // If the event came from figma, don't send the selection
+        if (fromFigma) {
+            return;
+        }
         sendSelection(selectedNodes);
     }
 
@@ -75,6 +92,8 @@
             '*'
         );
 
+        // Ignore the next selectionchange event, which is fired directly after the postmessage above
+        // See the "selection-changed" message handler above, where the toggle is reset
         ignoreSelection = true;
     }
 </script>

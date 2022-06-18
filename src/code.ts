@@ -112,7 +112,6 @@ figma.ui.onmessage = msg => {
 			nodesToSelect.push(figma.getNodeById(element.id))
 		});
 		figma.currentPage.selection = nodesToSelect
-		//TODO: what if user changes the selection in figma? Notify plugin to match selection.
 	}
 };
 
@@ -126,5 +125,30 @@ figma.on("selectionchange", handleSelectionChange)
 function handleSelectionChange() {
 	const currentSelection = figma.currentPage.selection
 
-	figma.ui.postMessage({ type: "selection-changed", data: currentSelection })
+	// currentSelection:
+	// [
+	// 	{
+	// 		"id": "104:2508"
+	// 	},
+	// 	{
+	// 		"id": "113:3692"
+	// 	}
+	// ]
+
+	// console.log(currentSelection);
+
+
+	let nodesToSend = []
+	currentSelection.forEach(element => {
+		nodesToSend.push({
+			id: element.id,
+			name: element.name,
+			parent: element.parent,
+			children: element.children,
+			type: element.type,
+			selected: true
+		})
+	});
+
+	figma.ui.postMessage({ type: "selection-changed", data: nodesToSend })
 }
