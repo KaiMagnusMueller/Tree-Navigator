@@ -35,15 +35,11 @@
 
         searchResults.forEach((element) => (element.selected = false));
 
-        console.log(e);
-
         let addToSelection = searchResults.filter(
             (elem) => elem.id === e.detail.resultID
         );
 
         selection = [...addToSelection];
-
-        console.log(selection);
 
         sendSelection(selection);
 
