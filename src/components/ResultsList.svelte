@@ -1,26 +1,105 @@
 <script>
     import { IconButton } from 'figma-plugin-ds-svelte';
-    import AppIcon from '../assets/icons/AppIcon.svg';
-    import IconFlexible from './IconFlexible';
+    import ResultsListItem from './ResultsListItem.svelte';
 
     export let querySendTime;
-
     let queryDuration;
+    let searchResults = [];
+
+    // Set to true so the plugin ignores the first time the selection change event is fired
+    // Otherwise when parents and children are matched, the children would immediately get deselected
+    let ignoreSelection = true;
 
     onmessage = (event) => {
         if (event.data.pluginMessage.type == 'search-results') {
             searchResults = event.data.pluginMessage.data;
             // console.log('got results');
+            // console.log(searchResults);
             queryDuration = Date.now() - querySendTime;
-            console.log('elapsed Time:' + queryDuration);
+
+            //  result:
+            // ---------
+            //  id,
+            // 	name,
+            // 	parent,
+            // 	children,
+            // 	type
+            // TODO: add "selected" as property
+        }
+
+        if (event.data.pluginMessage.type == 'selection-changed') {
+            // If the event is triggered by a selection change that originated in the plugin (see the select layers postmessage), ignore the event and reset the toggle so that events triggered by the user are not ignored
+            if (ignoreSelection) {
+                ignoreSelection = false;
+                return;
+            }
+            console.log('selection changed in figma');
+
+            let newSelectionIDs = [];
+            //[104:2508], [113:3692]
+
+            event.data.pluginMessage.data.forEach((selection) => {
+                newSelectionIDs.push(selection.id);
+            });
+            updateSelection(newSelectionIDs, true);
         }
     };
 
-    let searchResults = [];
+    // #####################################
+    // #####################################
+
+    let selection = [];
+
+    function handleClick(e) {
+        updateSelection([e.detail.resultID]);
+    }
+
+    function updateSelection(newItemIDs, fromFigma) {
+        // console.log(newItemIDs);
+        let selectedNodes = [];
+
+        searchResults.forEach((result, i) => {
+            let addToSelection = newItemIDs.filter(
+                (newItem) => newItem === result.id
+            );
+
+            if (addToSelection.length > 0) {
+                searchResults[i].selected = true;
+                selectedNodes.push(result);
+            } else if (result.selected === true) {
+                searchResults[i].selected = false;
+            }
+        });
+
+        // If the event came from figma, don't send the selection
+        if (fromFigma) {
+            return;
+        }
+        sendSelection(selectedNodes);
+    }
+
+    // #####################################
+    // #####################################
+
+    function sendSelection(params) {
+        parent.postMessage(
+            {
+                pluginMessage: {
+                    type: 'select-layers',
+                    parameters: params,
+                },
+            },
+            '*'
+        );
+
+        // Ignore the next selectionchange event, which is fired directly after the postmessage above
+        // See the "selection-changed" message handler above, where the toggle is reset
+        ignoreSelection = true;
+    }
 </script>
 
 <div class="results-container pr-xxsmall pl-xxsmall">
-    {#if searchResults.length > 0}
+    {#if searchResults.length > 0 && queryDuration != undefined}
         <p class="text--results-info">
             Found {searchResults.length} nodes in {Math.round(
                 queryDuration / 100
@@ -32,18 +111,14 @@
             <p>{result.name}, {result.id}, {result.type}</p>
         {/each} -->
 
-        <div>
+        <div class="results-list">
             {#each searchResults as result}
-                <div class="result-list-elem">
-                    <div class="result-content">
-                        <IconFlexible iconName={AppIcon} color="black" />
-                        <span class="text--results-title">{result.name}</span>
-                    </div>
-                </div>
+                <ResultsListItem {result} on:result-clicked={handleClick} />
             {/each}
-            <!-- TODO: select layer on click -->
         </div>
-    {:else}
+    {:else if searchResults.length === 0 && queryDuration != undefined}
+        <p>no results</p>
+    {:else if searchResults.length === 0}
         <div class="loading-spinner-container">
             <div class="loading-spinner-wrapper">
                 <span class="loading-spinner">Loading...</span>
@@ -66,28 +141,12 @@
         color: var(--black8-opaque);
     }
 
-    .text--results-title {
-    }
-
-    .result-list-elem {
-        border-radius: 4px;
-        /* TODO: finalize styling */
-    }
-
-    .result-content {
+    .results-list {
         display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: 12px;
-        pointer-events: none;
-    }
-
-    .result-list-elem:hover {
-        background-color: var(--silver);
+        flex-direction: column;
     }
 
     .loading-spinner-container {
-        display: flex;
     }
 
     .loading-spinner-wrapper {

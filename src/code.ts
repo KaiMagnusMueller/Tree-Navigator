@@ -68,6 +68,7 @@ figma.ui.onmessage = msg => {
 			nodes = node.findAll()
 		}
 
+		nodes.reverse()
 
 		let filteredNodes = nodes.filter(elem => elem.name === query.query_text)
 		//TODO: Make case-insensitive
@@ -90,7 +91,8 @@ figma.ui.onmessage = msg => {
 				name: element.name,
 				parent: element.parent,
 				children: element.children,
-				type: element.type
+				type: element.type,
+				selected: true
 
 			})
 		});
@@ -103,8 +105,50 @@ figma.ui.onmessage = msg => {
 	// Make sure to close the plugin when you're done. Otherwise the plugin will
 	// keep running, which shows the cancel button at the bottom of the screen.
 	// figma.closePlugin();
+
+	if (msg.type === 'select-layers') {
+		let nodesToSelect = []
+		msg.parameters.forEach(element => {
+			nodesToSelect.push(figma.getNodeById(element.id))
+		});
+		figma.currentPage.selection = nodesToSelect
+	}
 };
 
 function sendResultsList(results) {
 	figma.ui.postMessage({ type: "search-results", data: results })
+}
+
+
+figma.on("selectionchange", handleSelectionChange)
+
+function handleSelectionChange() {
+	const currentSelection = figma.currentPage.selection
+
+	// currentSelection:
+	// [
+	// 	{
+	// 		"id": "104:2508"
+	// 	},
+	// 	{
+	// 		"id": "113:3692"
+	// 	}
+	// ]
+
+	// console.log(currentSelection);
+
+
+	let nodesToSend = []
+	currentSelection.forEach(element => {
+		nodesToSend.push({
+			id: element.id,
+			name: element.name,
+			parent: element.parent,
+			children: element.children,
+			type: element.type,
+			selected: true
+		})
+	});
+
+	figma.ui.postMessage({ type: "selection-changed", data: nodesToSend })
 }
