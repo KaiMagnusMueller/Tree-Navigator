@@ -8,17 +8,8 @@
     let classList = '';
 
     //TODO: delete .subscribe and add $ notation
-    let _recentSearches = [];
-
-    recentSearches.subscribe((value) => {
-        _recentSearches = value;
-    });
-
-    let nodeTypeList;
-
-    filterList.subscribe((value) => {
-        nodeTypeList = value;
-    });
+    let _recentSearches = $recentSearches;
+    let nodeTypeList = $filterList;
 
     function getNodeName(types) {
         let nodes = [];

@@ -15,13 +15,14 @@ figma.showUI(__html__, { width: 320, height: 500, themeColors: false });
 
 let documentNode = figma.root
 let filterList = documentNode.getPluginData("filterList")
+let recentSearchList = documentNode.getPluginData("recentSearchList")
 
-if (filterList.length > 0) {
-	figma.ui.postMessage({ type: "loaded-plugin-filter-list", data: filterList })
-}
+figma.ui.postMessage({ type: "loaded-plugin-recent-search-list", data: recentSearchList })
+figma.ui.postMessage({ type: "loaded-plugin-filter-list", data: filterList })
 
 
 figma.ui.onmessage = msg => {
+
 	// One way of distinguishing between different types of messages sent from
 	// your HTML page is to use an object with a "type" property like this.
 	if (msg.type === 'create-shapes') {
@@ -152,3 +153,4 @@ function handleSelectionChange() {
 
 	figma.ui.postMessage({ type: "selection-changed", data: nodesToSend })
 }
+
