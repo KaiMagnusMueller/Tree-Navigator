@@ -3,6 +3,7 @@
 	//contains Figma color vars, spacing vars, utility classes and more
 	import { GlobalCSS } from 'figma-plugin-ds-svelte';
 	import { searchQuery, recentSearches, UIState } from './stores';
+	import { recentSearchExamples } from './assets/example-data';
 
 	//import some Svelte Figma UI components
 	import {
@@ -43,8 +44,12 @@
 		onmessage = (event) => {
 			if (event.data.pluginMessage.type == 'loaded-plugin-recent-search-list') {
 				console.log('loaded-plugin-recent-search-list');
-				if (!event.data.pluginMessage.data) {
+				if (event.data.pluginMessage.data) {
+					console.log('data found... loading');
+					$recentSearches = event.data.pluginMessage.data;
+				} else {
 					console.log('no data... loading example');
+					$recentSearches = recentSearchExamples;
 				}
 			}
 		};
@@ -89,6 +94,17 @@
 
 			$recentSearches = [localQuery, ...$recentSearches];
 			// console.log($recentSearches);
+
+			//TODO: is it possible to let a store update the plugindata on its own?
+			parent.postMessage(
+				{
+					pluginMessage: {
+						type: 'update-recent-searches',
+						parameters: $recentSearches,
+					},
+				},
+				'*'
+			);
 		}
 	}
 

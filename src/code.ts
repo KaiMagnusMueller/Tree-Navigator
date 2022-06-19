@@ -17,6 +17,11 @@ let documentNode = figma.root
 let filterList = documentNode.getPluginData("filterList")
 let recentSearchList = documentNode.getPluginData("recentSearchList")
 
+if (recentSearchList) {
+	console.log();
+	recentSearchList = JSON.parse(recentSearchList)
+}
+
 figma.ui.postMessage({ type: "loaded-plugin-recent-search-list", data: recentSearchList })
 figma.ui.postMessage({ type: "loaded-plugin-filter-list", data: filterList })
 
@@ -114,6 +119,12 @@ figma.ui.onmessage = msg => {
 		});
 		figma.currentPage.selection = nodesToSelect
 	}
+
+	if (msg.type === 'update-recent-searches') {
+		const string = JSON.stringify(msg.parameters)
+		documentNode.setPluginData("recentSearchList", string)
+	}
+
 };
 
 function sendResultsList(results) {
