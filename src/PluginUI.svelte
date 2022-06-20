@@ -4,6 +4,7 @@
 	import { GlobalCSS } from 'figma-plugin-ds-svelte';
 	import { searchQuery, recentSearches, UIState } from './stores';
 	import { recentSearchExamples } from './assets/example-data';
+	import { updateRecentSearches } from './lib/helper-functions';
 
 	//import some Svelte Figma UI components
 	import {
@@ -96,16 +97,7 @@
 			$recentSearches = $recentSearches.slice(0, 20);
 			// console.log($recentSearches);
 
-			//TODO: is it possible to let a store update the plugindata on its own?
-			parent.postMessage(
-				{
-					pluginMessage: {
-						type: 'update-recent-searches',
-						parameters: $recentSearches,
-					},
-				},
-				'*'
-			);
+			updateRecentSearches();
 		}
 	}
 

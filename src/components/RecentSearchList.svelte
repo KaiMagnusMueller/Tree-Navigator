@@ -16,12 +16,25 @@
         });
         return nodes;
     }
+
+    function handleRemoveSearch() {
+        const index = event.detail;
+
+        console.log('remove');
+        console.log(index);
+        $recentSearches = $recentSearches.splice(index, index + 1);
+    }
 </script>
 
 <div class="recent-search-wrapper {classList}">
     <div class="recent-search-list pb-xlarge pr-xxsmall pl-xxsmall flex column flex-grow">
-        {#each $recentSearches as search}
-            <RecentSearchItem {search} node_types={getNodeName(search.node_types)} on:recentSearch
+        {#each $recentSearches as search, i}
+            <RecentSearchItem
+                {search}
+                {i}
+                node_types={getNodeName(search.node_types)}
+                on:recentSearch
+                on:removeSearch={handleRemoveSearch}
                 >{search.query_text}
             </RecentSearchItem>
         {/each}
