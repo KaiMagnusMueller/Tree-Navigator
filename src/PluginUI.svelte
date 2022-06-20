@@ -88,11 +88,12 @@
 				node_types: $searchQuery.node_types,
 				query_text: $searchQuery.query_text,
 				restrict_to_selection: $searchQuery.restrict_to_selection,
-				selected_node_ids: $searchQuery.selected_node_ids,
+				selecuted_node_ids: $searchQuery.selected_node_ids,
 				query_submit_time: $searchQuery.query_submit_time,
 			};
 
 			$recentSearches = [localQuery, ...$recentSearches];
+			$recentSearches = $recentSearches.slice(0, 20);
 			// console.log($recentSearches);
 
 			//TODO: is it possible to let a store update the plugindata on its own?

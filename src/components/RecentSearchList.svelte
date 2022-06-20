@@ -7,7 +7,6 @@
 
     let classList = '';
 
-    //TODO: delete .subscribe and add $ notation
     let nodeTypeList = $filterList;
 
     function getNodeName(types) {
