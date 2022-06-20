@@ -2,6 +2,7 @@
     import { Section } from 'figma-plugin-ds-svelte';
     import { recentSearches, filterList } from '../stores.js';
     import RecentSearchItem from './RecentSearchItem.svelte';
+    import { updateRecentSearches } from '../lib/helper-functions';
 
     export { classList as class };
 
@@ -17,12 +18,11 @@
         return nodes;
     }
 
-    function handleRemoveSearch() {
+    function handleRemoveSearch(event) {
         const index = event.detail;
-
-        console.log('remove');
-        console.log(index);
-        $recentSearches = $recentSearches.splice(index, index + 1);
+        $recentSearches.splice(index, 1);
+        $recentSearches = $recentSearches;
+        updateRecentSearches($recentSearches);
     }
 </script>
 

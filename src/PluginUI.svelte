@@ -97,7 +97,7 @@
 			$recentSearches = $recentSearches.slice(0, 20);
 			// console.log($recentSearches);
 
-			updateRecentSearches();
+			updateRecentSearches($recentSearches);
 		}
 	}
 
