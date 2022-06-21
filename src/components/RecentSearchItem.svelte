@@ -23,6 +23,7 @@
 
         //isNew = false
         dispatch('recentSearch', false);
+        dispatch('moveToTop', i);
     }
 
     function handleRemove() {

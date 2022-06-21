@@ -12,6 +12,9 @@
 
     function getNodeName(types) {
         let nodes = [];
+        // if (types.constructor != Array) {
+        //     throw 'Expected type Array as types';
+        // }
         types.forEach((type) => {
             nodes.push(nodeTypeList.find((element) => element.node_type == type).name);
         });
@@ -24,6 +27,13 @@
         $recentSearches = $recentSearches;
         updateRecentSearches($recentSearches);
     }
+
+    function handleMoveToTop(event) {
+        const index = event.detail;
+        const cutArray = $recentSearches.splice(index, 1);
+        $recentSearches = [...cutArray, ...$recentSearches];
+        updateRecentSearches($recentSearches);
+    }
 </script>
 
 <div class="recent-search-wrapper {classList}">
@@ -34,6 +44,7 @@
                 {i}
                 node_types={getNodeName(search.node_types)}
                 on:recentSearch
+                on:moveToTop={handleMoveToTop}
                 on:removeSearch={handleRemoveSearch}
                 >{search.query_text}
             </RecentSearchItem>

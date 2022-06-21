@@ -44,8 +44,7 @@
 	onMount(() => {
 		onmessage = (event) => {
 			if (event.data.pluginMessage.type == 'loaded-plugin-recent-search-list') {
-				console.log('loaded-plugin-recent-search-list');
-				if (event.data.pluginMessage.data) {
+				if (event.data.pluginMessage.data.length > 0) {
 					console.log('data found... loading');
 					$recentSearches = event.data.pluginMessage.data;
 				} else {
@@ -98,6 +97,7 @@
 			// console.log($recentSearches);
 
 			updateRecentSearches($recentSearches);
+		} else {
 		}
 	}
 

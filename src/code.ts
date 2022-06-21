@@ -14,11 +14,13 @@ figma.showUI(__html__, { width: 320, height: 500, themeColors: false });
 // posted message.
 
 let documentNode = figma.root
+
+//reset plugindata
+// documentNode.setPluginData("recentSearchList", "[]")
 let filterList = documentNode.getPluginData("filterList")
 let recentSearchList = documentNode.getPluginData("recentSearchList")
 
 if (recentSearchList) {
-	console.log();
 	recentSearchList = JSON.parse(recentSearchList)
 }
 
@@ -66,7 +68,7 @@ figma.ui.onmessage = msg => {
 
 
 		let nodes = []
-		if (query.node_types.length > 0) {
+		if (query.node_types.length > 0 && query.node_types[0] != "ALL") {
 			nodes = node.findAllWithCriteria({
 				types: query.node_types
 			})
@@ -78,6 +80,7 @@ figma.ui.onmessage = msg => {
 
 		let filteredNodes = nodes.filter(elem => elem.name === query.query_text)
 		//TODO: Make case-insensitive
+
 
 
 		console.log('Found ' + nodes.length + ' nodes');

@@ -1,6 +1,6 @@
 export const recentSearchExamples = [
     {
-        node_types: [],
+        node_types: ["ALL"],
         query_submit_time: {},
         query_text: "Test",
         restrict_to_selection: false,
