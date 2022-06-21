@@ -110,7 +110,10 @@
 		parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*');
 	}
 
-	function navBack(params) {}
+	function navBack(params) {
+		$UIState.showMainMenu = true;
+		$UIState.showSearchResults = false;
+	}
 </script>
 
 <div class="wrapper">
