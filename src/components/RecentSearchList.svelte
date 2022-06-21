@@ -2,44 +2,50 @@
     import { Section } from 'figma-plugin-ds-svelte';
     import { recentSearches, filterList } from '../stores.js';
     import RecentSearchItem from './RecentSearchItem.svelte';
+    import { updateRecentSearches } from '../lib/helper-functions';
 
     export { classList as class };
 
     let classList = '';
 
-    //TODO: delete .subscribe and add $ notation
-    let _recentSearches = [];
-
-    recentSearches.subscribe((value) => {
-        _recentSearches = value;
-    });
-
-    let nodeTypeList;
-
-    filterList.subscribe((value) => {
-        nodeTypeList = value;
-    });
+    let nodeTypeList = $filterList;
 
     function getNodeName(types) {
         let nodes = [];
+        // if (types.constructor != Array) {
+        //     throw 'Expected type Array as types';
+        // }
         types.forEach((type) => {
-            nodes.push(
-                nodeTypeList.find((element) => element.node_type == type).name
-            );
+            nodes.push(nodeTypeList.find((element) => element.node_type == type).name);
         });
         return nodes;
+    }
+
+    function handleRemoveSearch(event) {
+        const index = event.detail;
+        $recentSearches.splice(index, 1);
+        $recentSearches = $recentSearches;
+        updateRecentSearches($recentSearches);
+    }
+
+    function handleMoveToTop(event) {
+        const index = event.detail;
+        const cutArray = $recentSearches.splice(index, 1);
+        $recentSearches = [...cutArray, ...$recentSearches];
+        updateRecentSearches($recentSearches);
     }
 </script>
 
 <div class="recent-search-wrapper {classList}">
-    <div
-        class="recent-search-list pb-xlarge pr-xxsmall pl-xxsmall flex column flex-grow"
-    >
-        {#each _recentSearches as search}
+    <div class="recent-search-list pb-xlarge pr-xxsmall pl-xxsmall flex column flex-grow">
+        {#each $recentSearches as search, i}
             <RecentSearchItem
                 {search}
+                {i}
                 node_types={getNodeName(search.node_types)}
                 on:recentSearch
+                on:moveToTop={handleMoveToTop}
+                on:removeSearch={handleRemoveSearch}
                 >{search.query_text}
             </RecentSearchItem>
         {/each}
@@ -60,11 +66,7 @@
 
     .recent-search-wrapper:after {
         content: '';
-        background: linear-gradient(
-            0deg,
-            rgba(255, 255, 255) 0%,
-            rgb(255, 255, 255, 0) 40%
-        );
+        background: linear-gradient(0deg, rgba(255, 255, 255) 0%, rgb(255, 255, 255, 0) 40%);
         height: 100%;
         position: absolute;
         left: 0;

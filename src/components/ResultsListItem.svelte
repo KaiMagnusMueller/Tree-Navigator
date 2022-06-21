@@ -31,11 +31,7 @@
     }
 </script>
 
-<div
-    class="result-list-elem"
-    class:selected={result.selected}
-    on:click={handleClick}
->
+<div class="result-list-elem" class:selected={result.selected} on:click={handleClick}>
     <div class="result-content">
         <IconFlexible iconName={returnIcon()} color="black" />
         <span class="text--results-title">{result.name}</span>
@@ -52,11 +48,13 @@
     }
 
     .result-list-elem:first-of-type {
-        border-radius: 4px 4px 0 0;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
     }
 
     .result-list-elem:last-of-type {
-        border-radius: 0 0 4px 4px;
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
     }
 
     .result-content {

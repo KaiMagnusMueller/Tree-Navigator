@@ -14,14 +14,22 @@ figma.showUI(__html__, { width: 320, height: 500, themeColors: false });
 // posted message.
 
 let documentNode = figma.root
-let filterList = documentNode.getPluginData("filterList")
 
-if (filterList.length > 0) {
-	figma.ui.postMessage({ type: "loaded-plugin-filter-list", data: filterList })
+//reset plugindata
+// documentNode.setPluginData("recentSearchList", "[]")
+let filterList = documentNode.getPluginData("filterList")
+let recentSearchList = documentNode.getPluginData("recentSearchList")
+
+if (recentSearchList) {
+	recentSearchList = JSON.parse(recentSearchList)
 }
+
+figma.ui.postMessage({ type: "loaded-plugin-recent-search-list", data: recentSearchList })
+figma.ui.postMessage({ type: "loaded-plugin-filter-list", data: filterList })
 
 
 figma.ui.onmessage = msg => {
+
 	// One way of distinguishing between different types of messages sent from
 	// your HTML page is to use an object with a "type" property like this.
 	if (msg.type === 'create-shapes') {
@@ -60,7 +68,7 @@ figma.ui.onmessage = msg => {
 
 
 		let nodes = []
-		if (query.node_types.length > 0) {
+		if (query.node_types.length > 0 && query.node_types[0] != "ALL") {
 			nodes = node.findAllWithCriteria({
 				types: query.node_types
 			})
@@ -72,6 +80,7 @@ figma.ui.onmessage = msg => {
 
 		let filteredNodes = nodes.filter(elem => elem.name === query.query_text)
 		//TODO: Make case-insensitive
+
 
 
 		console.log('Found ' + nodes.length + ' nodes');
@@ -113,6 +122,12 @@ figma.ui.onmessage = msg => {
 		});
 		figma.currentPage.selection = nodesToSelect
 	}
+
+	if (msg.type === 'update-recent-searches') {
+		const string = JSON.stringify(msg.parameters)
+		documentNode.setPluginData("recentSearchList", string)
+	}
+
 };
 
 function sendResultsList(results) {
@@ -152,3 +167,4 @@ function handleSelectionChange() {
 
 	figma.ui.postMessage({ type: "selection-changed", data: nodesToSend })
 }
+

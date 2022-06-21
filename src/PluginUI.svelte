@@ -3,6 +3,8 @@
 	//contains Figma color vars, spacing vars, utility classes and more
 	import { GlobalCSS } from 'figma-plugin-ds-svelte';
 	import { searchQuery, recentSearches, UIState } from './stores';
+	import { recentSearchExamples } from './assets/example-data';
+	import { updateRecentSearches } from './lib/helper-functions';
 
 	//import some Svelte Figma UI components
 	import {
@@ -39,6 +41,20 @@
 	//this is a reactive variable that will return false when a value is selected from
 	//the select menu, its value is bound to the primary buttons disabled prop
 
+	onMount(() => {
+		onmessage = (event) => {
+			if (event.data.pluginMessage.type == 'loaded-plugin-recent-search-list') {
+				if (event.data.pluginMessage.data.length > 0) {
+					console.log('data found... loading');
+					$recentSearches = event.data.pluginMessage.data;
+				} else {
+					console.log('no data... loading example');
+					$recentSearches = recentSearchExamples;
+				}
+			}
+		};
+	});
+
 	function handleQuerySubmit(event) {
 		//true because event comes from recent list item
 		// console.log(event.detail);
@@ -72,12 +88,16 @@
 				node_types: $searchQuery.node_types,
 				query_text: $searchQuery.query_text,
 				restrict_to_selection: $searchQuery.restrict_to_selection,
-				selected_node_ids: $searchQuery.selected_node_ids,
+				selecuted_node_ids: $searchQuery.selected_node_ids,
 				query_submit_time: $searchQuery.query_submit_time,
 			};
 
 			$recentSearches = [localQuery, ...$recentSearches];
+			$recentSearches = $recentSearches.slice(0, 20);
 			// console.log($recentSearches);
+
+			updateRecentSearches($recentSearches);
+		} else {
 		}
 	}
 
@@ -104,27 +124,15 @@
 				class="flex-grow"
 				autofocus
 			/>
-			<IconButton
-				on:click={handleQuerySubmit}
-				iconName={IconForward}
-				bind:disabled
-			/>
+			<IconButton on:click={handleQuerySubmit} iconName={IconForward} bind:disabled />
 		</div>
-		<FilterList
-			class="flex-no-shrink"
-			on:filterChanged={(event) => (filterChanged = event.detail)}
-		/>
+		<FilterList class="flex-no-shrink" on:filterChanged={(event) => (filterChanged = event.detail)} />
 		{#if $UIState.showMainMenu}
 			<div class="section--recent flex column flex-grow">
 				<Section class="flex-no-shrink">Recent Searches</Section>
-				<RecentSearchList
-					class="flex-grow"
-					on:recentSearch={handleQuerySubmit}
-				/>
+				<RecentSearchList class="flex-grow" on:recentSearch={handleQuerySubmit} />
 			</div>
-			<div
-				class="section--footer flex row justify-content-end pr-xxsmall pl-xxsmall pb-xxsmall"
-			>
+			<div class="section--footer flex row justify-content-end pr-xxsmall pl-xxsmall pb-xxsmall">
 				<!-- TODO: make IconButton accept flexible color -->
 				<IconButton iconName={IconInfo} color={'black3'} />
 				<IconButton iconName={IconAdjust} color={'black3'} />
@@ -162,11 +170,7 @@
 		position: absolute;
 		bottom: 0;
 		right: 0;
-		background: radial-gradient(
-			ellipse farthest-corner at bottom right,
-			#fff,
-			#fff0
-		);
+		background: radial-gradient(ellipse farthest-corner at bottom right, #fff, #fff0);
 	}
 
 	:global(html) {

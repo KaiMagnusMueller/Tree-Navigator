@@ -1,16 +1,12 @@
 <script>
-    import {
-        Icon,
-        IconSearch,
-        IconButton,
-        IconForward,
-    } from 'figma-plugin-ds-svelte';
+    import { Icon, IconClose, IconSearch, IconButton, IconForward } from 'figma-plugin-ds-svelte';
 
     import { searchQuery } from '../stores';
     import { createEventDispatcher } from 'svelte';
     let dispatch = createEventDispatcher();
 
     export let node_types;
+    export let i;
 
     export let search = {};
     // console.log(search);
@@ -27,6 +23,12 @@
 
         //isNew = false
         dispatch('recentSearch', false);
+        dispatch('moveToTop', i);
+    }
+
+    function handleRemove() {
+        console.log('remove this search');
+        dispatch('removeSearch', i);
     }
 </script>
 
@@ -43,6 +45,7 @@
         </p>
     </div>
     <div class="search-button">
+        <IconButton iconName={IconClose} on:click={handleRemove} />
         <IconButton iconName={IconForward} on:click={handleClick} />
     </div>
 </div>
@@ -91,6 +94,7 @@
     }
 
     .recent-search-item:hover .search-button {
-        display: block;
+        display: flex;
+        gap: 4px;
     }
 </style>
