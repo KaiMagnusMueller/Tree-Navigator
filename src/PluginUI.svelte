@@ -2,7 +2,7 @@
 	//import Global CSS from the svelte boilerplate
 	//contains Figma color vars, spacing vars, utility classes and more
 	import { GlobalCSS } from 'figma-plugin-ds-svelte';
-	import { searchQuery, recentSearches, UIState } from './stores';
+	import { searchQuery, recentSearches, UIState, activeFilters } from './stores';
 	import { recentSearchExamples } from './assets/example-data';
 	import { updateRecentSearches } from './lib/helper-functions';
 
@@ -36,6 +36,7 @@
 	let querySendTime;
 
 	$: $searchQuery.query_text = searchString;
+	$: $activeFilters.query_text = searchString;
 
 	$: disabled = searchString === '' && filterChanged == false;
 	//this is a reactive variable that will return false when a value is selected from
@@ -45,7 +46,7 @@
 		onmessage = (event) => {
 			if (event.data.pluginMessage.type == 'loaded-plugin-recent-search-list') {
 				if (event.data.pluginMessage.data.length > 0) {
-					console.log('data found... loading');
+					// console.log('data found... loading');
 					$recentSearches = event.data.pluginMessage.data;
 				} else {
 					console.log('no data... loading example');
@@ -54,6 +55,11 @@
 			}
 		};
 	});
+
+	function handleSubmitButton(event) {
+		$searchQuery = $activeFilters;
+		handleQuerySubmit(event);
+	}
 
 	function handleQuerySubmit(event) {
 		//true because event comes from recent list item
@@ -84,15 +90,15 @@
 
 		//only add to recentlist if the item is not already on the list
 		if (isNew == true) {
-			let localQuery = {
+			let queryToAdd = {
 				node_types: $searchQuery.node_types,
 				query_text: $searchQuery.query_text,
 				restrict_to_selection: $searchQuery.restrict_to_selection,
-				selecuted_node_ids: $searchQuery.selected_node_ids,
+				selected_node_ids: $searchQuery.selected_node_ids,
 				query_submit_time: $searchQuery.query_submit_time,
 			};
 
-			$recentSearches = [localQuery, ...$recentSearches];
+			$recentSearches = [queryToAdd, ...$recentSearches];
 			$recentSearches = $recentSearches.slice(0, 20);
 			// console.log($recentSearches);
 
@@ -110,13 +116,16 @@
 		parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*');
 	}
 
-	function navBack(params) {}
+	function navBack(params) {
+		$UIState.showMainMenu = true;
+		$UIState.showSearchResults = false;
+	}
 </script>
 
 <div class="wrapper">
 	<div class="main-section">
 		<div class="header-group flex pr-xxsmall pl-xxsmall pt-xxsmall">
-			<IconButton on:click={navBack} iconName={IconBack} disabled />
+			<IconButton on:click={navBack} iconName={IconBack} disabled={$UIState.showMainMenu} />
 			<InputFlexible
 				iconName={IconSearch}
 				placeholder="Search"
@@ -124,7 +133,7 @@
 				class="flex-grow"
 				autofocus
 			/>
-			<IconButton on:click={handleQuerySubmit} iconName={IconForward} bind:disabled />
+			<IconButton on:click={handleSubmitButton} iconName={IconForward} bind:disabled />
 		</div>
 		<FilterList class="flex-no-shrink" on:filterChanged={(event) => (filterChanged = event.detail)} />
 		{#if $UIState.showMainMenu}

@@ -2,7 +2,7 @@
     import { afterUpdate, onMount, createEventDispatcher } from 'svelte';
     import { element } from 'svelte/internal';
 
-    import { filterList, searchQuery } from '../stores';
+    import { activeFilters, filterList, searchQuery } from '../stores';
     import FilterPill from './FilterPill.svelte';
     import FilterScrollButton from './FilterScrollButton.svelte';
     import { Checkbox } from 'figma-plugin-ds-svelte';
@@ -10,11 +10,7 @@
     export { className as class };
     let className = '';
 
-    let savedFilters = [];
-
-    filterList.subscribe((value) => {
-        savedFilters = value;
-    });
+    let savedFilters = $filterList;
 
     onmessage = (event) => {
         if (event.data.pluginMessage.type == 'loaded-plugin-filter-list') {
@@ -32,9 +28,7 @@
     // filterMap.set("ALL", true);
 
     let stickyFilters = savedFilters.filter((elem) => elem.sticky == true);
-    let regularFilters = savedFilters.filter(
-        (elem) => elem.sticky == false || undefined
-    );
+    let regularFilters = savedFilters.filter((elem) => elem.sticky == false || undefined);
 
     stickyFilters.forEach((element) => {
         const enabled = element.default ? true : false;
@@ -55,7 +49,7 @@
         element.checked = enabled;
     });
 
-    let activeFilters = [];
+    let _activeFilters = [];
     //array with all checked filters
     let _activeFilterObj = filterArray.filter((elem) => elem.checked == true);
 
@@ -81,14 +75,10 @@
         // console.log(filterMap);
         checkedLayerFilters = 0;
 
-        checkedLayerFilters = filterArray.filter(
-            (elem) => elem.checked == true && elem.node_type != 'ALL'
-        );
+        checkedLayerFilters = filterArray.filter((elem) => elem.checked == true && elem.node_type != 'ALL');
 
         console.log(checkedLayerFilters);
-        let ALL_FILTER_I = filterArray.findIndex(
-            (elem) => elem.node_type == 'ALL'
-        );
+        let ALL_FILTER_I = filterArray.findIndex((elem) => elem.node_type == 'ALL');
         if (checkedLayerFilters.length > 0) {
             filterArray[ALL_FILTER_I].checked = false;
 
@@ -98,14 +88,14 @@
             dispatch('filterChanged', false);
         }
 
-        const _activeFilterObj = filterArray.filter(
-            (elem) => elem.checked == true
-        );
+        const _activeFilterObj = filterArray.filter((elem) => elem.checked == true);
 
-        activeFilters = [];
+        _activeFilters = [];
         _activeFilterObj.forEach((element) => {
-            activeFilters.push(element.node_type);
+            _activeFilters.push(element.node_type);
         });
+
+        $activeFilters.node_types = _activeFilters;
     }
 
     function isAFilterChecked(elem) {
@@ -127,13 +117,7 @@
     });
 
     function initScrollPosition() {
-        scrollMinMax = [
-            0,
-            -1 *
-                (filterListElem.scrollWidth -
-                    filterListElem.parentElement.clientWidth) -
-                8,
-        ];
+        scrollMinMax = [0, -1 * (filterListElem.scrollWidth - filterListElem.parentElement.clientWidth) - 8];
 
         //TODO: fix figma not correctly assigning scrolllWidth
         // scrollWidth: 1051
@@ -141,9 +125,9 @@
         // VM111974:2852 320
         // VM111974:2853 (2) [0, -695]
 
-        console.log(filterListElem.scrollWidth);
-        console.log(filterListElem.parentElement.clientWidth);
-        console.log(scrollMinMax);
+        // console.log(filterListElem.scrollWidth);
+        // console.log(filterListElem.parentElement.clientWidth);
+        // console.log(scrollMinMax);
     }
 
     let scrollPos = 0;
@@ -171,25 +155,22 @@
 
         scrollPos = targetPos;
 
-        console.log(scrollPos, scrollMinMax);
+        // console.log(scrollPos, scrollMinMax);
     }
 
     function handleManualScroll(value) {
         moveFilterList(value);
     }
 
-    let _searchQuery;
+    let _searchQuery = $searchQuery;
 
-    searchQuery.subscribe((value) => {
-        _searchQuery = value;
-    });
+    $: _searchQuery.node_types = _activeFilters;
 
-    $: _searchQuery.node_types = activeFilters;
-
-    //TODO: check what activeFilters contains, especially when no layer filter is selected and an ALL filer should be in there
+    //TODO: check what _activeFilters contains, especially when no layer filter is selected and an ALL filer should be in there
 
     let selectionCheck = false;
     $: _searchQuery.restrict_to_selection = selectionCheck;
+    $: $activeFilters.restrict_to_selection = selectionCheck;
     $: console.log(selectionCheck);
 </script>
 
@@ -220,10 +201,8 @@
         > -->
 
             {#each filterArray as filter}
-                <FilterPill
-                    on:selectFilter={handleFilter}
-                    nodeType={filter.node_type}
-                    bind:checked={filter.checked}>{filter.name}</FilterPill
+                <FilterPill on:selectFilter={handleFilter} nodeType={filter.node_type} bind:checked={filter.checked}
+                    >{filter.name}</FilterPill
                 >
 
                 <!-- <FilterPill iconName={IconComponent}>Component</FilterPill> -->
@@ -237,9 +216,7 @@
         >
     {/if} -->
     </div>
-    <Checkbox class="pl-xxsmall" bind:checked={selectionCheck}
-        >Limit to selection</Checkbox
-    >
+    <Checkbox class="pl-xxsmall" bind:checked={selectionCheck}>Limit to selection</Checkbox>
 </div>
 
 <style>

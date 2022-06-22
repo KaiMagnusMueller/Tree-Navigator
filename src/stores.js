@@ -95,6 +95,13 @@ export let filterList = writable([
 
 ]);
 
+export let activeFilters = writable({
+    node_types: [],
+    query_text: "",
+    restrict_to_selection: false,
+    selected_node_ids: [],
+})
+
 
 export let recentSearches = writable([
 
