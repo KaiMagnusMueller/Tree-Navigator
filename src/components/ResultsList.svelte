@@ -13,6 +13,7 @@
     onmessage = (event) => {
         if (event.data.pluginMessage.type == 'search-results') {
             searchResults = event.data.pluginMessage.data;
+
             // console.log('got results');
             // console.log(searchResults);
             queryDuration = Date.now() - querySendTime;
@@ -59,9 +60,7 @@
         let selectedNodes = [];
 
         searchResults.forEach((result, i) => {
-            let addToSelection = newItemIDs.filter(
-                (newItem) => newItem === result.id
-            );
+            let addToSelection = newItemIDs.filter((newItem) => newItem === result.id);
 
             if (addToSelection.length > 0) {
                 searchResults[i].selected = true;
@@ -101,9 +100,7 @@
 <div class="results-container pr-xxsmall pl-xxsmall">
     {#if searchResults.length > 0 && queryDuration != undefined}
         <p class="text--results-info">
-            Found {searchResults.length} nodes in {Math.round(
-                queryDuration / 100
-            ) / 10}
+            Found {searchResults.length} nodes in {Math.round(queryDuration / 100) / 10}
             seconds.
         </p>
         <!-- 
@@ -112,7 +109,7 @@
         {/each} -->
 
         <div class="results-list">
-            {#each searchResults as result}
+            {#each searchResults as result (result.id)}
                 <ResultsListItem {result} on:result-clicked={handleClick} />
             {/each}
         </div>
