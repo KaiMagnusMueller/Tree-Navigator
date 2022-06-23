@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 
-export let filterList = writable([
+export let nodeTypeFilterList = writable([
     {
         node_type: "ALL",
         name: "All Types",

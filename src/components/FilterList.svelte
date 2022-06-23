@@ -2,7 +2,7 @@
     import { afterUpdate, onMount, createEventDispatcher } from 'svelte';
     import { element } from 'svelte/internal';
 
-    import { activeFilters, filterList, searchQuery } from '../stores';
+    import { activeFilters, nodeTypeFilterList, searchQuery } from '../stores';
     import FilterPill from './FilterPill.svelte';
     import FilterScrollButton from './FilterScrollButton.svelte';
     import { Checkbox } from 'figma-plugin-ds-svelte';
@@ -10,7 +10,7 @@
     export { className as class };
     let className = '';
 
-    let savedFilters = $filterList;
+    let savedFilters = $nodeTypeFilterList;
 
     onmessage = (event) => {
         if (event.data.pluginMessage.type == 'loaded-plugin-filter-list') {
@@ -108,16 +108,19 @@
         }
     }
 
-    let filterListElem;
+    let nodeTypeFilterListElem;
     let scrollMinMax = [];
 
     onMount(() => {
-        console.log(filterListElem);
+        console.log(nodeTypeFilterListElem);
         initScrollPosition();
     });
 
     function initScrollPosition() {
-        scrollMinMax = [0, -1 * (filterListElem.scrollWidth - filterListElem.parentElement.clientWidth) - 8];
+        scrollMinMax = [
+            0,
+            -1 * (nodeTypeFilterListElem.scrollWidth - nodeTypeFilterListElem.parentElement.clientWidth) - 8,
+        ];
 
         //TODO: fix figma not correctly assigning scrolllWidth
         // scrollWidth: 1051
@@ -125,8 +128,8 @@
         // VM111974:2852 320
         // VM111974:2853 (2) [0, -695]
 
-        // console.log(filterListElem.scrollWidth);
-        // console.log(filterListElem.parentElement.clientWidth);
+        // console.log(nodeTypeFilterListElem.scrollWidth);
+        // console.log(nodeTypeFilterListElem.parentElement.clientWidth);
         // console.log(scrollMinMax);
     }
 
@@ -186,8 +189,8 @@
     {/if} -->
 
         <div
-            id="filterList"
-            bind:this={filterListElem}
+            id="nodeTypeFilterList"
+            bind:this={nodeTypeFilterListElem}
             class="filter-pill-group flex pl-xxsmall"
             on:wheel|preventDefault|stopPropagation={handleScroll}
             style="left: {scrollPos}px;"

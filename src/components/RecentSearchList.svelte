@@ -1,14 +1,14 @@
 <script>
     import { Section } from 'figma-plugin-ds-svelte';
-    import { recentSearches, filterList } from '../stores.js';
+    import { recentSearches, nodeTypeFilterList } from '../stores.js';
     import RecentSearchItem from './RecentSearchItem.svelte';
-    import { updateRecentSearches } from '../lib/helper-functions';
+    import { saveRecentSearches } from '../lib/helper-functions';
 
     export { classList as class };
 
     let classList = '';
 
-    let nodeTypeList = $filterList;
+    let nodeTypeList = $nodeTypeFilterList;
 
     function getNodeName(types) {
         let nodes = [];
@@ -25,14 +25,14 @@
         const index = event.detail;
         $recentSearches.splice(index, 1);
         $recentSearches = $recentSearches;
-        updateRecentSearches($recentSearches);
+        saveRecentSearches($recentSearches);
     }
 
     function handleMoveToTop(event) {
         const index = event.detail;
         const cutArray = $recentSearches.splice(index, 1);
         $recentSearches = [...cutArray, ...$recentSearches];
-        updateRecentSearches($recentSearches);
+        saveRecentSearches($recentSearches);
     }
 </script>
 

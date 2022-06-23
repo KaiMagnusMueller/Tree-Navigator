@@ -17,7 +17,7 @@ let documentNode = figma.root
 
 //reset plugindata
 // documentNode.setPluginData("recentSearchList", "[]")
-let filterList = documentNode.getPluginData("filterList")
+let nodeTypeFilterList = documentNode.getPluginData("nodeTypeFilterList")
 let recentSearchList = documentNode.getPluginData("recentSearchList")
 
 if (recentSearchList) {
@@ -25,7 +25,7 @@ if (recentSearchList) {
 }
 
 figma.ui.postMessage({ type: "loaded-plugin-recent-search-list", data: recentSearchList })
-figma.ui.postMessage({ type: "loaded-plugin-filter-list", data: filterList })
+figma.ui.postMessage({ type: "loaded-plugin-filter-list", data: nodeTypeFilterList })
 
 
 figma.ui.onmessage = msg => {

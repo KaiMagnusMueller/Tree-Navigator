@@ -2,9 +2,9 @@
 	//import Global CSS from the svelte boilerplate
 	//contains Figma color vars, spacing vars, utility classes and more
 	import { GlobalCSS } from 'figma-plugin-ds-svelte';
-	import { searchQuery, recentSearches, UIState, activeFilters } from './stores';
+	import { searchQuery, recentSearches, UIState, activeFilters, nodeTypeFilterList } from './stores';
 	import { recentSearchExamples } from './assets/example-data';
-	import { updateRecentSearches } from './lib/helper-functions';
+	import { saveRecentSearches, saveFilterRanking } from './lib/helper-functions';
 
 	//import some Svelte Figma UI components
 	import {
@@ -88,6 +88,8 @@
 			//prevent the postMessage function from locking up the main plugin by delaying it a few milliseconds
 		}, 50);
 
+		updateNodeTypeFilterCounts($searchQuery.node_types);
+
 		//only add to recentlist if the item is not already on the list
 		if (isNew == true) {
 			let queryToAdd = {
@@ -102,7 +104,8 @@
 			$recentSearches = $recentSearches.slice(0, 20);
 			// console.log($recentSearches);
 
-			updateRecentSearches($recentSearches);
+			saveRecentSearches($recentSearches);
+			saveFilterRanking($nodeTypeFilterList);
 		} else {
 		}
 	}
@@ -119,6 +122,19 @@
 	function navBack(params) {
 		$UIState.showMainMenu = true;
 		$UIState.showSearchResults = false;
+	}
+
+	function updateNodeTypeFilterCounts(types) {
+		types.forEach((type) => {
+			let index = $nodeTypeFilterList.findIndex((elem) => elem.node_type == type);
+
+			if (index >= 0) {
+				console.log('Update at ' + index);
+				$nodeTypeFilterList[index].count++;
+			}
+		});
+
+		// TODO: sort nodeTypeFilterList by count value (possibly in filter component)
 	}
 </script>
 
