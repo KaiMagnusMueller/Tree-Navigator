@@ -53,8 +53,19 @@
 					$recentSearches = recentSearchExamples;
 				}
 			}
+
+			if (event.data.pluginMessage.type == 'loaded-plugin-filter-list') {
+				if (event.data.pluginMessage.data.length == 0) {
+					console.log('no filters used previously');
+					return;
+				}
+				$nodeTypeFilterList = event.data.pluginMessage.data;
+				console.log($nodeTypeFilterList);
+			}
 		};
 	});
+
+	onmessage = (event) => {};
 
 	function handleSubmitButton(event) {
 		$searchQuery = $activeFilters;

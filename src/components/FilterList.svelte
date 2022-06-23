@@ -12,16 +12,6 @@
 
     let savedFilters = $nodeTypeFilterList;
 
-    onmessage = (event) => {
-        if (event.data.pluginMessage.type == 'loaded-plugin-filter-list') {
-            if (event.data.pluginMessage.data.length == 0) {
-                console.log('no filters used previously');
-                return;
-            }
-            let loadedFilters = event.data.pluginMessage.data;
-        }
-    };
-
     let filterMap = new Map();
     let filterArray = [];
 
@@ -174,7 +164,7 @@
     let selectionCheck = false;
     $: _searchQuery.restrict_to_selection = selectionCheck;
     $: $activeFilters.restrict_to_selection = selectionCheck;
-    $: console.log(selectionCheck);
+    // $: console.log(selectionCheck);
 </script>
 
 <svelte:window on:resize={initScrollPosition} />

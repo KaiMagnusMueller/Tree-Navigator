@@ -24,6 +24,10 @@ if (recentSearchList) {
 	recentSearchList = JSON.parse(recentSearchList)
 }
 
+if (nodeTypeFilterList) {
+	nodeTypeFilterList = JSON.parse(nodeTypeFilterList)
+}
+
 figma.ui.postMessage({ type: "loaded-plugin-recent-search-list", data: recentSearchList })
 figma.ui.postMessage({ type: "loaded-plugin-filter-list", data: nodeTypeFilterList })
 
@@ -128,6 +132,10 @@ figma.ui.onmessage = msg => {
 		documentNode.setPluginData("recentSearchList", string)
 	}
 
+	if (msg.type === 'update-filter-ranking') {
+		const string = JSON.stringify(msg.parameters)
+		documentNode.setPluginData("nodeTypeFilterList", string)
+	}
 };
 
 function sendResultsList(results) {
