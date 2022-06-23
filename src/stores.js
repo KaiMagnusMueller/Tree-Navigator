@@ -1,4 +1,4 @@
-import { writable, readable } from 'svelte/store';
+import { writable } from 'svelte/store';
 
 export let filterList = writable([
     {
@@ -113,7 +113,6 @@ export let searchQuery = writable({
     restrict_to_selection: false,
     selected_node_ids: [],
     query_submit_time: "",
-
 })
 
 export let UIState = writable({

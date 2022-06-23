@@ -1,11 +1,13 @@
 <script>
     import { createEventDispatcher } from 'svelte';
 
-    import Text from '../assets/icons/NodeTypes/Text.svg';
-    import Instance from '../assets/icons/NodeTypes/Instance.svg';
-    import Component from '../assets/icons/NodeTypes/Component.svg';
     import IconFlexible from './IconFlexible';
+
+    // Component Icons
     import AppIcon from '../assets/icons/AppIcon.svg';
+    import Component from '../assets/icons/NodeTypes/Component.svg';
+    import Instance from '../assets/icons/NodeTypes/Instance.svg';
+    import Text from '../assets/icons/NodeTypes/Text.svg';
 
     const dispatch = createEventDispatcher();
     export let result;

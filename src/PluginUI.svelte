@@ -62,7 +62,7 @@
 	}
 
 	function handleQuerySubmit(event) {
-		//true because event comes from recent list item
+		//true if event comes from recent list item
 		// console.log(event.detail);
 		const isNew = event.detail;
 
@@ -193,10 +193,10 @@
 		scrollbar-width: thin;
 		scrollbar-color: var(--thumbBG) var(--scrollbarBG);
 	}
-	:global(body)::-webkit-scrollbar-track {
+	:global(::-webkit-scrollbar-track) {
 		background: var(--scrollbarBG);
 	}
-	:global(body)::-webkit-scrollbar-thumb {
+	:global(::-webkit-scrollbar-thumb) {
 		background-color: var(--thumbBG);
 		border-radius: 6px;
 		border: 3px solid var(--scrollbarBG);
