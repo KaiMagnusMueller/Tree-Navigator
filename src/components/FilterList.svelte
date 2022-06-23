@@ -10,38 +10,34 @@
     export { className as class };
     let className = '';
 
-    let savedFilters = $nodeTypeFilterList;
-
-    let filterMap = new Map();
     let filterArray = [];
 
-    // filterMap.set("ALL", true);
+    filterArray = sortAndBuildFilterList($nodeTypeFilterList);
 
-    let stickyFilters = savedFilters.filter((elem) => elem.sticky == true);
-    let regularFilters = savedFilters.filter((elem) => elem.sticky == false || undefined);
+    function sortAndBuildFilterList(filters) {
+        let stickyFilters = filters.filter((elem) => elem.sticky == true);
+        let regularFilters = filters.filter((elem) => elem.sticky == false || undefined);
 
-    stickyFilters.forEach((element) => {
-        const enabled = element.default ? true : false;
-        filterMap.set(element.node_type, enabled);
-    });
+        stickyFilters.sort((a, b) => {
+            b.count - a.count;
+        });
+        regularFilters.sort((a, b) => {
+            b.count - a.count;
+        });
 
-    regularFilters.forEach((element) => {
-        filterMap.set(element.node_type, false);
-    });
+        console.log(regularFilters);
 
-    filterArray = stickyFilters.concat(regularFilters);
+        let _filterArray = stickyFilters.concat(regularFilters);
 
-    // console.log(filterMap);
-    // console.log(filterArray);
+        _filterArray.forEach((element) => {
+            const enabled = element.default ? true : false;
+            element.checked = enabled;
+        });
 
-    filterArray.forEach((element) => {
-        const enabled = element.default ? true : false;
-        element.checked = enabled;
-    });
+        return _filterArray;
+    }
 
     let _activeFilters = [];
-    //array with all checked filters
-    let _activeFilterObj = filterArray.filter((elem) => elem.checked == true);
 
     // array with checked filters excluding ALL
     let checkedLayerFilters;
@@ -60,9 +56,6 @@
             });
         }
 
-        //TODO: cleanup
-        filterMap.set(event.detail[0], event.detail[1]);
-        // console.log(filterMap);
         checkedLayerFilters = 0;
 
         checkedLayerFilters = filterArray.filter((elem) => elem.checked == true && elem.node_type != 'ALL');
@@ -80,22 +73,12 @@
 
         const _activeFilterObj = filterArray.filter((elem) => elem.checked == true);
 
-        _activeFilters = [];
+        let _activeFilters = [];
         _activeFilterObj.forEach((element) => {
             _activeFilters.push(element.node_type);
         });
 
         $activeFilters.node_types = _activeFilters;
-    }
-
-    function isAFilterChecked(elem) {
-        if (elem.node_type == 'ALL') {
-            return;
-        }
-
-        if (elem.checked == true) {
-            checkedLayerFilters++;
-        }
     }
 
     let nodeTypeFilterListElem;
@@ -107,10 +90,7 @@
     });
 
     function initScrollPosition() {
-        scrollMinMax = [
-            0,
-            -1 * (nodeTypeFilterListElem.scrollWidth - nodeTypeFilterListElem.parentElement.clientWidth) - 8,
-        ];
+        scrollMinMax = [0, -1 * (nodeTypeFilterListElem.scrollWidth - nodeTypeFilterListElem.parentElement.clientWidth) - 8];
 
         //TODO: fix figma not correctly assigning scrolllWidth
         // scrollWidth: 1051

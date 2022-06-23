@@ -60,8 +60,14 @@
 					return;
 				}
 				$nodeTypeFilterList = event.data.pluginMessage.data;
+
+				console.log('update node filter list');
 				console.log($nodeTypeFilterList);
 			}
+
+			// TODO: save filter list without checked state
+			// update filter list with new count values
+			// Send filter list to filter list component from here
 		};
 	});
 
@@ -153,13 +159,7 @@
 	<div class="main-section">
 		<div class="header-group flex pr-xxsmall pl-xxsmall pt-xxsmall">
 			<IconButton on:click={navBack} iconName={IconBack} disabled={$UIState.showMainMenu} />
-			<InputFlexible
-				iconName={IconSearch}
-				placeholder="Search"
-				bind:value={searchString}
-				class="flex-grow"
-				autofocus
-			/>
+			<InputFlexible iconName={IconSearch} placeholder="Search" bind:value={searchString} class="flex-grow" autofocus />
 			<IconButton on:click={handleSubmitButton} iconName={IconForward} bind:disabled />
 		</div>
 		<FilterList class="flex-no-shrink" on:filterChanged={(event) => (filterChanged = event.detail)} />
