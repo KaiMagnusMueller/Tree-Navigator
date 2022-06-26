@@ -2,9 +2,9 @@
 	//import Global CSS from the svelte boilerplate
 	//contains Figma color vars, spacing vars, utility classes and more
 	import { GlobalCSS } from 'figma-plugin-ds-svelte';
-	import { searchQuery, recentSearches, UIState, activeFilters } from './stores';
+	import { searchQuery, recentSearches, UIState, activeFilters, nodeTypeFilterList, nodeTypeFilterListDefault } from './stores';
 	import { recentSearchExamples } from './assets/example-data';
-	import { updateRecentSearches } from './lib/helper-functions';
+	import { saveRecentSearches, saveFilterRanking } from './lib/helper-functions';
 
 	//import some Svelte Figma UI components
 	import {
@@ -27,6 +27,7 @@
 	import { each, now, onMount } from 'svelte/internal';
 	import IconInfo from './assets/icons/information.svg';
 	import ResultsList from './components/ResultsList.svelte';
+	import TestComponent from './components/TestComponent.svelte';
 
 	//current input of search field
 	let searchString = '';
@@ -42,6 +43,8 @@
 	//this is a reactive variable that will return false when a value is selected from
 	//the select menu, its value is bound to the primary buttons disabled prop
 
+	let filterList = [];
+
 	onMount(() => {
 		onmessage = (event) => {
 			if (event.data.pluginMessage.type == 'loaded-plugin-recent-search-list') {
@@ -53,8 +56,34 @@
 					$recentSearches = recentSearchExamples;
 				}
 			}
+
+			if (event.data.pluginMessage.type == 'loaded-plugin-filter-counts') {
+				filterList = $nodeTypeFilterList;
+				if (event.data.pluginMessage.data.length == 0) {
+					console.log('no filters used previously');
+					return;
+				}
+
+				filterList.forEach((filter) => {
+					let loadedFilter = event.data.pluginMessage.data.find((elem) => elem.node_type === filter.node_type);
+					filter.count = loadedFilter.count;
+				});
+
+				filterList.sort((a, b) => {
+					return b.count - a.count;
+				});
+
+				console.log('update node filter list');
+				console.log(filterList);
+			}
+
+			// TODO: save filter list without checked state
+			// update filter list with new count values
+			// Send filter list to filter list component from here
 		};
 	});
+
+	onmessage = (event) => {};
 
 	function handleSubmitButton(event) {
 		$searchQuery = $activeFilters;
@@ -88,6 +117,8 @@
 			//prevent the postMessage function from locking up the main plugin by delaying it a few milliseconds
 		}, 50);
 
+		updateNodeTypeFilterCounts($searchQuery.node_types);
+
 		//only add to recentlist if the item is not already on the list
 		if (isNew == true) {
 			let queryToAdd = {
@@ -102,7 +133,8 @@
 			$recentSearches = $recentSearches.slice(0, 20);
 			// console.log($recentSearches);
 
-			updateRecentSearches($recentSearches);
+			saveRecentSearches($recentSearches);
+			saveFilterRanking($nodeTypeFilterList);
 		} else {
 		}
 	}
@@ -120,22 +152,32 @@
 		$UIState.showMainMenu = true;
 		$UIState.showSearchResults = false;
 	}
+
+	function updateNodeTypeFilterCounts(types) {
+		types.forEach((type) => {
+			let index = $nodeTypeFilterList.findIndex((elem) => elem.node_type == type);
+
+			if (index >= 0) {
+				console.log('Update at ' + index);
+				$nodeTypeFilterList[index].count++;
+			}
+		});
+
+		// TODO: sort nodeTypeFilterList by count value (possibly in filter component)
+	}
 </script>
 
 <div class="wrapper">
 	<div class="main-section">
+		<!-- <TestComponent /> -->
 		<div class="header-group flex pr-xxsmall pl-xxsmall pt-xxsmall">
 			<IconButton on:click={navBack} iconName={IconBack} disabled={$UIState.showMainMenu} />
-			<InputFlexible
-				iconName={IconSearch}
-				placeholder="Search"
-				bind:value={searchString}
-				class="flex-grow"
-				autofocus
-			/>
+			<InputFlexible iconName={IconSearch} placeholder="Search" bind:value={searchString} class="flex-grow" autofocus />
 			<IconButton on:click={handleSubmitButton} iconName={IconForward} bind:disabled />
 		</div>
-		<FilterList class="flex-no-shrink" on:filterChanged={(event) => (filterChanged = event.detail)} />
+		{#if filterList.length > 0}
+			<FilterList class="flex-no-shrink" on:filterChanged={(event) => (filterChanged = event.detail)} {filterList} />
+		{/if}
 		{#if $UIState.showMainMenu}
 			<div class="section--recent flex column flex-grow">
 				<Section class="flex-no-shrink">Recent Searches</Section>

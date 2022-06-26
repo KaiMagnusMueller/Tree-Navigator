@@ -1,8 +1,7 @@
 <script>
     import { afterUpdate, onMount, createEventDispatcher } from 'svelte';
-    import { element } from 'svelte/internal';
 
-    import { activeFilters, filterList, searchQuery } from '../stores';
+    import { activeFilters, nodeTypeFilterList, searchQuery } from '../stores';
     import FilterPill from './FilterPill.svelte';
     import FilterScrollButton from './FilterScrollButton.svelte';
     import { Checkbox } from 'figma-plugin-ds-svelte';
@@ -10,48 +9,37 @@
     export { className as class };
     let className = '';
 
-    let savedFilters = $filterList;
-
-    onmessage = (event) => {
-        if (event.data.pluginMessage.type == 'loaded-plugin-filter-list') {
-            if (event.data.pluginMessage.data.length == 0) {
-                console.log('no filters used previously');
-                return;
-            }
-            let loadedFilters = event.data.pluginMessage.data;
-        }
-    };
-
-    let filterMap = new Map();
     let filterArray = [];
+    export { filterArray as filterList };
 
-    // filterMap.set("ALL", true);
+    filterArray = sortAndBuildFilterList(filterArray);
 
-    let stickyFilters = savedFilters.filter((elem) => elem.sticky == true);
-    let regularFilters = savedFilters.filter((elem) => elem.sticky == false || undefined);
+    function sortAndBuildFilterList(filters) {
+        console.log(filters);
+        console.log('test');
+        let stickyFilters = filters.filter((elem) => elem.sticky == true);
+        let regularFilters = filters.filter((elem) => elem.sticky == false || undefined);
 
-    stickyFilters.forEach((element) => {
-        const enabled = element.default ? true : false;
-        filterMap.set(element.node_type, enabled);
-    });
+        stickyFilters.sort((a, b) => {
+            return b.count - a.count;
+        });
+        regularFilters.sort((a, b) => {
+            return b.count - a.count;
+        });
 
-    regularFilters.forEach((element) => {
-        filterMap.set(element.node_type, false);
-    });
+        console.log(regularFilters);
 
-    filterArray = stickyFilters.concat(regularFilters);
+        let _filterArray = stickyFilters.concat(regularFilters);
 
-    // console.log(filterMap);
-    // console.log(filterArray);
+        _filterArray.forEach((element) => {
+            const enabled = element.default ? true : false;
+            element.checked = enabled;
+        });
 
-    filterArray.forEach((element) => {
-        const enabled = element.default ? true : false;
-        element.checked = enabled;
-    });
+        return _filterArray;
+    }
 
     let _activeFilters = [];
-    //array with all checked filters
-    let _activeFilterObj = filterArray.filter((elem) => elem.checked == true);
 
     // array with checked filters excluding ALL
     let checkedLayerFilters;
@@ -70,9 +58,6 @@
             });
         }
 
-        //TODO: cleanup
-        filterMap.set(event.detail[0], event.detail[1]);
-        // console.log(filterMap);
         checkedLayerFilters = 0;
 
         checkedLayerFilters = filterArray.filter((elem) => elem.checked == true && elem.node_type != 'ALL');
@@ -90,7 +75,7 @@
 
         const _activeFilterObj = filterArray.filter((elem) => elem.checked == true);
 
-        _activeFilters = [];
+        let _activeFilters = [];
         _activeFilterObj.forEach((element) => {
             _activeFilters.push(element.node_type);
         });
@@ -98,26 +83,16 @@
         $activeFilters.node_types = _activeFilters;
     }
 
-    function isAFilterChecked(elem) {
-        if (elem.node_type == 'ALL') {
-            return;
-        }
-
-        if (elem.checked == true) {
-            checkedLayerFilters++;
-        }
-    }
-
-    let filterListElem;
+    let nodeTypeFilterListElem;
     let scrollMinMax = [];
 
     onMount(() => {
-        console.log(filterListElem);
+        console.log(nodeTypeFilterListElem);
         initScrollPosition();
     });
 
     function initScrollPosition() {
-        scrollMinMax = [0, -1 * (filterListElem.scrollWidth - filterListElem.parentElement.clientWidth) - 8];
+        scrollMinMax = [0, -1 * (nodeTypeFilterListElem.scrollWidth - nodeTypeFilterListElem.parentElement.clientWidth) - 8 - 45];
 
         //TODO: fix figma not correctly assigning scrolllWidth
         // scrollWidth: 1051
@@ -125,8 +100,8 @@
         // VM111974:2852 320
         // VM111974:2853 (2) [0, -695]
 
-        // console.log(filterListElem.scrollWidth);
-        // console.log(filterListElem.parentElement.clientWidth);
+        // console.log(nodeTypeFilterListElem.scrollWidth);
+        // console.log(nodeTypeFilterListElem.parentElement.clientWidth);
         // console.log(scrollMinMax);
     }
 
@@ -155,7 +130,7 @@
 
         scrollPos = targetPos;
 
-        // console.log(scrollPos, scrollMinMax);
+        console.log(scrollPos, scrollMinMax);
     }
 
     function handleManualScroll(value) {
@@ -171,7 +146,7 @@
     let selectionCheck = false;
     $: _searchQuery.restrict_to_selection = selectionCheck;
     $: $activeFilters.restrict_to_selection = selectionCheck;
-    $: console.log(selectionCheck);
+    // $: console.log(selectionCheck);
 </script>
 
 <svelte:window on:resize={initScrollPosition} />
@@ -186,8 +161,8 @@
     {/if} -->
 
         <div
-            id="filterList"
-            bind:this={filterListElem}
+            id="nodeTypeFilterList"
+            bind:this={nodeTypeFilterListElem}
             class="filter-pill-group flex pl-xxsmall"
             on:wheel|preventDefault|stopPropagation={handleScroll}
             style="left: {scrollPos}px;"
@@ -200,7 +175,7 @@
             disabled={allTypesDisabled}>All Types</FilterPill
         > -->
 
-            {#each filterArray as filter}
+            {#each filterArray as filter (filter.node_type)}
                 <FilterPill on:selectFilter={handleFilter} nodeType={filter.node_type} bind:checked={filter.checked}
                     >{filter.name}</FilterPill
                 >

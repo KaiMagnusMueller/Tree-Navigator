@@ -17,18 +17,28 @@ let documentNode = figma.root
 
 //reset plugindata
 // documentNode.setPluginData("recentSearchList", "[]")
-let filterList = documentNode.getPluginData("filterList")
+let nodeTypeFilterList = documentNode.getPluginData("nodeTypeFilterList")
 let recentSearchList = documentNode.getPluginData("recentSearchList")
 
 if (recentSearchList) {
 	recentSearchList = JSON.parse(recentSearchList)
 }
 
-figma.ui.postMessage({ type: "loaded-plugin-recent-search-list", data: recentSearchList })
-figma.ui.postMessage({ type: "loaded-plugin-filter-list", data: filterList })
+if (nodeTypeFilterList) {
+	nodeTypeFilterList = JSON.parse(nodeTypeFilterList)
+}
 
+figma.ui.postMessage({ type: "loaded-plugin-recent-search-list", data: recentSearchList })
+figma.ui.postMessage({ type: "loaded-plugin-filter-counts", data: nodeTypeFilterList })
+
+function sendPluginmessage(params) {
+	figma.ui.postMessage({ type: "plugin", data: params })
+	console.log("message sent to plugin");
+}
 
 figma.ui.onmessage = msg => {
+
+
 
 	// One way of distinguishing between different types of messages sent from
 	// your HTML page is to use an object with a "type" property like this.
@@ -128,6 +138,20 @@ figma.ui.onmessage = msg => {
 		documentNode.setPluginData("recentSearchList", string)
 	}
 
+	if (msg.type === 'update-filter-ranking') {
+		const string = JSON.stringify(msg.parameters)
+		documentNode.setPluginData("nodeTypeFilterList", string)
+	}
+
+	if (msg.type === 'figma') {
+		console.log("got message");
+
+		console.log(msg.parameters);
+		let message = ["sent from figma"]
+		sendPluginmessage(message)
+	}
+
+
 };
 
 function sendResultsList(results) {
@@ -159,7 +183,7 @@ function handleSelectionChange() {
 			id: element.id,
 			name: element.name,
 			parent: element.parent,
-			children: element.children,
+			// children: element.children,
 			type: element.type,
 			selected: true
 		})
@@ -167,4 +191,3 @@ function handleSelectionChange() {
 
 	figma.ui.postMessage({ type: "selection-changed", data: nodesToSend })
 }
-
