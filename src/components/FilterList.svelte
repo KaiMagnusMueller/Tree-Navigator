@@ -19,10 +19,10 @@
         let regularFilters = filters.filter((elem) => elem.sticky == false || undefined);
 
         stickyFilters.sort((a, b) => {
-            return b.count - a.count;
+            b.count - a.count;
         });
         regularFilters.sort((a, b) => {
-            return b.count - a.count;
+            b.count - a.count;
         });
 
         console.log(regularFilters);
@@ -90,7 +90,7 @@
     });
 
     function initScrollPosition() {
-        scrollMinMax = [0, -1 * (nodeTypeFilterListElem.scrollWidth - nodeTypeFilterListElem.parentElement.clientWidth) - 8] - 45;
+        scrollMinMax = [0, -1 * (nodeTypeFilterListElem.scrollWidth - nodeTypeFilterListElem.parentElement.clientWidth) - 8];
 
         //TODO: fix figma not correctly assigning scrolllWidth
         // scrollWidth: 1051
