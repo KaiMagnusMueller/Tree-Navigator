@@ -27,7 +27,6 @@
             // 	type
             // TODO: add "selected" as property
         }
-
         if (event.data.pluginMessage.type == 'selection-changed') {
             // If the event is triggered by a selection change that originated in the plugin (see the select layers postmessage), ignore the event and reset the toggle so that events triggered by the user are not ignored
             if (ignoreSelection) {

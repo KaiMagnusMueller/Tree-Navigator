@@ -2,7 +2,7 @@
 	//import Global CSS from the svelte boilerplate
 	//contains Figma color vars, spacing vars, utility classes and more
 	import { GlobalCSS } from 'figma-plugin-ds-svelte';
-	import { searchQuery, recentSearches, UIState, activeFilters, nodeTypeFilterList } from './stores';
+	import { searchQuery, recentSearches, UIState, activeFilters, nodeTypeFilterList, nodeTypeFilterListDefault } from './stores';
 	import { recentSearchExamples } from './assets/example-data';
 	import { saveRecentSearches, saveFilterRanking } from './lib/helper-functions';
 
@@ -27,6 +27,7 @@
 	import { each, now, onMount } from 'svelte/internal';
 	import IconInfo from './assets/icons/information.svg';
 	import ResultsList from './components/ResultsList.svelte';
+	import TestComponent from './components/TestComponent.svelte';
 
 	//current input of search field
 	let searchString = '';
@@ -42,6 +43,8 @@
 	//this is a reactive variable that will return false when a value is selected from
 	//the select menu, its value is bound to the primary buttons disabled prop
 
+	let filterList = [];
+
 	onMount(() => {
 		onmessage = (event) => {
 			if (event.data.pluginMessage.type == 'loaded-plugin-recent-search-list') {
@@ -54,15 +57,24 @@
 				}
 			}
 
-			if (event.data.pluginMessage.type == 'loaded-plugin-filter-list') {
+			if (event.data.pluginMessage.type == 'loaded-plugin-filter-counts') {
+				filterList = $nodeTypeFilterList;
 				if (event.data.pluginMessage.data.length == 0) {
 					console.log('no filters used previously');
 					return;
 				}
-				$nodeTypeFilterList = event.data.pluginMessage.data;
+
+				filterList.forEach((filter) => {
+					let loadedFilter = event.data.pluginMessage.data.find((elem) => elem.node_type === filter.node_type);
+					filter.count = loadedFilter.count;
+				});
+
+				filterList.sort((a, b) => {
+					return b.count - a.count;
+				});
 
 				console.log('update node filter list');
-				console.log($nodeTypeFilterList);
+				console.log(filterList);
 			}
 
 			// TODO: save filter list without checked state
@@ -157,12 +169,15 @@
 
 <div class="wrapper">
 	<div class="main-section">
+		<!-- <TestComponent /> -->
 		<div class="header-group flex pr-xxsmall pl-xxsmall pt-xxsmall">
 			<IconButton on:click={navBack} iconName={IconBack} disabled={$UIState.showMainMenu} />
 			<InputFlexible iconName={IconSearch} placeholder="Search" bind:value={searchString} class="flex-grow" autofocus />
 			<IconButton on:click={handleSubmitButton} iconName={IconForward} bind:disabled />
 		</div>
-		<FilterList class="flex-no-shrink" on:filterChanged={(event) => (filterChanged = event.detail)} />
+		{#if filterList.length > 0}
+			<FilterList class="flex-no-shrink" on:filterChanged={(event) => (filterChanged = event.detail)} {filterList} />
+		{/if}
 		{#if $UIState.showMainMenu}
 			<div class="section--recent flex column flex-grow">
 				<Section class="flex-no-shrink">Recent Searches</Section>

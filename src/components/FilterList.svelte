@@ -1,6 +1,5 @@
 <script>
     import { afterUpdate, onMount, createEventDispatcher } from 'svelte';
-    import { element } from 'svelte/internal';
 
     import { activeFilters, nodeTypeFilterList, searchQuery } from '../stores';
     import FilterPill from './FilterPill.svelte';
@@ -11,18 +10,21 @@
     let className = '';
 
     let filterArray = [];
+    export { filterArray as filterList };
 
-    filterArray = sortAndBuildFilterList($nodeTypeFilterList);
+    filterArray = sortAndBuildFilterList(filterArray);
 
     function sortAndBuildFilterList(filters) {
+        console.log(filters);
+        console.log('test');
         let stickyFilters = filters.filter((elem) => elem.sticky == true);
         let regularFilters = filters.filter((elem) => elem.sticky == false || undefined);
 
         stickyFilters.sort((a, b) => {
-            b.count - a.count;
+            return b.count - a.count;
         });
         regularFilters.sort((a, b) => {
-            b.count - a.count;
+            return b.count - a.count;
         });
 
         console.log(regularFilters);
@@ -90,7 +92,7 @@
     });
 
     function initScrollPosition() {
-        scrollMinMax = [0, -1 * (nodeTypeFilterListElem.scrollWidth - nodeTypeFilterListElem.parentElement.clientWidth) - 8];
+        scrollMinMax = [0, -1 * (nodeTypeFilterListElem.scrollWidth - nodeTypeFilterListElem.parentElement.clientWidth) - 8 - 45];
 
         //TODO: fix figma not correctly assigning scrolllWidth
         // scrollWidth: 1051
@@ -128,7 +130,7 @@
 
         scrollPos = targetPos;
 
-        // console.log(scrollPos, scrollMinMax);
+        console.log(scrollPos, scrollMinMax);
     }
 
     function handleManualScroll(value) {
@@ -173,7 +175,7 @@
             disabled={allTypesDisabled}>All Types</FilterPill
         > -->
 
-            {#each filterArray as filter}
+            {#each filterArray as filter (filter.node_type)}
                 <FilterPill on:selectFilter={handleFilter} nodeType={filter.node_type} bind:checked={filter.checked}
                     >{filter.name}</FilterPill
                 >
