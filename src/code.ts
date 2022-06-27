@@ -146,8 +146,10 @@ figma.ui.onmessage = msg => {
 
 
 	if (msg.type === 'focus-selection') {
-		const string = JSON.stringify(msg.parameters)
-		documentNode.setPluginData("nodeTypeFilterList", string)
+
+		// figma.notify("<- Return")
+
+		figma.viewport.scrollAndZoomIntoView(figma.currentPage.selection);
 	}
 
 
