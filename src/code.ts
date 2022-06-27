@@ -138,6 +138,7 @@ figma.ui.onmessage = msg => {
 		if (msg.parameters.constructor !== Array) {
 			console.error("Wrong data type" + msg.parameters.constructor)
 			console.log(msg.parameters);
+			return
 		}
 
 		const string = JSON.stringify(msg.parameters)
@@ -148,6 +149,7 @@ figma.ui.onmessage = msg => {
 		if (msg.parameters.constructor !== Array) {
 			console.error("Wrong data type" + msg.parameters.constructor)
 			console.log(msg.parameters);
+			return
 		}
 
 		const string = JSON.stringify(msg.parameters)
