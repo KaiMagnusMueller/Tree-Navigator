@@ -135,11 +135,21 @@ figma.ui.onmessage = msg => {
 	}
 
 	if (msg.type === 'update-recent-searches') {
+		if (msg.parameters.constructor !== Array) {
+			console.error("Wrong data type" + msg.parameters.constructor)
+			console.log(msg.parameters);
+		}
+
 		const string = JSON.stringify(msg.parameters)
 		documentNode.setPluginData("recentSearchList", string)
 	}
 
 	if (msg.type === 'update-filter-ranking') {
+		if (msg.parameters.constructor !== Array) {
+			console.error("Wrong data type" + msg.parameters.constructor)
+			console.log(msg.parameters);
+		}
+
 		const string = JSON.stringify(msg.parameters)
 		documentNode.setPluginData("nodeTypeFilterList", string)
 	}
