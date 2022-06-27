@@ -2,6 +2,7 @@
     import { createEventDispatcher } from 'svelte';
 
     import IconFlexible from './IconFlexible';
+    import { IconButton, IconResizeToFit } from 'figma-plugin-ds-svelte';
 
     // Component Icons
     import AppIcon from '../assets/icons/AppIcon.svg';
@@ -25,18 +26,29 @@
         }
     }
 
-    function handleClick(e) {
+    function handleResClick(e) {
         dispatch('result-clicked', {
             resultID: result.id,
             shiftKey: e.shiftKey,
         });
     }
+
+    function handleFoClick(e) {
+        dispatch('focus-selection', {
+            resultID: result.id,
+        });
+    }
 </script>
 
-<div class="result-list-elem" class:selected={result.selected} on:click={handleClick}>
-    <div class="result-content">
+<!-- The |self modifier prevents the selection from being updated before the handleFoClick() event is fired. -->
+<!-- This makes it possible to zoom to unselected elements, if that is neccessary -->
+<div class="result-list-elem flex row" class:selected={result.selected} on:click|self={handleResClick}>
+    <div class="result-content flex row">
         <IconFlexible iconName={returnIcon()} color="black" />
         <span class="text--results-title">{result.name}</span>
+    </div>
+    <div class="result-hover">
+        <IconButton iconName={IconResizeToFit} on:click={handleFoClick} />
     </div>
 </div>
 
@@ -46,7 +58,9 @@
     }
 
     .result-list-elem {
-        padding: 2px 0;
+        padding: 2px;
+        align-items: center;
+        justify-content: space-between;
     }
 
     .result-list-elem:first-of-type {
@@ -60,11 +74,17 @@
     }
 
     .result-content {
-        display: flex;
-        flex-direction: row;
         align-items: center;
         gap: 12px;
         pointer-events: none;
+    }
+
+    .result-hover {
+        display: none;
+    }
+
+    .result-list-elem:hover .result-hover {
+        display: block;
     }
 
     .result-list-elem:hover {

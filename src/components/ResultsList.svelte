@@ -6,6 +6,8 @@
     let queryDuration;
     let searchResults = [];
 
+    let resultsListElem;
+
     // Set to true so the plugin ignores the first time the selection change event is fired
     // Otherwise when parents and children are matched, the children would immediately get deselected
     let ignoreSelection = true;
@@ -24,8 +26,8 @@
             // 	name,
             // 	parent,
             // 	children,
-            // 	type
-            // TODO: add "selected" as property
+            // 	type,
+            //  selected
         }
         if (event.data.pluginMessage.type == 'selection-changed') {
             // If the event is triggered by a selection change that originated in the plugin (see the select layers postmessage), ignore the event and reset the toggle so that events triggered by the user are not ignored
@@ -51,6 +53,8 @@
     let selection = [];
 
     function handleClick(e) {
+        console.log('new selection');
+
         updateSelection([e.detail.resultID]);
     }
 
@@ -74,6 +78,23 @@
             return;
         }
         sendSelection(selectedNodes);
+    }
+
+    function handleFocSelection(e) {
+        console.log('focus selection');
+
+        // Possible to focus a node without updating the selection by leaving out this call to updateSelection()
+        updateSelection([e.detail.resultID]);
+
+        parent.postMessage(
+            {
+                pluginMessage: {
+                    type: 'focus-selection',
+                    parameters: [e.detail.resultID],
+                },
+            },
+            '*'
+        );
     }
 
     // #####################################
@@ -107,9 +128,9 @@
             <p>{result.name}, {result.id}, {result.type}</p>
         {/each} -->
 
-        <div class="results-list">
+        <div class="results-list" bind:this={resultsListElem}>
             {#each searchResults as result (result.id)}
-                <ResultsListItem {result} on:result-clicked={handleClick} />
+                <ResultsListItem {result} on:result-clicked={handleClick} on:focus-selection={handleFocSelection} />
             {/each}
         </div>
     {:else if searchResults.length === 0 && queryDuration != undefined}
