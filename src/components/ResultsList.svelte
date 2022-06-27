@@ -51,6 +51,8 @@
     let selection = [];
 
     function handleClick(e) {
+        console.log('new selection');
+
         updateSelection([e.detail.resultID]);
     }
 
@@ -74,6 +76,23 @@
             return;
         }
         sendSelection(selectedNodes);
+    }
+
+    function handleFocSelection(e) {
+        console.log('focus selection');
+
+        // Possible to focus a node without updating the selection by leaving out this call to updateSelection()
+        updateSelection([e.detail.resultID]);
+
+        parent.postMessage(
+            {
+                pluginMessage: {
+                    type: 'focus-selection',
+                    parameters: [e.detail.resultID],
+                },
+            },
+            '*'
+        );
     }
 
     // #####################################
@@ -109,7 +128,7 @@
 
         <div class="results-list">
             {#each searchResults as result (result.id)}
-                <ResultsListItem {result} on:result-clicked={handleClick} />
+                <ResultsListItem {result} on:result-clicked={handleClick} on:focus-selection={handleFocSelection} />
             {/each}
         </div>
     {:else if searchResults.length === 0 && queryDuration != undefined}

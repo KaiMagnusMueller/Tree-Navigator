@@ -117,6 +117,7 @@ figma.ui.onmessage = msg => {
 		});
 
 		figma.currentPage.selection = filteredNodes
+		figma.viewport.scrollAndZoomIntoView(filteredNodes);
 
 		sendResultsList(nodesToSend)
 	}
@@ -143,6 +144,14 @@ figma.ui.onmessage = msg => {
 		documentNode.setPluginData("nodeTypeFilterList", string)
 	}
 
+
+	if (msg.type === 'focus-selection') {
+		const string = JSON.stringify(msg.parameters)
+		documentNode.setPluginData("nodeTypeFilterList", string)
+	}
+
+
+	// ############################################################
 	if (msg.type === 'figma') {
 		console.log("got message");
 
