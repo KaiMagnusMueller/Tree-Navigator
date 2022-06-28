@@ -79,9 +79,26 @@ figma.ui.onmessage = msg => {
 
 		if (query.restrict_to_selection && figma.currentPage.selection.length > 0) {
 			console.log("selection");
-			nodeSet = [...figma.currentPage.selection]
+			let _nodeSet = [...figma.currentPage.selection]
 
-			nodeSet.filter(node => node.type == "BOOLEAN_OPERATION" | "COMPONENT" | "COMPONENT_SET" | "FRAME" | "GROUP" | "INSTANCE" | "PAGE" | "SECTION")
+			console.log(_nodeSet);
+
+
+			nodeSet = _nodeSet.filter(checkTypes)
+
+
+			console.log(nodeSet);
+			// console.log(nodeSet[2].type.toString() == "FRAME");
+
+
+			function checkTypes(node: SceneNode) {
+
+				// Node types that have the findAllWithCriteria() and findAll() functions
+				const allowedTypes = ["BOOLEAN_OPERATION", "COMPONENT", "COMPONENT_SET", "FRAME", "GROUP", "INSTANCE", "PAGE", "SECTION"]
+
+				return allowedTypes.indexOf(node.type) > 0 ? true : false
+			}
+
 		} else {
 			console.log("current page");
 

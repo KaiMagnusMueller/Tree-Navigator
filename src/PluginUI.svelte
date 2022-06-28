@@ -73,8 +73,8 @@
 					return b.count - a.count;
 				});
 
-				console.log('update node filter list');
-				console.log(filterList);
+				// console.log('update node filter list');
+				// console.log(filterList);
 			}
 
 			// TODO: save filter list without checked state
