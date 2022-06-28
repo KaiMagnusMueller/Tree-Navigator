@@ -13,6 +13,7 @@ figma.showUI(__html__, { width: 320, height: 500, themeColors: false });
 // callback. The callback will be passed the "pluginMessage" property of the
 // posted message.
 
+figma.skipInvisibleInstanceChildren = true
 let documentNode = figma.root
 
 //reset plugindata
@@ -74,17 +75,40 @@ figma.ui.onmessage = msg => {
 
 		const query = msg.parameters
 
-		const node = figma.currentPage
+		let nodeSet = []
 
+		if (query.restrict_to_selection && figma.currentPage.selection.length > 0) {
+			console.log("selection");
+			nodeSet = [...figma.currentPage.selection]
+
+			nodeSet.filter(node => node.type == "BOOLEAN_OPERATION" | "COMPONENT" | "COMPONENT_SET" | "FRAME" | "GROUP" | "INSTANCE" | "PAGE" | "SECTION")
+		} else {
+			console.log("current page");
+
+			nodeSet.push(figma.currentPage)
+		}
+
+		console.log("---------------");
+		console.log(nodeSet);
+		console.log(figma.currentPage.selection);
+		console.log("---------------");
 
 		let nodes = []
-		if (query.node_types.length > 0 && query.node_types[0] != "ALL") {
-			nodes = node.findAllWithCriteria({
-				types: query.node_types
-			})
-		} else {
-			nodes = node.findAll()
-		}
+
+		nodeSet.forEach(node => {
+
+			console.log(node);
+
+
+			if (query.node_types.length > 0 && query.node_types[0] != "ALL") {
+				nodes.push(node.findAllWithCriteria({
+					types: query.node_types
+				}))
+			} else {
+				nodes.push(node.findAll())
+			}
+
+		})
 
 		nodes.reverse()
 
