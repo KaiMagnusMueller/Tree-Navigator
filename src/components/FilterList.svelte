@@ -15,8 +15,7 @@
     filterArray = sortAndBuildFilterList(filterArray);
 
     function sortAndBuildFilterList(filters) {
-        console.log(filters);
-        console.log('test');
+        // console.log(filters);
         let stickyFilters = filters.filter((elem) => elem.sticky == true);
         let regularFilters = filters.filter((elem) => elem.sticky == false || undefined);
 
@@ -27,7 +26,7 @@
             return b.count - a.count;
         });
 
-        console.log(regularFilters);
+        // console.log(regularFilters);
 
         let _filterArray = stickyFilters.concat(regularFilters);
 
@@ -87,7 +86,7 @@
     let scrollMinMax = [];
 
     onMount(() => {
-        console.log(nodeTypeFilterListElem);
+        // console.log(nodeTypeFilterListElem);
         initScrollPosition();
     });
 
@@ -130,7 +129,7 @@
 
         scrollPos = targetPos;
 
-        console.log(scrollPos, scrollMinMax);
+        // console.log(scrollPos, scrollMinMax);
     }
 
     function handleManualScroll(value) {

@@ -13,6 +13,7 @@ figma.showUI(__html__, { width: 320, height: 500, themeColors: false });
 // callback. The callback will be passed the "pluginMessage" property of the
 // posted message.
 
+figma.skipInvisibleInstanceChildren = true
 let documentNode = figma.root
 
 //reset plugindata
@@ -74,28 +75,86 @@ figma.ui.onmessage = msg => {
 
 		const query = msg.parameters
 
-		const node = figma.currentPage
-
-
+		//nodes to search
+		let nodeSearchSet = []
+		//
 		let nodes = []
-		if (query.node_types.length > 0 && query.node_types[0] != "ALL") {
-			nodes = node.findAllWithCriteria({
-				types: query.node_types
-			})
+
+		if (query.restrict_to_selection && figma.currentPage.selection.length > 0) {
+
+			let _nodeSelectionSet = [...figma.currentPage.selection]
+
+			//Filter and remove non iterable nodes from search set
+			nodeSearchSet = _nodeSelectionSet.filter(checkTypes)
+
+
+			function checkTypes(node) {
+
+				const searchable = node.findAllWithCriteria ? true : false
+				const typeIsInQuery = query.node_types.indexOf(node.type) !== -1 ? true : false
+				const typeFilterExists = query.node_types.length > 0 ? true : false
+
+				// typeIsInQuery -  we add all non-searchable nodes to nodes[], so they get searched 
+				//                  by name later, if they belong to one of the current node types we want to 
+				//                  find
+				// !typeFilterExists - we add all non-searchable nodes to nodes[], so they get searched 
+				//                     by name later, if no type filter exists
+				// Searchable - add, because it won't be part of the found nodes later at findAllWithCriteria()
+				//              an instance will be part of the nodeSearchSet, because it is searchable
+				//              however, it would otherwise not be returned and get added to the nodes array
+
+				if (typeIsInQuery || !typeFilterExists || searchable) {
+					// console.log("add node to list");
+					// console.log(node);
+
+					nodes.push(node)
+				}
+				// Return true if the node has the findAllWithCriteria() and findAll() functions (only both occur)
+				return searchable
+			}
+
 		} else {
-			nodes = node.findAll()
+			nodeSearchSet.push(figma.currentPage)
 		}
+
+		// console.log("---------------");
+		// console.log(nodeSet);
+		// console.log(figma.currentPage.selection);
+		// console.log("---------------");
+
+
+		nodeSearchSet.forEach(node => {
+			if (query.node_types.length > 0 && query.node_types[0] != "ALL") {
+				nodes = nodes.concat(node.findAllWithCriteria({
+					types: query.node_types
+				}))
+
+			} else {
+				nodes = nodes.concat(node.findAll())
+			}
+		})
 
 		nodes.reverse()
 
-		let filteredNodes = nodes.filter(elem => elem.name === query.query_text)
-		//TODO: Make case-insensitive
+		// TODO: Implement fuzzy search
+		let filteredNodes = nodes.filter(elem => {
 
+			let elemName = elem.name
+			let queryText = query.query_text
+
+			if (!query.exact_string_match) {
+				elemName = elemName.toLowerCase()
+				queryText = queryText.toLowerCase()
+			}
+
+			return elemName === queryText
+		})
 
 
 		console.log('Found ' + nodes.length + ' nodes');
-		console.log(filteredNodes);
+		console.log(nodes);
 		console.log('Found ' + filteredNodes.length + ' nodes after filtering names');
+		console.log(filteredNodes);
 		// for (let index = 0; index < nodes.length; index++) {
 		// 	const element = nodes[index];
 
