@@ -75,56 +75,63 @@ figma.ui.onmessage = msg => {
 
 		const query = msg.parameters
 
-		let nodeSet = []
+		//nodes to search
+		let nodeSearchSet = []
+		//
+		let nodes = []
 
 		if (query.restrict_to_selection && figma.currentPage.selection.length > 0) {
-			console.log("selection");
-			let _nodeSet = [...figma.currentPage.selection]
 
-			console.log(_nodeSet);
+			let _nodeSelectionSet = [...figma.currentPage.selection]
 
-
-			nodeSet = _nodeSet.filter(checkTypes)
+			//Filter and remove non iterable nodes from search set
+			nodeSearchSet = _nodeSelectionSet.filter(checkTypes)
 
 
-			console.log(nodeSet);
-			// console.log(nodeSet[2].type.toString() == "FRAME");
+			function checkTypes(node) {
 
+				const searchable = node.findAllWithCriteria ? true : false
+				const typeIsInQuery = query.node_types.indexOf(node.type) !== -1 ? true : false
+				const typeFilterExists = query.node_types.length > 0 ? true : false
 
-			function checkTypes(node: SceneNode) {
+				// typeIsInQuery -  we add all non-searchable nodes to nodes[], so they get searched 
+				//                  by name later, if they belong to one of the current node types we want to 
+				//                  find
+				// !typeFilterExists - we add all non-searchable nodes to nodes[], so they get searched 
+				//                     by name later, if no type filter exists
+				// Searchable - add, because it won't be part of the found nodes later at findAllWithCriteria()
+				//              an instance will be part of the nodeSearchSet, because it is searchable
+				//              however, it would otherwise not be returned and get added to the nodes array
 
-				// Node types that have the findAllWithCriteria() and findAll() functions
-				const allowedTypes = ["BOOLEAN_OPERATION", "COMPONENT", "COMPONENT_SET", "FRAME", "GROUP", "INSTANCE", "PAGE", "SECTION"]
+				if (typeIsInQuery || !typeFilterExists || searchable) {
+					// console.log("add node to list");
+					// console.log(node);
 
-				return allowedTypes.indexOf(node.type) > 0 ? true : false
+					nodes.push(node)
+				}
+				// Return true if the node has the findAllWithCriteria() and findAll() functions (only both occur)
+				return searchable
 			}
 
 		} else {
-			console.log("current page");
-
-			nodeSet.push(figma.currentPage)
+			nodeSearchSet.push(figma.currentPage)
 		}
 
-		console.log("---------------");
-		console.log(nodeSet);
-		console.log(figma.currentPage.selection);
-		console.log("---------------");
-
-		let nodes = []
-
-		nodeSet.forEach(node => {
-
-			console.log(node);
+		// console.log("---------------");
+		// console.log(nodeSet);
+		// console.log(figma.currentPage.selection);
+		// console.log("---------------");
 
 
+		nodeSearchSet.forEach(node => {
 			if (query.node_types.length > 0 && query.node_types[0] != "ALL") {
-				nodes.push(node.findAllWithCriteria({
+				nodes = nodes.concat(node.findAllWithCriteria({
 					types: query.node_types
 				}))
-			} else {
-				nodes.push(node.findAll())
-			}
 
+			} else {
+				nodes = nodes.concat(node.findAll())
+			}
 		})
 
 		nodes.reverse()
@@ -135,8 +142,9 @@ figma.ui.onmessage = msg => {
 
 
 		console.log('Found ' + nodes.length + ' nodes');
-		console.log(filteredNodes);
+		console.log(nodes);
 		console.log('Found ' + filteredNodes.length + ' nodes after filtering names');
+		console.log(filteredNodes);
 		// for (let index = 0; index < nodes.length; index++) {
 		// 	const element = nodes[index];
 
