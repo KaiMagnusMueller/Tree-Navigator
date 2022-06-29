@@ -102,6 +102,7 @@ export let activeFilters = writable({
     query_text: "",
     restrict_to_selection: false,
     selected_node_ids: [],
+    exact_string_match: false
 })
 
 
@@ -115,6 +116,8 @@ export let searchQuery = writable({
     restrict_to_selection: false,
     selected_node_ids: [],
     query_submit_time: "",
+    exact_string_match: false
+
 })
 
 export let UIState = writable({
