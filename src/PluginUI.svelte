@@ -166,6 +166,11 @@
 		// TODO: sort nodeTypeFilterList by count value (possibly in filter component)
 	}
 
+	function deleteRecentSearches() {
+		$recentSearches = [];
+		saveRecentSearches($recentSearches);
+	}
+
 	// -------------------------
 	// UI
 	// -------------------------
@@ -210,6 +215,10 @@
 					iconName={IconBack}
 				/>
 				<Section class="">Settings</Section>
+			</div>
+			<div class="settings--content pt-xsmall pr-xxsmall pl-xxsmall">
+				<Section class="">Recent Searches</Section>
+				<Button variant="secondary" destructive on:click={deleteRecentSearches}>Delete Recent Searches</Button>
 			</div>
 		</div>
 	{/if}
