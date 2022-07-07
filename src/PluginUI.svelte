@@ -165,6 +165,14 @@
 
 		// TODO: sort nodeTypeFilterList by count value (possibly in filter component)
 	}
+
+	// -------------------------
+	// UI
+	// -------------------------
+
+	function openSettings() {
+		$UIState.showSettingsMenu = true;
+	}
 </script>
 
 <div class="wrapper">
@@ -186,12 +194,25 @@
 			<div class="section--footer flex row justify-content-end pr-xxsmall pl-xxsmall pb-xxsmall">
 				<!-- TODO: make IconButton accept flexible color -->
 				<IconButton iconName={IconInfo} color={'black3'} />
-				<IconButton iconName={IconAdjust} color={'black3'} />
+				<IconButton iconName={IconAdjust} color={'black3'} on:click={openSettings} />
 			</div>
 		{:else if $UIState.showSearchResults}
 			<ResultsList {querySendTime} />
 		{/if}
 	</div>
+	{#if $UIState.showSettingsMenu}
+		<div class="menu--settings">
+			<div class="settings--header flex pr-xxsmall pl-xxsmall pt-xxsmall ">
+				<IconButton
+					on:click={() => {
+						$UIState.showSettingsMenu = false;
+					}}
+					iconName={IconBack}
+				/>
+				<Section class="">Settings</Section>
+			</div>
+		</div>
+	{/if}
 </div>
 
 <style>
@@ -222,6 +243,16 @@
 		bottom: 0;
 		right: 0;
 		background: radial-gradient(ellipse farthest-corner at bottom right, #fff, #fff0);
+	}
+
+	.menu--settings {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		top: 0;
+		left: 0;
+
+		background-color: var(--white);
 	}
 
 	:global(html) {
