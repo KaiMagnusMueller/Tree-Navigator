@@ -12,6 +12,8 @@
     let filterArray = [];
     export { filterArray as filterList };
 
+    $: filterArray;
+
     filterArray = sortAndBuildFilterList(filterArray);
 
     function sortAndBuildFilterList(filters) {

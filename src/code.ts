@@ -20,6 +20,7 @@ let documentNode = figma.root
 // documentNode.setPluginData("recentSearchList", "[]")
 let nodeTypeFilterList = documentNode.getPluginData("nodeTypeFilterList")
 let recentSearchList = documentNode.getPluginData("recentSearchList")
+let settings = documentNode.getPluginData("settings")
 
 if (recentSearchList) {
 	recentSearchList = JSON.parse(recentSearchList)
@@ -29,6 +30,11 @@ if (nodeTypeFilterList) {
 	nodeTypeFilterList = JSON.parse(nodeTypeFilterList)
 }
 
+if (settings) {
+	settings = JSON.parse(settings)
+}
+
+figma.ui.postMessage({ type: "loaded-plugin-settings", data: settings })
 figma.ui.postMessage({ type: "loaded-plugin-recent-search-list", data: recentSearchList })
 figma.ui.postMessage({ type: "loaded-plugin-filter-counts", data: nodeTypeFilterList })
 
@@ -38,8 +44,6 @@ function sendPluginmessage(params) {
 }
 
 figma.ui.onmessage = msg => {
-
-
 
 	// One way of distinguishing between different types of messages sent from
 	// your HTML page is to use an object with a "type" property like this.
@@ -233,7 +237,10 @@ figma.ui.onmessage = msg => {
 		sendPluginmessage(message)
 	}
 
-
+	if (msg.type === 'update-settings') {
+		const string = JSON.stringify(msg.parameters)
+		documentNode.setPluginData("settings", string)
+	}
 };
 
 function sendResultsList(results) {

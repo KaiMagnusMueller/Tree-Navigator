@@ -1,4 +1,4 @@
-import { writable } from 'svelte/store';
+import { readable, writable } from 'svelte/store';
 
 export let nodeTypeFilterListDefault = writable([])
 
@@ -125,23 +125,32 @@ export let UIState = writable({
     showSearchResults: false,
 })
 
+export let defaultSettings = readable({
+    recentSearchLength: 20,
+    rememberNodeFilterCounts: true
+})
 
-function createTestStore() {
-    const { subscribe, set, update } = writable([]);
+export let settings = writable({
 
-    return {
-        subscribe,
-        // set: (value) => set(value),
-        increment: () => update(n => n + 1),
-        decrement: () => update(n => n - 1),
-        add: addSearch(),
-        reset: () => set(0)
-    };
+})
 
-    function addSearch(params) {
 
-    }
-}
+// function createTestStore() {
+//     const { subscribe, set, update } = writable([]);
 
-const testStore = createTestStore()
-export { testStore }
+//     return {
+//         subscribe,
+//         // set: (value) => set(value),
+//         increment: () => update(n => n + 1),
+//         decrement: () => update(n => n - 1),
+//         add: addSearch(),
+//         reset: () => set(0)
+//     };
+
+//     function addSearch(params) {
+
+//     }
+// }
+
+// const testStore = createTestStore()
+// export { testStore }

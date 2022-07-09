@@ -2,7 +2,7 @@
 	//import Global CSS from the svelte boilerplate
 	//contains Figma color vars, spacing vars, utility classes and more
 	import { GlobalCSS } from 'figma-plugin-ds-svelte';
-	import { searchQuery, recentSearches, UIState, activeFilters, nodeTypeFilterList, nodeTypeFilterListDefault } from './stores';
+	import { searchQuery, recentSearches, UIState, activeFilters, nodeTypeFilterList, settings, defaultSettings } from './stores';
 	import { recentSearchExamples } from './assets/example-data';
 	import { saveRecentSearches, saveFilterRanking } from './lib/helper-functions';
 
@@ -19,12 +19,13 @@
 		IconComponent,
 		IconForward,
 		Section,
+		Switch,
 	} from 'figma-plugin-ds-svelte';
 
 	import InputFlexible from './components/InputFlexible';
 	import FilterList from './components/FilterList.svelte';
 	import RecentSearchList from './components/RecentSearchList.svelte';
-	import { each, now, onMount } from 'svelte/internal';
+	import { onMount } from 'svelte/internal';
 	import IconInfo from './assets/icons/information.svg';
 	import ResultsList from './components/ResultsList.svelte';
 	import TestComponent from './components/TestComponent.svelte';
@@ -47,9 +48,20 @@
 
 	onMount(() => {
 		onmessage = (event) => {
+			if (event.data.pluginMessage.type == 'loaded-plugin-settings') {
+				if (event.data.pluginMessage.data.length > 0) {
+					console.log('settings found... loading');
+					$settings = event.data.pluginMessage.data;
+				} else {
+					console.log('no settings... loading defaults');
+					$settings = $defaultSettings;
+					// TODO: message from figma currently not coming through
+				}
+			}
+
 			if (event.data.pluginMessage.type == 'loaded-plugin-recent-search-list') {
 				if (event.data.pluginMessage.data.length > 0) {
-					// console.log('data found... loading');
+					console.log('data found... loading');
 					$recentSearches = event.data.pluginMessage.data;
 				} else {
 					console.log('no data... loading example');
@@ -74,7 +86,7 @@
 				});
 
 				// console.log('update node filter list');
-				// console.log(filterList);
+				console.log(filterList);
 			}
 
 			// TODO: save filter list without checked state
@@ -130,7 +142,7 @@
 			};
 
 			$recentSearches = [queryToAdd, ...$recentSearches];
-			$recentSearches = $recentSearches.slice(0, 20);
+			$recentSearches = $recentSearches.slice(0, $settings.recentSearchLength);
 			// console.log($recentSearches);
 
 			saveRecentSearches($recentSearches);
@@ -139,18 +151,8 @@
 		}
 	}
 
-	function displayResults() {
-		$UIState.showMainMenu = false;
-		$UIState.showSearchResults = true;
-	}
-
 	function cancel() {
 		parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*');
-	}
-
-	function navBack(params) {
-		$UIState.showMainMenu = true;
-		$UIState.showSearchResults = false;
 	}
 
 	function updateNodeTypeFilterCounts(types) {
@@ -171,9 +173,31 @@
 		saveRecentSearches($recentSearches);
 	}
 
+	function resetFilterCounts() {
+		$nodeTypeFilterList.forEach((elem) => {
+			elem.count = 0;
+		});
+		saveFilterRanking($nodeTypeFilterList);
+	}
+
+	function toggleFilterReordering() {
+		console.log($settings);
+		resetFilterCounts();
+	}
+
 	// -------------------------
 	// UI
 	// -------------------------
+
+	function displayResults() {
+		$UIState.showMainMenu = false;
+		$UIState.showSearchResults = true;
+	}
+
+	function navBack(params) {
+		$UIState.showMainMenu = true;
+		$UIState.showSearchResults = false;
+	}
 
 	function openSettings() {
 		$UIState.showSettingsMenu = true;
@@ -189,7 +213,7 @@
 			<IconButton on:click={handleSubmitButton} iconName={IconForward} bind:disabled />
 		</div>
 		{#if filterList.length > 0}
-			<FilterList class="flex-no-shrink" on:filterChanged={(event) => (filterChanged = event.detail)} {filterList} />
+			<FilterList class="flex-no-shrink" on:filterChanged={(event) => (filterChanged = event.detail)} bind:filterList />
 		{/if}
 		{#if $UIState.showMainMenu}
 			<div class="section--recent flex column flex-grow">
@@ -206,8 +230,8 @@
 		{/if}
 	</div>
 	{#if $UIState.showSettingsMenu}
-		<div class="menu--settings">
-			<div class="settings--header flex pr-xxsmall pl-xxsmall pt-xxsmall ">
+		<div class="menu--settings flex column">
+			<div class="settings--header flex pt-xxsmall pr-xxsmall pl-xxsmall">
 				<IconButton
 					on:click={() => {
 						$UIState.showSettingsMenu = false;
@@ -216,9 +240,18 @@
 				/>
 				<Section class="">Settings</Section>
 			</div>
-			<div class="settings--content pt-xsmall pr-xxsmall pl-xxsmall">
-				<Section class="">Recent Searches</Section>
-				<Button variant="secondary" destructive on:click={deleteRecentSearches}>Delete Recent Searches</Button>
+			<div class="settings--content pr-xxsmall pl-xxsmall">
+				<div class="settings--section pb-xxsmall">
+					<Section class="">Recent Searches</Section>
+					<Button variant="secondary" destructive on:click={deleteRecentSearches}>Delete Recent Searches</Button>
+				</div>
+				<div class="settings--section pb-xxsmall">
+					<Section class="settings--input">Filters</Section>
+					<Button variant="secondary" destructive on:click={resetFilterCounts}>Reset Filter Order</Button>
+					<Switch bind:checked={$settings.rememberNodeFilterCounts} on:change={toggleFilterReordering}
+						>Sort Filters by Usage</Switch
+					>
+				</div>
 			</div>
 		</div>
 	{/if}
@@ -260,8 +293,18 @@
 		height: 100%;
 		top: 0;
 		left: 0;
+		z-index: 1;
+
+		gap: 12px;
 
 		background-color: var(--white);
+	}
+
+	.settings--section {
+	}
+
+	.settings--input {
+		width: fit-content;
 	}
 
 	:global(html) {
