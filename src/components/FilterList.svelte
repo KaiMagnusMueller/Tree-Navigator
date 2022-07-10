@@ -1,7 +1,7 @@
 <script>
     import { afterUpdate, onMount, createEventDispatcher } from 'svelte';
 
-    import { activeFilters, nodeTypeFilterList, searchQuery } from '../stores';
+    import { activeFilters, searchQuery, settings } from '../stores';
     import FilterPill from './FilterPill.svelte';
     import FilterScrollButton from './FilterScrollButton.svelte';
     import { Checkbox } from 'figma-plugin-ds-svelte';
@@ -21,12 +21,16 @@
         let stickyFilters = filters.filter((elem) => elem.sticky == true);
         let regularFilters = filters.filter((elem) => elem.sticky == false || undefined);
 
-        stickyFilters.sort((a, b) => {
-            return b.count - a.count;
-        });
-        regularFilters.sort((a, b) => {
-            return b.count - a.count;
-        });
+        // Sort by filter counts if rememberNodeFilterCounts is on
+        if ($settings.rememberNodeFilterCounts) {
+            console.log($settings.rememberNodeFilterCounts);
+            stickyFilters.sort((a, b) => {
+                return b.count - a.count;
+            });
+            regularFilters.sort((a, b) => {
+                return b.count - a.count;
+            });
+        }
 
         // console.log(regularFilters);
 

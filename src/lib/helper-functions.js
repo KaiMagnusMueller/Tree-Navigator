@@ -41,6 +41,7 @@ function _objectWithoutProperties(obj, keys) {
 }
 
 export function saveSettings(settings) {
+    console.log(settings);
     parent.postMessage(
         {
             pluginMessage: {

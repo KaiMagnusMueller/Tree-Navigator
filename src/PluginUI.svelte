@@ -4,7 +4,7 @@
 	import { GlobalCSS } from 'figma-plugin-ds-svelte';
 	import { searchQuery, recentSearches, UIState, activeFilters, nodeTypeFilterList, settings, defaultSettings } from './stores';
 	import { recentSearchExamples } from './assets/example-data';
-	import { saveRecentSearches, saveFilterRanking } from './lib/helper-functions';
+	import { saveRecentSearches, saveFilterRanking, saveSettings } from './lib/helper-functions';
 
 	//import some Svelte Figma UI components
 	import {
@@ -49,13 +49,13 @@
 	onMount(() => {
 		onmessage = (event) => {
 			if (event.data.pluginMessage.type == 'loaded-plugin-settings') {
-				if (event.data.pluginMessage.data.length > 0) {
+				if (event.data.pluginMessage.data) {
 					console.log('settings found... loading');
 					$settings = event.data.pluginMessage.data;
 				} else {
 					console.log('no settings... loading defaults');
 					$settings = $defaultSettings;
-					// TODO: message from figma currently not coming through
+					// TODO: when new settings are added, merge restored settings with new default settings
 				}
 			}
 
@@ -81,12 +81,12 @@
 					filter.count = loadedFilter.count;
 				});
 
-				filterList.sort((a, b) => {
-					return b.count - a.count;
-				});
+				// filterList.sort((a, b) => {
+				// 	return b.count - a.count;
+				// });
 
 				// console.log('update node filter list');
-				console.log(filterList);
+				// console.log(filterList);
 			}
 
 			// TODO: save filter list without checked state
@@ -181,8 +181,8 @@
 	}
 
 	function toggleFilterReordering() {
-		console.log($settings);
-		resetFilterCounts();
+		// resetFilterCounts();
+		saveSettings($settings);
 	}
 
 	// -------------------------
@@ -247,10 +247,10 @@
 				</div>
 				<div class="settings--section pb-xxsmall">
 					<Section class="settings--input">Filters</Section>
-					<Button variant="secondary" destructive on:click={resetFilterCounts}>Reset Filter Order</Button>
 					<Switch bind:checked={$settings.rememberNodeFilterCounts} on:change={toggleFilterReordering}
 						>Sort Filters by Usage</Switch
 					>
+					<Button variant="secondary" destructive on:click={resetFilterCounts}>Reset Filter Order</Button>
 				</div>
 			</div>
 		</div>
