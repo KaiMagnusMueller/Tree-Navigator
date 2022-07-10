@@ -15,7 +15,7 @@
     "cssnano": "^5.1.11",
     "figma-plugin-ds-svelte": "github:KaiMagnusMueller/figma-plugin-ds-svelte-improved",
     "postcss": "^8.4.14",
-    "rollup": "^2.75.6",
+    "rollup": "^2.76.0",
     "rollup-plugin-html-bundle": "*",
     "rollup-plugin-livereload": "^2.0.5",
     "rollup-plugin-postcss": "^4.0.2",
