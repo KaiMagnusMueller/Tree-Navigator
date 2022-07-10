@@ -49,6 +49,9 @@
                 >{search.query_text}
             </RecentSearchItem>
         {/each}
+        {#if $recentSearches.length == 0}
+            <p>Nothing to see...</p>
+        {/if}
     </div>
 </div>
 

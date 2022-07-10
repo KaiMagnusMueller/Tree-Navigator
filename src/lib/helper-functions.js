@@ -39,3 +39,17 @@ function _objectWithoutProperties(obj, keys) {
     }
     return target;
 }
+
+export function saveSettings(settings) {
+    console.log(settings);
+    parent.postMessage(
+        {
+            pluginMessage: {
+                type: 'update-settings',
+                parameters: settings,
+            },
+        },
+        '*'
+    );
+    console.log("save settings");
+}
