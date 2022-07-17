@@ -138,7 +138,7 @@ export let caseMatching = writable([
 export let activeFilters = writable({
     node_types: [],
     query_text: "",
-    area_type: false,
+    area_type: "PAGE",
     selected_node_ids: [],
     string_match: false,
     case_sensitive: false
@@ -152,11 +152,11 @@ export let recentSearches = writable([
 export let searchQuery = writable({
     node_types: [],
     query_text: "",
-    restrict_to_selection: false,
+    area_type: "PAGE",
     selected_node_ids: [],
+    string_match: false,
+    case_sensitive: false,
     query_submit_time: "",
-    exact_string_match: false
-
 })
 
 export let UIState = writable({

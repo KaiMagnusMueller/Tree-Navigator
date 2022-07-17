@@ -9,14 +9,14 @@
     export { className as class };
     let className = '';
 
-    let filterArray = [];
-    export { filterArray as filterList };
+    let nodeTypeArray = [];
+    export { nodeTypeArray as nodeTypeList };
 
-    $: filterArray;
+    $: nodeTypeArray;
 
-    filterArray = sortAndBuildFilterList(filterArray);
+    nodeTypeArray = sortAndBuildNodeTypeFilter(nodeTypeArray);
 
-    function sortAndBuildFilterList(filters) {
+    function sortAndBuildNodeTypeFilter(filters) {
         // console.log(filters);
         let stickyFilters = filters.filter((elem) => elem.sticky == true);
         let regularFilters = filters.filter((elem) => elem.sticky == false || undefined);
@@ -58,27 +58,27 @@
 
         if (event.detail[0] == 'ALL') {
             console.log('reset all');
-            filterArray.forEach((elem) => {
+            nodeTypeArray.forEach((elem) => {
                 elem.checked = false;
             });
         }
 
         checkedLayerFilters = 0;
 
-        checkedLayerFilters = filterArray.filter((elem) => elem.checked == true && elem.node_type != 'ALL');
+        checkedLayerFilters = nodeTypeArray.filter((elem) => elem.checked == true && elem.node_type != 'ALL');
 
         console.log(checkedLayerFilters);
-        let ALL_FILTER_I = filterArray.findIndex((elem) => elem.node_type == 'ALL');
+        let ALL_FILTER_I = nodeTypeArray.findIndex((elem) => elem.node_type == 'ALL');
         if (checkedLayerFilters.length > 0) {
-            filterArray[ALL_FILTER_I].checked = false;
+            nodeTypeArray[ALL_FILTER_I].checked = false;
 
             dispatch('filterChanged', true);
         } else {
-            filterArray[ALL_FILTER_I].checked = true;
+            nodeTypeArray[ALL_FILTER_I].checked = true;
             dispatch('filterChanged', false);
         }
 
-        const _activeFilterObj = filterArray.filter((elem) => elem.checked == true);
+        const _activeFilterObj = nodeTypeArray.filter((elem) => elem.checked == true);
 
         let _activeFilters = [];
         _activeFilterObj.forEach((element) => {
@@ -149,8 +149,8 @@
     //TODO: check what _activeFilters contains, especially when no layer filter is selected and an ALL filer should be in there
 
     let selectionCheck = false;
-    $: _searchQuery.restrict_to_selection = selectionCheck;
-    $: $activeFilters.restrict_to_selection = selectionCheck;
+    $: _searchQuery.area_type = selectionCheck;
+    $: $activeFilters.area_type = selectionCheck;
     // $: console.log(selectionCheck);
 </script>
 
@@ -180,7 +180,7 @@
             disabled={allTypesDisabled}>All Types</FilterPill
         > -->
 
-            {#each filterArray as filter (filter.node_type)}
+            {#each nodeTypeArray as filter (filter.node_type)}
                 <FilterPill on:selectFilter={handleFilter} nodeType={filter.node_type} bind:checked={filter.checked}
                     >{filter.name}</FilterPill
                 >

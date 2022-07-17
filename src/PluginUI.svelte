@@ -44,7 +44,7 @@
 	//this is a reactive variable that will return false when a value is selected from
 	//the select menu, its value is bound to the primary buttons disabled prop
 
-	let filterList = [];
+	let nodeTypeList = [];
 
 	onMount(() => {
 		onmessage = (event) => {
@@ -70,23 +70,23 @@
 			}
 
 			if (event.data.pluginMessage.type == 'loaded-plugin-filter-counts') {
-				filterList = $nodeTypeFilters;
+				nodeTypeList = $nodeTypeFilters;
 				if (event.data.pluginMessage.data.length == 0) {
 					console.log('no filters used previously');
 					return;
 				}
 
-				filterList.forEach((filter) => {
+				nodeTypeList.forEach((filter) => {
 					let loadedFilter = event.data.pluginMessage.data.find((elem) => elem.node_type === filter.node_type);
 					filter.count = loadedFilter.count;
 				});
 
-				// filterList.sort((a, b) => {
+				// nodeTypeList.sort((a, b) => {
 				// 	return b.count - a.count;
 				// });
 
 				// console.log('update node filter list');
-				// console.log(filterList);
+				// console.log(nodeTypeList);
 			}
 
 			// TODO: save filter list without checked state
@@ -134,11 +134,14 @@
 		//only add to recentlist if the item is not already on the list
 		if (isNew == true) {
 			let queryToAdd = {
+				// TODO: Make dynamic, so it loops dynamically through every property
 				node_types: $searchQuery.node_types,
 				query_text: $searchQuery.query_text,
-				restrict_to_selection: $searchQuery.restrict_to_selection,
+				area_type: $searchQuery.area_type,
 				selected_node_ids: $searchQuery.selected_node_ids,
 				query_submit_time: $searchQuery.query_submit_time,
+				string_match: $searchQuery.string_match,
+				case_sensitive: $searchQuery.case_sensitive,
 			};
 
 			$recentSearches = [queryToAdd, ...$recentSearches];
@@ -212,8 +215,8 @@
 			<InputFlexible iconName={IconSearch} placeholder="Search" bind:value={searchString} class="flex-grow" autofocus />
 			<IconButton on:click={handleSubmitButton} iconName={IconForward} bind:disabled />
 		</div>
-		{#if filterList.length > 0}
-			<FilterSection class="flex-no-shrink" on:filterChanged={(event) => (filterChanged = event.detail)} bind:filterList />
+		{#if nodeTypeList.length > 0}
+			<FilterSection class="flex-no-shrink" on:filterChanged={(event) => (filterChanged = event.detail)} bind:nodeTypeList />
 		{/if}
 		{#if $UIState.showMainMenu}
 			<div class="section--recent flex column flex-grow">

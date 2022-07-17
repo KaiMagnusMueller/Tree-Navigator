@@ -84,7 +84,7 @@ figma.ui.onmessage = msg => {
 		//
 		let nodes = []
 
-		if (query.restrict_to_selection && figma.currentPage.selection.length > 0) {
+		if (query.area_type === "SELECTION" && figma.currentPage.selection.length > 0) {
 
 			let _nodeSelectionSet = [...figma.currentPage.selection]
 

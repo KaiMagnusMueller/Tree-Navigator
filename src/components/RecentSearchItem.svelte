@@ -13,7 +13,7 @@
 
     // node_types: [],
     // query_text: "",
-    // restrict_to_selection: false,
+    // area_type: false,
     // selected_node_ids: [],
     // query_submit_time: "",
 
