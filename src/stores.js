@@ -1,8 +1,8 @@
 import { readable, writable } from 'svelte/store';
 
-export let nodeTypeFilterListDefault = writable([])
+export let nodeTypeFiltersDefault = writable([])
 
-export let nodeTypeFilterList = writable([
+export let nodeTypeFilters = writable([
     {
         node_type: "ALL",
         name: "All Types",
@@ -97,7 +97,7 @@ export let nodeTypeFilterList = writable([
 
 ]);
 
-export let searchAreaFilterList = writable([
+export let searchAreaFilters = writable([
     {
         area_type: "SELECTION",
         name: "Current selection",
@@ -112,24 +112,36 @@ export let searchAreaFilterList = writable([
     // },
 ])
 
-export let stringFilterList = writable([
+export let stringMatching = writable([
     {
         string_match: "EXACT",
         name: "Match Exact String",
-    },
-    {
-        area_type: "CASE_INSENSITIVE",
-        name: "Match case sensitive",
+        default: true
     },
 ])
 
+export let caseMatching = writable([
+    {
+        case_sensitive: false,
+        name: "Match case insensitive",
+        default: true
+    },
+    {
+        case_sensitive: true,
+        name: "Match case sensitive",
+    },
+
+])
+
+// --------------------------------
 
 export let activeFilters = writable({
     node_types: [],
     query_text: "",
-    restrict_to_selection: false,
+    area_type: false,
     selected_node_ids: [],
-    exact_string_match: false
+    string_match: false,
+    case_sensitive: false
 })
 
 

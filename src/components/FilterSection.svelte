@@ -88,16 +88,16 @@
         $activeFilters.node_types = _activeFilters;
     }
 
-    let nodeTypeFilterListElem;
+    let nodeTypeFiltersElem;
     let scrollMinMax = [];
 
     onMount(() => {
-        // console.log(nodeTypeFilterListElem);
+        // console.log(nodeTypeFiltersElem);
         initScrollPosition();
     });
 
     function initScrollPosition() {
-        scrollMinMax = [0, -1 * (nodeTypeFilterListElem.scrollWidth - nodeTypeFilterListElem.parentElement.clientWidth) - 8 - 45];
+        scrollMinMax = [0, -1 * (nodeTypeFiltersElem.scrollWidth - nodeTypeFiltersElem.parentElement.clientWidth) - 8 - 45];
 
         //TODO: fix figma not correctly assigning scrolllWidth
         // scrollWidth: 1051
@@ -105,8 +105,8 @@
         // VM111974:2852 320
         // VM111974:2853 (2) [0, -695]
 
-        // console.log(nodeTypeFilterListElem.scrollWidth);
-        // console.log(nodeTypeFilterListElem.parentElement.clientWidth);
+        // console.log(nodeTypeFiltersElem.scrollWidth);
+        // console.log(nodeTypeFiltersElem.parentElement.clientWidth);
         // console.log(scrollMinMax);
     }
 
@@ -166,8 +166,8 @@
     {/if} -->
 
         <div
-            id="nodeTypeFilterList"
-            bind:this={nodeTypeFilterListElem}
+            id="nodeTypeFilters"
+            bind:this={nodeTypeFiltersElem}
             class="filter-pill-group flex pl-xxsmall"
             on:wheel|preventDefault|stopPropagation={handleScroll}
             style="left: {scrollPos}px;"

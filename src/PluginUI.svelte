@@ -2,7 +2,7 @@
 	//import Global CSS from the svelte boilerplate
 	//contains Figma color vars, spacing vars, utility classes and more
 	import { GlobalCSS } from 'figma-plugin-ds-svelte';
-	import { searchQuery, recentSearches, UIState, activeFilters, nodeTypeFilterList, settings, defaultSettings } from './stores';
+	import { searchQuery, recentSearches, UIState, activeFilters, nodeTypeFilters, settings, defaultSettings } from './stores';
 	import { recentSearchExamples } from './assets/example-data';
 	import { saveRecentSearches, saveFilterRanking, saveSettings } from './lib/helper-functions';
 
@@ -70,7 +70,7 @@
 			}
 
 			if (event.data.pluginMessage.type == 'loaded-plugin-filter-counts') {
-				filterList = $nodeTypeFilterList;
+				filterList = $nodeTypeFilters;
 				if (event.data.pluginMessage.data.length == 0) {
 					console.log('no filters used previously');
 					return;
@@ -146,7 +146,7 @@
 			// console.log($recentSearches);
 
 			saveRecentSearches($recentSearches);
-			saveFilterRanking($nodeTypeFilterList);
+			saveFilterRanking($nodeTypeFilters);
 		} else {
 		}
 	}
@@ -157,15 +157,15 @@
 
 	function updateNodeTypeFilterCounts(types) {
 		types.forEach((type) => {
-			let index = $nodeTypeFilterList.findIndex((elem) => elem.node_type == type);
+			let index = $nodeTypeFilters.findIndex((elem) => elem.node_type == type);
 
 			if (index >= 0) {
 				console.log('Update at ' + index);
-				$nodeTypeFilterList[index].count++;
+				$nodeTypeFilters[index].count++;
 			}
 		});
 
-		// TODO: sort nodeTypeFilterList by count value (possibly in filter component)
+		// TODO: sort nodeTypeFilters by count value (possibly in filter component)
 	}
 
 	function deleteRecentSearches() {
@@ -174,10 +174,10 @@
 	}
 
 	function resetFilterCounts() {
-		$nodeTypeFilterList.forEach((elem) => {
+		$nodeTypeFilters.forEach((elem) => {
 			elem.count = 0;
 		});
-		saveFilterRanking($nodeTypeFilterList);
+		saveFilterRanking($nodeTypeFilters);
 	}
 
 	function toggleFilterReordering() {

@@ -1,6 +1,6 @@
 <script>
     import { Section } from 'figma-plugin-ds-svelte';
-    import { recentSearches, nodeTypeFilterList } from '../stores.js';
+    import { recentSearches, nodeTypeFilters } from '../stores.js';
     import RecentSearchItem from './RecentSearchItem.svelte';
     import { saveRecentSearches } from '../lib/helper-functions';
 
@@ -8,7 +8,7 @@
 
     let classList = '';
 
-    let nodeTypeList = $nodeTypeFilterList;
+    let nodeTypeList = $nodeTypeFilters;
 
     function getNodeName(types) {
         let nodes = [];

@@ -18,7 +18,7 @@ let documentNode = figma.root
 
 //reset plugindata
 // documentNode.setPluginData("recentSearchList", "[]")
-let nodeTypeFilterList = documentNode.getPluginData("nodeTypeFilterList")
+let nodeTypeFilters = documentNode.getPluginData("nodeTypeFilters")
 let recentSearchList = documentNode.getPluginData("recentSearchList")
 let settings = documentNode.getPluginData("settings")
 
@@ -26,8 +26,8 @@ if (recentSearchList) {
 	recentSearchList = JSON.parse(recentSearchList)
 }
 
-if (nodeTypeFilterList) {
-	nodeTypeFilterList = JSON.parse(nodeTypeFilterList)
+if (nodeTypeFilters) {
+	nodeTypeFilters = JSON.parse(nodeTypeFilters)
 }
 
 if (settings) {
@@ -36,7 +36,7 @@ if (settings) {
 
 figma.ui.postMessage({ type: "loaded-plugin-settings", data: settings })
 figma.ui.postMessage({ type: "loaded-plugin-recent-search-list", data: recentSearchList })
-figma.ui.postMessage({ type: "loaded-plugin-filter-counts", data: nodeTypeFilterList })
+figma.ui.postMessage({ type: "loaded-plugin-filter-counts", data: nodeTypeFilters })
 
 function sendPluginmessage(params) {
 	figma.ui.postMessage({ type: "plugin", data: params })
@@ -216,7 +216,7 @@ figma.ui.onmessage = msg => {
 		}
 
 		const string = JSON.stringify(msg.parameters)
-		documentNode.setPluginData("nodeTypeFilterList", string)
+		documentNode.setPluginData("nodeTypeFilters", string)
 	}
 
 
