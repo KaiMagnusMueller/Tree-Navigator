@@ -97,6 +97,33 @@ export let nodeTypeFilterList = writable([
 
 ]);
 
+export let searchAreaFilterList = writable([
+    {
+        area_type: "SELECTION",
+        name: "Current selection",
+    },
+    {
+        area_type: "PAGE",
+        name: "Current page",
+    },
+    // {
+    //     area_type: "DOCUMENT",
+    //     name: "Current file",
+    // },
+])
+
+export let stringFilterList = writable([
+    {
+        string_match: "EXACT",
+        name: "Match Exact String",
+    },
+    {
+        area_type: "CASE_INSENSITIVE",
+        name: "Match case sensitive",
+    },
+])
+
+
 export let activeFilters = writable({
     node_types: [],
     query_text: "",

@@ -23,7 +23,7 @@
 	} from 'figma-plugin-ds-svelte';
 
 	import InputFlexible from './components/InputFlexible';
-	import FilterList from './components/FilterList.svelte';
+	import FilterSection from './components/FilterSection.svelte';
 	import RecentSearchList from './components/RecentSearchList.svelte';
 	import { onMount } from 'svelte/internal';
 	import IconInfo from './assets/icons/information.svg';
@@ -213,7 +213,7 @@
 			<IconButton on:click={handleSubmitButton} iconName={IconForward} bind:disabled />
 		</div>
 		{#if filterList.length > 0}
-			<FilterList class="flex-no-shrink" on:filterChanged={(event) => (filterChanged = event.detail)} bind:filterList />
+			<FilterSection class="flex-no-shrink" on:filterChanged={(event) => (filterChanged = event.detail)} bind:filterList />
 		{/if}
 		{#if $UIState.showMainMenu}
 			<div class="section--recent flex column flex-grow">
