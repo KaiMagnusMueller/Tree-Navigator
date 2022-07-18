@@ -18,23 +18,23 @@
 
     function sortAndBuildNodeTypeFilter(filters) {
         // console.log(filters);
-        let stickyFilters = filters.filter((elem) => elem.sticky == true);
-        let regularFilters = filters.filter((elem) => elem.sticky == false || undefined);
+        let stickyTypes = filters.filter((elem) => elem.sticky == true);
+        let regularTypes = filters.filter((elem) => elem.sticky == false || undefined);
 
         // Sort by filter counts if rememberNodeFilterCounts is on
         if ($settings.rememberNodeFilterCounts) {
             console.log($settings.rememberNodeFilterCounts);
-            stickyFilters.sort((a, b) => {
+            stickyTypes.sort((a, b) => {
                 return b.count - a.count;
             });
-            regularFilters.sort((a, b) => {
+            regularTypes.sort((a, b) => {
                 return b.count - a.count;
             });
         }
 
-        // console.log(regularFilters);
+        // console.log(regularTypes);
 
-        let _filterArray = stickyFilters.concat(regularFilters);
+        let _filterArray = stickyTypes.concat(regularTypes);
 
         _filterArray.forEach((element) => {
             const enabled = element.default ? true : false;
@@ -152,6 +152,11 @@
     $: _searchQuery.area_type = selectionCheck;
     $: $activeFilters.area_type = selectionCheck;
     // $: console.log(selectionCheck);
+
+    let selectedTypes;
+    let selectedArea;
+    let selectedStringMatch;
+    let selectedCase;
 </script>
 
 <svelte:window on:resize={initScrollPosition} />
@@ -180,13 +185,13 @@
             disabled={allTypesDisabled}>All Types</FilterPill
         > -->
 
-            {#each nodeTypeArray as filter (filter.node_type)}
-                <FilterPill on:selectFilter={handleFilter} nodeType={filter.node_type} bind:checked={filter.checked}
-                    >{filter.name}</FilterPill
-                >
-
-                <!-- <FilterPill iconName={IconComponent}>Component</FilterPill> -->
-            {/each}
+            <FilterPill on:selectFilter={handleFilter} bind:selectedValues={selectedTypes} />
+            <!-- TODO: add slot in filter pill that sets the correct label like: "Instances, 2 more" -->
+            <!-- <FilterPill iconName={IconComponent}>Component</FilterPill> -->
+            <!-- 
+            <FilterPill on:selectFilter={handleFilter} optionList={searchAreaArray} bind:selectedValues={selectedArea} />
+            <FilterPill on:selectFilter={handleFilter} optionList={stringMatchArray} bind:selectedValues={selectedStringMatch} />
+            <FilterPill on:selectFilter={handleFilter} optionList={caseArray} bind:selectedValues={selectedCase} /> -->
         </div>
         <!-- {#if scrollPos != scrollMinMax[1]}
         <FilterScrollButton

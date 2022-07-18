@@ -1,41 +1,55 @@
 <script>
-    import { GlobalCSS, Icon } from "figma-plugin-ds-svelte";
+    import { GlobalCSS, Icon } from 'figma-plugin-ds-svelte';
 
-    import { createEventDispatcher, onMount } from "svelte";
-    import IconFlexible from "./IconFlexible";
+    import { createEventDispatcher, onMount } from 'svelte';
+    import IconFlexible from './IconFlexible';
+    import DropdownMenu from './DropdownMenu';
 
-    export let variant = "primary";
+    export let variant = 'primary';
     export let disabled = false;
     export let destructive = false;
     export { className as class };
 
-    export let iconName = "";
+    export let iconName = '';
     export let iconText = null;
 
     let size = 16;
-    import SVGComponent from "../assets/icons/SVGComponent.svg";
+    import SVGComponent from '../assets/icons/SVGComponent.svg';
 
     export let checked = false;
-    export let nodeType = "";
 
-    let className = "";
+    // Menu item test
+    export let optionList = [
+        { value: 'item1', label: 'Passthrough', group: 'group1', selected: true },
+        { value: 'item2', label: 'Normal ', group: 'group1', selected: false },
+        { value: 'item3', label: 'Darken', group: 'group2', selected: false },
+        { value: 'item4', label: 'Multiply', group: 'group2', selected: false },
+        { value: 'item4', label: 'Color Burn', group: 'group2', selected: false },
+    ];
+
+    export let nodeType = '';
+
+    let className = '';
 
     let dispatch = createEventDispatcher();
 
     function handleClick() {
         //TODO: disabled state, event stoppen
         checked = !checked;
+        visible = !visible;
     }
+
+    let visible = false;
 </script>
 
 <div
     on:click={handleClick}
-    on:click={() => dispatch("selectFilter", [nodeType, checked])}
+    on:click={() => dispatch('selectFilter', [nodeType, checked])}
     on:submit|preventDefault
     on:keydown={(event) => {
-        if (event.key == "Enter") {
+        if (event.key == 'Enter') {
             handleClick();
-            dispatch("selectFilter", [nodeType, checked]);
+            dispatch('selectFilter', [nodeType, checked]);
         }
     }}
     onclick="this.blur();"
@@ -48,12 +62,7 @@
     tabindex="0"
 >
     {#if iconName}
-        <IconFlexible
-            iconName={SVGComponent}
-            {iconText}
-            {size}
-            color="transparent"
-        />
+        <IconFlexible iconName={SVGComponent} {iconText} {size} color="transparent" />
     {/if}
 
     <label>
@@ -61,6 +70,8 @@
         <slot />
     </label>
 </div>
+
+<DropdownMenu bind:menuItems={optionList} bind:visible />
 
 <style>
     div {
@@ -100,7 +111,7 @@
         background: #efcbfc;
     }
 
-    input[type="checkbox"] {
+    input[type='checkbox'] {
         display: none;
         /* visibility: hidden; */
     }
