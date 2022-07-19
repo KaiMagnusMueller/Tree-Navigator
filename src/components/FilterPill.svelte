@@ -64,7 +64,7 @@
         {disabled}
         class:destructive
         class="bt-dropdown {variant} {className}"
-        class:checked
+        class:checked={active}
         data-node-type={nodeType}
         tabindex="0"
         bind:this={pillElem}

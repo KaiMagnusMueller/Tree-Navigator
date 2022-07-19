@@ -357,7 +357,7 @@
 
     .menu {
         position: absolute;
-        top: 32px;
+        top: 8px;
         left: 0;
         /* width: 100%; */
         background-color: var(--hud);
