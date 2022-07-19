@@ -12,7 +12,12 @@
     export let placeholder = 'Please make a selection.';
     export let value = null; //stores the current selection, note, the value will be an object from your array
     export let showGroupLabels = false; //default prop, true will show option group labels
-    export let visible = false;
+    export let active = false;
+    export let pillElem;
+
+    console.log('pillElem: ');
+    console.log(pillElem);
+
     export { className as class };
 
     const dispatch = createEventDispatcher();
@@ -78,21 +83,26 @@
         });
     }
 
-    $: visible, menuClick();
+    $: active, menuClick();
 
     //run for all menu click events
     //this opens/closes the menu
     function menuClick(event) {
-        if (!event) {
-            visible = false;
-            return;
-        }
+        // if (!event) {
+        //     // visible = false;
+        //     return;
+        // }
 
-        resetMenuProperties();
+        console.log('event: ');
+        console.log(event);
+        console.log(menuList);
+        console.log(active);
 
-        if (!event.target) {
-            visible = false;
-        } else if (event.target.contains(menuButton)) {
+        // resetMenuProperties();
+
+        if (!event?.target) {
+            // active = false;
+        } else if (event.target.contains(pillElem)) {
             let topPos = 0;
 
             if (value) {
@@ -148,7 +158,8 @@
                 }, interval * x + 40);
             } else {
                 menuList.classList.add('hidden'); //hide the menu
-                menuButton.classList.remove('selected'); //remove selected state from button
+                // menuButton.classList.remove('selected'); //remove selected state from button
+                active = false;
             }
         }
     }
@@ -231,8 +242,7 @@
                 </span>
             {/if}
         </button> -->
-
-        <ul class="menu" class:hidden={!visible} bind:this={menuList}>
+        <ul class="menu" class:hidden={!active} bind:this={menuList}>
             {#if menuItems && menuItems.length > 0}
                 {#each menuItems as item, i}
                     {#if i === 0}
@@ -349,7 +359,7 @@
         position: absolute;
         top: 32px;
         left: 0;
-        width: 100%;
+        /* width: 100%; */
         background-color: var(--hud);
         box-shadow: var(--shadow-hud);
         padding: var(--size-xxsmall) 0 var(--size-xxsmall) 0;

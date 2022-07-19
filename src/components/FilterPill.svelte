@@ -36,45 +36,57 @@
     function handleClick() {
         //TODO: disabled state, event stoppen
         checked = !checked;
-        visible = !visible;
+        active = !active;
+
+        console.log('-----------------');
+        console.log('Dropdown: ' + active);
+        console.log('pill elem: ' + pillElem);
     }
 
-    let visible = false;
+    let active = false;
+    let pillElem;
+    let value = 'undefined';
 </script>
 
-<div
-    on:click={handleClick}
-    on:click={() => dispatch('selectFilter', [nodeType, checked])}
-    on:submit|preventDefault
-    on:keydown={(event) => {
-        if (event.key == 'Enter') {
-            handleClick();
-            dispatch('selectFilter', [nodeType, checked]);
-        }
-    }}
-    onclick="this.blur();"
-    {variant}
-    {disabled}
-    class:destructive
-    class="{variant} {className}"
-    class:checked
-    data-node-type={nodeType}
-    tabindex="0"
->
-    {#if iconName}
-        <IconFlexible iconName={SVGComponent} {iconText} {size} color="transparent" />
-    {/if}
+<div class="wrapper">
+    <div
+        on:click={handleClick}
+        on:click={() => dispatch('selectFilter', [nodeType, checked])}
+        on:submit|preventDefault
+        on:keydown={(event) => {
+            if (event.key == 'Enter') {
+                handleClick();
+                dispatch('selectFilter', [nodeType, checked]);
+            }
+        }}
+        onclick="this.blur();"
+        {variant}
+        {disabled}
+        class:destructive
+        class="bt-dropdown {variant} {className}"
+        class:checked
+        data-node-type={nodeType}
+        tabindex="0"
+        bind:this={pillElem}
+    >
+        {#if iconName}
+            <IconFlexible iconName={SVGComponent} {iconText} {size} color="transparent" />
+        {/if}
 
-    <label>
-        <input type="checkbox" bind:checked />
-        <slot />
-    </label>
+        <label>
+            <input type="checkbox" bind:checked={active} />
+            <slot>{value.label}</slot>
+        </label>
+    </div>
+    <DropdownMenu bind:menuItems={optionList} bind:active bind:pillElem bind:value />
 </div>
 
-<DropdownMenu bind:menuItems={optionList} bind:visible />
-
 <style>
-    div {
+    .wrapper {
+        position: relative;
+    }
+
+    .bt-dropdown {
         display: flex;
         gap: 4px;
         align-items: center;
@@ -96,18 +108,18 @@
         transition: all 0.15s;
     }
 
-    div:focus,
-    :hover {
+    .bt-dropdown:focus,
+    .bt-dropdown:hover {
         /* outline: 2px solid var(--blue);
         outline-offset: -2px; */
         box-shadow: 0 1px 6px rgba(128, 46, 111, 0.51);
     }
 
-    div:active {
+    .bt-dropdown:active {
         background: #c484da;
     }
 
-    div.checked {
+    .bt-dropdown.checked {
         background: #efcbfc;
     }
 
