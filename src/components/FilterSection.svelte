@@ -47,7 +47,9 @@
     function sortAndBuildNodeTypeFilter(filters) {
         // console.log(filters);
         let stickyTypes = filters.filter((elem) => elem.sticky == true);
-        let regularTypes = filters.filter((elem) => elem.sticky == false || undefined);
+        let regularTypes = filters.filter(
+            (elem) => elem.sticky == false || undefined
+        );
 
         // Sort by filter counts if rememberNodeFilterCounts is on
         if ($settings.rememberNodeFilterCounts) {
@@ -90,38 +92,52 @@
     function handleFilter(event) {
         //detail: [NODE_TYPE, checked]
 
-        // console.log(event.detail);
+        console.log(event);
 
-        if (event.detail[0] == 'ALL') {
-            console.log('reset all');
-            nodeTypeArray.forEach((elem) => {
-                elem.checked = false;
-            });
-        }
+        // if (event.detail[0] == 'ALL') {
+        //     console.log('reset all');
+        //     nodeTypeArray.forEach((elem) => {
+        //         elem.checked = false;
+        //     });
+        // }
 
-        checkedLayerFilters = 0;
+        // checkedLayerFilters = 0;
 
-        checkedLayerFilters = nodeTypeArray.filter((elem) => elem.checked == true && elem.node_type != 'ALL');
+        // checkedLayerFilters = nodeTypeArray.filter(
+        //     (elem) => elem.checked == true && elem.node_type != 'ALL'
+        // );
 
-        console.log(checkedLayerFilters);
-        let ALL_FILTER_I = nodeTypeArray.findIndex((elem) => elem.node_type == 'ALL');
-        if (checkedLayerFilters.length > 0) {
-            nodeTypeArray[ALL_FILTER_I].checked = false;
+        // console.log(checkedLayerFilters);
+        // let ALL_FILTER_I = nodeTypeArray.findIndex(
+        //     (elem) => elem.node_type == 'ALL'
+        // );
+        // if (checkedLayerFilters.length > 0) {
+        //     nodeTypeArray[ALL_FILTER_I].checked = false;
 
-            dispatch('filterChanged', true);
-        } else {
-            nodeTypeArray[ALL_FILTER_I].checked = true;
-            dispatch('filterChanged', false);
-        }
+        //     dispatch('filterChanged', true);
+        // } else {
+        //     nodeTypeArray[ALL_FILTER_I].checked = true;
+        //     dispatch('filterChanged', false);
+        // }
 
-        const _activeFilterObj = nodeTypeArray.filter((elem) => elem.checked == true);
+        // const _activeFilterObj = nodeTypeArray.filter(
+        //     (elem) => elem.checked == true
+        // );
 
-        let _activeFilters = [];
-        _activeFilterObj.forEach((element) => {
-            _activeFilters.push(element.node_type);
+        // let _activeFilters = [];
+        // _activeFilterObj.forEach((element) => {
+        //     _activeFilters.push(element.node_type);
+        // });
+
+        const filterType = event.detail.filterType;
+
+        const selection = [];
+        event.detail.selection.forEach((elem) => {
+            selection.push(elem.node_type);
         });
 
-        $activeFilters.node_types = _activeFilters;
+        $activeFilters[filterType] = selection;
+        console.log($activeFilters);
     }
 
     let nodeTypeFiltersElem;
@@ -133,7 +149,14 @@
     });
 
     function initScrollPosition() {
-        scrollMinMax = [0, -1 * (nodeTypeFiltersElem.scrollWidth - nodeTypeFiltersElem.parentElement.clientWidth) - 8 - 45];
+        scrollMinMax = [
+            0,
+            -1 *
+                (nodeTypeFiltersElem.scrollWidth -
+                    nodeTypeFiltersElem.parentElement.clientWidth) -
+                8 -
+                45,
+        ];
 
         //TODO: fix figma not correctly assigning scrolllWidth
         // scrollWidth: 1051
@@ -221,7 +244,12 @@
             disabled={allTypesDisabled}>All Types</FilterPill
         > -->
 
-            <FilterPill on:selectFilter={handleFilter} bind:selectedValues={selectedTypes} optionList={nodeTypeArray} />
+            <FilterPill
+                on:selectFilter={handleFilter}
+                bind:selectedValues={selectedTypes}
+                optionList={nodeTypeArray}
+                filterType={'node_types'}
+            />
             <!-- TODO: add slot in filter pill that sets the correct label like: "Instances, 2 more" -->
             <!-- <FilterPill iconName={IconComponent}>Component</FilterPill> -->
             <!-- 
@@ -237,7 +265,9 @@
         >
     {/if} -->
     </div>
-    <Checkbox class="pl-xxsmall" bind:checked={selectionCheck}>Limit to selection</Checkbox>
+    <Checkbox class="pl-xxsmall" bind:checked={selectionCheck}
+        >Limit to selection</Checkbox
+    >
 </div>
 
 <style>

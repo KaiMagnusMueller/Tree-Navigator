@@ -110,7 +110,9 @@
                 menuList.classList.remove('hidden');
 
                 let id = value.id;
-                let selectedItem = menuList.querySelector('[itemId="' + id + '"]');
+                let selectedItem = menuList.querySelector(
+                    '[itemId="' + id + '"]'
+                );
                 selectedItem.focus(); //set focus to the currently selected item
 
                 // calculate distance from top so that we can position the dropdown menu
@@ -140,7 +142,7 @@
             }
             menuItems[itemId].selected = true; //select current item
             updateSelectedAndIds();
-            dispatch('change', menuItems[itemId]);
+            dispatch('change', [menuItems[itemId]]);
 
             if (macOSBlink) {
                 var x = 4;
@@ -186,8 +188,13 @@
         if (bounding.top < 0) {
             menuList.style.top = -Math.abs(parentBounding.top - 8) + 'px';
         }
-        if (bounding.bottom > (window.innerHeight || document.documentElement.clientHeight)) {
-            let minTop = -Math.abs(parentBounding.top - (window.innerHeight - menuHeight - 8));
+        if (
+            bounding.bottom >
+            (window.innerHeight || document.documentElement.clientHeight)
+        ) {
+            let minTop = -Math.abs(
+                parentBounding.top - (window.innerHeight - menuHeight - 8)
+            );
             let newTop = -Math.abs(bounding.bottom - window.innerHeight + 16);
             if (menuResized) {
                 menuList.style.top = -Math.abs(parentBounding.top - 8) + 'px';
@@ -257,8 +264,11 @@
                             <SelectDivider />
                         {/if}
                     {/if}
-                    <SelectItem on:click={menuClick} on:mouseenter={removeHighlight} itemId={item.id} bind:selected={item.selected}
-                        >{item.label}</SelectItem
+                    <SelectItem
+                        on:click={menuClick}
+                        on:mouseenter={removeHighlight}
+                        itemId={item.id}
+                        bind:selected={item.selected}>{item.label}</SelectItem
                     >
                 {/each}
             {/if}

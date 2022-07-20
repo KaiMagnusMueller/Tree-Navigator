@@ -20,8 +20,7 @@
 
     // Menu item test
     export let optionList = [];
-
-    export let nodeType = '';
+    export let filterType;
 
     let className = '';
 
@@ -37,6 +36,20 @@
         //     console.log('pill elem: ' + pillElem);
     }
 
+    function dispatchEvent(event) {
+        console.log('selectFilter');
+        console.log(event);
+
+        const selection = [...event.detail];
+
+        console.log(selection);
+
+        dispatch('selectFilter', {
+            filterType: filterType,
+            selection: selection,
+        });
+    }
+
     let active = false;
     let pillElem;
     let value = 'undefined';
@@ -44,13 +57,15 @@
 
 <div class="wrapper">
     <div
-        on:click={handleClick}
-        on:click={() => dispatch('selectFilter', [nodeType, checked])}
+        on:click={() => {
+            handleClick();
+            // dispatchEvent();
+        }}
         on:submit|preventDefault
         on:keydown={(event) => {
             if (event.key == 'Enter') {
                 handleClick();
-                dispatch('selectFilter', [nodeType, checked]);
+                dispatchEvent();
             }
         }}
         onclick="this.blur();"
@@ -59,12 +74,16 @@
         class:destructive
         class="bt-dropdown {variant} {className}"
         class:checked={active}
-        data-node-type={nodeType}
         tabindex="0"
         bind:this={pillElem}
     >
         {#if iconName}
-            <IconFlexible iconName={SVGComponent} {iconText} {size} color="transparent" />
+            <IconFlexible
+                iconName={SVGComponent}
+                {iconText}
+                {size}
+                color="transparent"
+            />
         {/if}
 
         <label>
@@ -72,7 +91,16 @@
             <slot>{value.label}</slot>
         </label>
     </div>
-    <DropdownMenu bind:menuItems={optionList} bind:active bind:pillElem bind:value />
+    <DropdownMenu
+        bind:menuItems={optionList}
+        bind:active
+        bind:pillElem
+        bind:value
+        on:change={(event) => {
+            handleClick();
+            dispatchEvent(event);
+        }}
+    />
 </div>
 
 <style>
