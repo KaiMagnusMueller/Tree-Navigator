@@ -14,7 +14,35 @@
 
     $: nodeTypeArray;
 
+    // Example optionlist formatting
+    // export let optionList = [
+    //     { value: 'item1', label: 'Passthrough', group: 'group1', selected: true },
+    //     { value: 'item2', label: 'Normal ', group: 'group1', selected: false },
+    //     { value: 'item3', label: 'Darken', group: 'group2', selected: false },
+    //     { value: 'item4', label: 'Multiply', group: 'group2', selected: false },
+    //     { value: 'item4', label: 'Color Burn', group: 'group2', selected: false },
+    // ];
+
     nodeTypeArray = sortAndBuildNodeTypeFilter(nodeTypeArray);
+
+    console.log(nodeTypeArray);
+
+    // Current nodeTypeArray
+    //     0: {node_type: 'ALL', name: 'All Types', count: 0, sticky: true, default: true, …}
+    // 1: {node_type: 'COMPONENT', name: 'Component', count: 1, sticky: false, checked: false, …}
+    // 2: {node_type: 'BOOLEAN_OPERATION', name: 'Boolean Operation', count: 0, sticky: false, checked: false, …}
+    // 3: {node_type: 'COMPONENT_SET', name: 'Component Set', count: 0, sticky: false, checked: false, …}
+    // 4: {node_type: 'ELLIPSE', name: 'Ellipse', count: 0, sticky: false, checked: false, …}
+    // 5: {node_type: 'FRAME', name: 'Frame', count: 0, sticky: false, checked: false, …}
+    // 6: {node_type: 'GROUP', name: 'Group', count: 0, sticky: false, checked: false, …}
+    // 7: {node_type: 'INSTANCE', name: 'Instance', count: 0, sticky: false, checked: false, …}
+    // 8: {node_type: 'LINE', name: 'Line', count: 0, sticky: false, checked: false, …}
+    // 9: {node_type: 'POLYGON', name: 'Polygon', count: 0, sticky: false, checked: false, …}
+    // 10: {node_type: 'RECTANGLE', name: 'Rectangle', count: 0, sticky: false, checked: false, …}
+    // 11: {node_type: 'SLICE', name: 'Slice', count: 0, sticky: false, checked: false, …}
+    // 12: {node_type: 'STAR', name: 'Star', count: 0, sticky: false, checked: false, …}
+    // 13: {node_type: 'TEXT', name: 'Text', count: 0, sticky: false, checked: false, …}
+    // 14: {node_type: 'VECTOR', name: 'Vector', count: 0, sticky: false, checked: false, …}
 
     function sortAndBuildNodeTypeFilter(filters) {
         // console.log(filters);
@@ -38,7 +66,15 @@
 
         _filterArray.forEach((element) => {
             const enabled = element.default ? true : false;
-            element.checked = enabled;
+            element.selected = enabled;
+            element.value = element.node_type;
+            element.label = element.name;
+
+            if (element.sticky == true) {
+                element.group = 'group1';
+            } else {
+                element.group = 'group2';
+            }
         });
 
         return _filterArray;
@@ -185,7 +221,7 @@
             disabled={allTypesDisabled}>All Types</FilterPill
         > -->
 
-            <FilterPill on:selectFilter={handleFilter} bind:selectedValues={selectedTypes} />
+            <FilterPill on:selectFilter={handleFilter} bind:selectedValues={selectedTypes} optionList={nodeTypeArray} />
             <!-- TODO: add slot in filter pill that sets the correct label like: "Instances, 2 more" -->
             <!-- <FilterPill iconName={IconComponent}>Component</FilterPill> -->
             <!-- 

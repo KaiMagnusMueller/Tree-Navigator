@@ -19,13 +19,7 @@
     export let checked = false;
 
     // Menu item test
-    export let optionList = [
-        { value: 'item1', label: 'Passthrough', group: 'group1', selected: true },
-        { value: 'item2', label: 'Normal ', group: 'group1', selected: false },
-        { value: 'item3', label: 'Darken', group: 'group2', selected: false },
-        { value: 'item4', label: 'Multiply', group: 'group2', selected: false },
-        { value: 'item4', label: 'Color Burn', group: 'group2', selected: false },
-    ];
+    export let optionList = [];
 
     export let nodeType = '';
 
@@ -38,9 +32,9 @@
         checked = !checked;
         active = !active;
 
-        console.log('-----------------');
-        console.log('Dropdown: ' + active);
-        console.log('pill elem: ' + pillElem);
+        //     console.log('-----------------');
+        //     console.log('Dropdown: ' + active);
+        //     console.log('pill elem: ' + pillElem);
     }
 
     let active = false;
