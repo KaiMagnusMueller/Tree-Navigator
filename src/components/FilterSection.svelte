@@ -12,8 +12,6 @@
     let filterListArrayNodeTypeArray = [];
     export { filterListArrayNodeTypeArray as filterListNodeTypeList };
 
-    $: filterListArrayNodeTypeArray;
-
     // Example optionlist formatting
     // export let optionList = [
     //     { value: 'item1', label: 'Passthrough', group: 'group1', selected: true },
@@ -25,11 +23,12 @@
     console.log('unmodified filters');
     console.log(filterListArrayNodeTypeArray);
 
-    filterListArrayNodeTypeArray = sortAndBuildNodeTypeFilter(
-        filterListArrayNodeTypeArray
-    );
+    let filterArray = [];
+    console.log('modified filters');
 
-    console.log(filterListArrayNodeTypeArray);
+    filterArray = sortAndBuildNodeTypeFilter(filterListArrayNodeTypeArray);
+
+    console.log(filterArray);
 
     // Current filterListArrayNodeTypeArray
     //     0: {node_type: 'ALL', name: 'All Types', count: 0, sticky: true, default: true, …}
@@ -49,16 +48,22 @@
     // 14: {node_type: 'VECTOR', name: 'Vector', count: 0, sticky: false, checked: false, …}
 
     function sortAndBuildNodeTypeFilter(array) {
-        let _filterArray;
-        array.forEach((elem) => {
-            const filterType = elem.filterType;
-            const filters = elem.filterOptions;
+        console.log(array);
 
+        let _filterArray;
+        array.forEach((el) => {
+            console.log(el);
+
+            const filterType = el.filterType;
+            const filters = el.filterOptions;
+
+            console.log('-----------------');
             console.log(filterType);
+            console.log('filters');
             console.log(filters);
             let stickyTypes = filters.filter((elem) => elem.sticky == true);
             let regularTypes = filters.filter(
-                (elem) => elem.sticky == false || undefined
+                (elem) => elem.sticky === false || elem.sticky === undefined
             );
 
             // Sort by filter counts if rememberNodeFilterCounts is on
@@ -74,8 +79,10 @@
                     return b.count - a.count;
                 });
             }
-
-            // console.log(regularTypes);
+            console.log('stickyTypes');
+            console.log(stickyTypes);
+            console.log('regularTypes');
+            console.log(regularTypes);
 
             let _filterOptions = stickyTypes.concat(regularTypes);
 
@@ -92,7 +99,10 @@
                 }
             });
 
-            elem.filterOptions = _filterOptions;
+            el.filterOptions = _filterOptions;
+            console.log('_filterOptions');
+            console.log(_filterOptions);
+            console.log(filters);
         });
 
         return array;
@@ -261,7 +271,7 @@
             disabled={allTypesDisabled}>All Types</FilterPill
         > -->
 
-            {#each filterListArrayNodeTypeArray as filter}
+            {#each filterArray as filter}
                 <FilterPill
                     on:selectFilter={handleFilter}
                     optionList={filter.filterOptions}

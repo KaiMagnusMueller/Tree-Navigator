@@ -59,8 +59,6 @@
 	let filterListNodeTypeList = [];
 
 	onMount(() => {
-		console.log($filterDefinitions);
-
 		onmessage = (event) => {
 			if (event.data.pluginMessage.type == 'loaded-plugin-settings') {
 				if (event.data.pluginMessage.data) {
@@ -269,7 +267,7 @@
 			<FilterSection
 				class="flex-no-shrink"
 				on:filterChanged={(event) => (filterChanged = event.detail)}
-				bind:filterListNodeTypeList
+				{filterListNodeTypeList}
 			/>
 		{/if}
 		{#if $UIState.showMainMenu}

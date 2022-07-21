@@ -8,7 +8,7 @@ export let filterDefinitions = writable([
         filterOptions: [
             {
                 node_type: "ALL",
-                name: "All Types",
+                name: "All types",
                 count: 0,
                 sticky: true,
                 default: true
@@ -100,19 +100,6 @@ export let filterDefinitions = writable([
         ]
     },
     {
-        filterType: "ASDF",
-        filterOptions: [
-            {
-                area_type: "YOYOYOYOY",
-                name: "Current selection"
-            },
-            {
-                area_type: "lj kjh kjh ",
-                name: "Current page"
-            }
-        ]
-    },
-    {
 
         filterType: "area_type",
         filterOptions: [
@@ -122,7 +109,8 @@ export let filterDefinitions = writable([
             },
             {
                 area_type: "PAGE",
-                name: "Current page"
+                name: "Current page",
+                default: true
             }
         ]
     },
@@ -131,7 +119,7 @@ export let filterDefinitions = writable([
         filterOptions: [
             {
                 string_match: "EXACT",
-                name: "Match Exact String",
+                name: "Match exact name",
                 default: true
             },
         ]
