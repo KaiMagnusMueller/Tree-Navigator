@@ -9,10 +9,10 @@
     export { className as class };
     let className = '';
 
-    let nodeTypeArray = [];
-    export { nodeTypeArray as nodeTypeList };
+    let filterListArrayNodeTypeArray = [];
+    export { filterListArrayNodeTypeArray as filterListNodeTypeList };
 
-    $: nodeTypeArray;
+    $: filterListArrayNodeTypeArray;
 
     // Example optionlist formatting
     // export let optionList = [
@@ -22,12 +22,16 @@
     //     { value: 'item4', label: 'Multiply', group: 'group2', selected: false },
     //     { value: 'item4', label: 'Color Burn', group: 'group2', selected: false },
     // ];
+    console.log('unmodified filters');
+    console.log(filterListArrayNodeTypeArray);
 
-    nodeTypeArray = sortAndBuildNodeTypeFilter(nodeTypeArray);
+    filterListArrayNodeTypeArray = sortAndBuildNodeTypeFilter(
+        filterListArrayNodeTypeArray
+    );
 
-    console.log(nodeTypeArray);
+    console.log(filterListArrayNodeTypeArray);
 
-    // Current nodeTypeArray
+    // Current filterListArrayNodeTypeArray
     //     0: {node_type: 'ALL', name: 'All Types', count: 0, sticky: true, default: true, …}
     // 1: {node_type: 'COMPONENT', name: 'Component', count: 1, sticky: false, checked: false, …}
     // 2: {node_type: 'BOOLEAN_OPERATION', name: 'Boolean Operation', count: 0, sticky: false, checked: false, …}
@@ -44,42 +48,54 @@
     // 13: {node_type: 'TEXT', name: 'Text', count: 0, sticky: false, checked: false, …}
     // 14: {node_type: 'VECTOR', name: 'Vector', count: 0, sticky: false, checked: false, …}
 
-    function sortAndBuildNodeTypeFilter(filters) {
-        // console.log(filters);
-        let stickyTypes = filters.filter((elem) => elem.sticky == true);
-        let regularTypes = filters.filter(
-            (elem) => elem.sticky == false || undefined
-        );
+    function sortAndBuildNodeTypeFilter(array) {
+        let _filterArray;
+        array.forEach((elem) => {
+            const filterType = elem.filterType;
+            const filters = elem.filterOptions;
 
-        // Sort by filter counts if rememberNodeFilterCounts is on
-        if ($settings.rememberNodeFilterCounts) {
-            console.log($settings.rememberNodeFilterCounts);
-            stickyTypes.sort((a, b) => {
-                return b.count - a.count;
-            });
-            regularTypes.sort((a, b) => {
-                return b.count - a.count;
-            });
-        }
+            console.log(filterType);
+            console.log(filters);
+            let stickyTypes = filters.filter((elem) => elem.sticky == true);
+            let regularTypes = filters.filter(
+                (elem) => elem.sticky == false || undefined
+            );
 
-        // console.log(regularTypes);
-
-        let _filterArray = stickyTypes.concat(regularTypes);
-
-        _filterArray.forEach((element) => {
-            const enabled = element.default ? true : false;
-            element.selected = enabled;
-            element.value = element.node_type;
-            element.label = element.name;
-
-            if (element.sticky == true) {
-                element.group = 'group1';
-            } else {
-                element.group = 'group2';
+            // Sort by filter counts if rememberNodeFilterCounts is on
+            if (
+                $settings.rememberNodeFilterCounts &&
+                filterType === 'node_type'
+            ) {
+                console.log($settings.rememberNodeFilterCounts);
+                stickyTypes.sort((a, b) => {
+                    return b.count - a.count;
+                });
+                regularTypes.sort((a, b) => {
+                    return b.count - a.count;
+                });
             }
+
+            // console.log(regularTypes);
+
+            let _filterOptions = stickyTypes.concat(regularTypes);
+
+            _filterOptions.forEach((element) => {
+                const enabled = element?.default ? true : false;
+                element.selected = enabled;
+                element.value = element[filterType];
+                element.label = element.name;
+
+                if (element.sticky == true) {
+                    element.group = 'group1';
+                } else {
+                    element.group = 'group2';
+                }
+            });
+
+            elem.filterOptions = _filterOptions;
         });
 
-        return _filterArray;
+        return array;
     }
 
     let _activeFilters = [];
@@ -96,31 +112,31 @@
 
         // if (event.detail[0] == 'ALL') {
         //     console.log('reset all');
-        //     nodeTypeArray.forEach((elem) => {
+        //     filterListArrayNodeTypeArray.forEach((elem) => {
         //         elem.checked = false;
         //     });
         // }
 
         // checkedLayerFilters = 0;
 
-        // checkedLayerFilters = nodeTypeArray.filter(
+        // checkedLayerFilters = filterListArrayNodeTypeArray.filter(
         //     (elem) => elem.checked == true && elem.node_type != 'ALL'
         // );
 
         // console.log(checkedLayerFilters);
-        // let ALL_FILTER_I = nodeTypeArray.findIndex(
+        // let ALL_FILTER_I = filterListArrayNodeTypeArray.findIndex(
         //     (elem) => elem.node_type == 'ALL'
         // );
         // if (checkedLayerFilters.length > 0) {
-        //     nodeTypeArray[ALL_FILTER_I].checked = false;
+        //     filterListArrayNodeTypeArray[ALL_FILTER_I].checked = false;
 
         //     dispatch('filterChanged', true);
         // } else {
-        //     nodeTypeArray[ALL_FILTER_I].checked = true;
+        //     filterListArrayNodeTypeArray[ALL_FILTER_I].checked = true;
         //     dispatch('filterChanged', false);
         // }
 
-        // const _activeFilterObj = nodeTypeArray.filter(
+        // const _activeFilterObj = filterListArrayNodeTypeArray.filter(
         //     (elem) => elem.checked == true
         // );
 
@@ -140,20 +156,21 @@
         console.log($activeFilters);
     }
 
-    let nodeTypeFiltersElem;
+    let filterDefinitionsElem;
     let scrollMinMax = [];
 
     onMount(() => {
-        // console.log(nodeTypeFiltersElem);
+        // console.log(filterDefinitionsElem);
         initScrollPosition();
     });
 
+    // TODO: 20.07. fix being able to scroll even when th efilter is smaller than the plugin window
     function initScrollPosition() {
         scrollMinMax = [
             0,
             -1 *
-                (nodeTypeFiltersElem.scrollWidth -
-                    nodeTypeFiltersElem.parentElement.clientWidth) -
+                (filterDefinitionsElem.scrollWidth -
+                    filterDefinitionsElem.parentElement.clientWidth) -
                 8 -
                 45,
         ];
@@ -164,8 +181,8 @@
         // VM111974:2852 320
         // VM111974:2853 (2) [0, -695]
 
-        // console.log(nodeTypeFiltersElem.scrollWidth);
-        // console.log(nodeTypeFiltersElem.parentElement.clientWidth);
+        // console.log(filterDefinitionsElem.scrollWidth);
+        // console.log(filterDefinitionsElem.parentElement.clientWidth);
         // console.log(scrollMinMax);
     }
 
@@ -230,8 +247,8 @@
     {/if} -->
 
         <div
-            id="nodeTypeFilters"
-            bind:this={nodeTypeFiltersElem}
+            id="filterDefinitions"
+            bind:this={filterDefinitionsElem}
             class="filter-pill-group flex pl-xxsmall"
             on:wheel|preventDefault|stopPropagation={handleScroll}
             style="left: {scrollPos}px;"
@@ -244,12 +261,14 @@
             disabled={allTypesDisabled}>All Types</FilterPill
         > -->
 
-            <FilterPill
-                on:selectFilter={handleFilter}
-                bind:selectedValues={selectedTypes}
-                optionList={nodeTypeArray}
-                filterType={'node_types'}
-            />
+            {#each filterListArrayNodeTypeArray as filter}
+                <FilterPill
+                    on:selectFilter={handleFilter}
+                    optionList={filter.filterOptions}
+                    filterType={filter.filterOptions}
+                />
+            {/each}
+
             <!-- TODO: add slot in filter pill that sets the correct label like: "Instances, 2 more" -->
             <!-- <FilterPill iconName={IconComponent}>Component</FilterPill> -->
             <!-- 

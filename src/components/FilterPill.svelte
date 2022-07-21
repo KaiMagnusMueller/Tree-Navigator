@@ -20,7 +20,7 @@
 
     // Menu item test
     export let optionList = [];
-    export let filterType;
+    export let filterType; //
 
     let className = '';
 

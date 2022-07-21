@@ -1,137 +1,156 @@
 import { readable, writable } from 'svelte/store';
 
-export let nodeTypeFiltersDefault = writable([])
+export let filterDefinitionsDefault = writable([])
 
-export let nodeTypeFilters = writable([
+export let filterDefinitions = writable([
     {
-        node_type: "ALL",
-        name: "All Types",
-        count: 0,
-        sticky: true,
-        default: true
+        filterType: "node_type",
+        filterOptions: [
+            {
+                node_type: "ALL",
+                name: "All Types",
+                count: 0,
+                sticky: true,
+                default: true
+            },
+            {
+                node_type: "BOOLEAN_OPERATION",
+                name: "Boolean Operation",
+                count: 0,
+                sticky: false,
+            },
+            {
+                node_type: "COMPONENT",
+                name: "Component",
+                count: 0,
+                sticky: false
+            },
+            {
+                node_type: "COMPONENT_SET",
+                name: "Component Set",
+                count: 0,
+                sticky: false
+            },
+            {
+                node_type: "ELLIPSE",
+                name: "Ellipse",
+                count: 0,
+                sticky: false
+            },
+            {
+                node_type: "FRAME",
+                name: "Frame",
+                count: 0,
+                sticky: false
+            },
+            {
+                node_type: "GROUP",
+                name: "Group",
+                count: 0,
+                sticky: false
+            },
+            {
+                node_type: "INSTANCE",
+                name: "Instance",
+                count: 0,
+                sticky: false
+            },
+            {
+                node_type: "LINE",
+                name: "Line",
+                count: 0,
+                sticky: false
+            },
+            {
+                node_type: "POLYGON",
+                name: "Polygon",
+                count: 0,
+                sticky: false
+            },
+            {
+                node_type: "RECTANGLE",
+                name: "Rectangle",
+                count: 0,
+                sticky: false
+            },
+            {
+                node_type: "SLICE",
+                name: "Slice",
+                count: 0,
+                sticky: false
+            },
+            {
+                node_type: "STAR",
+                name: "Star",
+                count: 0,
+                sticky: false
+            },
+            {
+                node_type: "TEXT",
+                name: "Text",
+                count: 0,
+                sticky: false
+            },
+            {
+                node_type: "VECTOR",
+                name: "Vector",
+                count: 0,
+                sticky: false
+            }
+        ]
     },
     {
-        node_type: "BOOLEAN_OPERATION",
-        name: "Boolean Operation",
-        count: 0,
-        sticky: false,
+        filterType: "ASDF",
+        filterOptions: [
+            {
+                area_type: "YOYOYOYOY",
+                name: "Current selection"
+            },
+            {
+                area_type: "lj kjh kjh ",
+                name: "Current page"
+            }
+        ]
     },
     {
-        node_type: "COMPONENT",
-        name: "Component",
-        count: 0,
-        sticky: false
-    },
-    {
-        node_type: "COMPONENT_SET",
-        name: "Component Set",
-        count: 0,
-        sticky: false
-    },
-    {
-        node_type: "ELLIPSE",
-        name: "Ellipse",
-        count: 0,
-        sticky: false
-    },
-    {
-        node_type: "FRAME",
-        name: "Frame",
-        count: 0,
-        sticky: false
-    },
-    {
-        node_type: "GROUP",
-        name: "Group",
-        count: 0,
-        sticky: false
-    },
-    {
-        node_type: "INSTANCE",
-        name: "Instance",
-        count: 0,
-        sticky: false
-    },
-    {
-        node_type: "LINE",
-        name: "Line",
-        count: 0,
-        sticky: false
-    },
-    {
-        node_type: "POLYGON",
-        name: "Polygon",
-        count: 0,
-        sticky: false
-    },
-    {
-        node_type: "RECTANGLE",
-        name: "Rectangle",
-        count: 0,
-        sticky: false
-    },
-    {
-        node_type: "SLICE",
-        name: "Slice",
-        count: 0,
-        sticky: false
-    },
-    {
-        node_type: "STAR",
-        name: "Star",
-        count: 0,
-        sticky: false
-    },
-    {
-        node_type: "TEXT",
-        name: "Text",
-        count: 0,
-        sticky: false
-    },
-    {
-        node_type: "VECTOR",
-        name: "Vector",
-        count: 0,
-        sticky: false
-    },
 
+        filterType: "area_type",
+        filterOptions: [
+            {
+                area_type: "SELECTION",
+                name: "Current selection"
+            },
+            {
+                area_type: "PAGE",
+                name: "Current page"
+            }
+        ]
+    },
+    {
+        filterType: "string_match",
+        filterOptions: [
+            {
+                string_match: "EXACT",
+                name: "Match Exact String",
+                default: true
+            },
+        ]
+    },
+    {
+        filterType: "case_sensitive",
+        filterOptions: [
+            {
+                case_sensitive: false,
+                name: "Match case insensitive",
+                default: true
+            },
+            {
+                case_sensitive: true,
+                name: "Match case sensitive"
+            },
+        ]
+    }
 ]);
-
-export let searchAreaFilters = writable([
-    {
-        area_type: "SELECTION",
-        name: "Current selection",
-    },
-    {
-        area_type: "PAGE",
-        name: "Current page",
-    },
-    // {
-    //     area_type: "DOCUMENT",
-    //     name: "Current file",
-    // },
-])
-
-export let stringMatching = writable([
-    {
-        string_match: "EXACT",
-        name: "Match Exact String",
-        default: true
-    },
-])
-
-export let caseMatching = writable([
-    {
-        case_sensitive: false,
-        name: "Match case insensitive",
-        default: true
-    },
-    {
-        case_sensitive: true,
-        name: "Match case sensitive",
-    },
-
-])
 
 // --------------------------------
 
