@@ -20,7 +20,14 @@
 
     // Menu item test
     export let optionList = [];
-    export let filterType; //
+    export let filterData;
+
+    const filterType = filterData.filterType;
+
+    if (optionList.length == 1) {
+        disabled = true;
+        console.log(disabled);
+    }
 
     let className = '';
 
@@ -37,12 +44,7 @@
     }
 
     function dispatchEvent(event) {
-        console.log('selectFilter');
-        console.log(event);
-
         const selection = [...event.detail];
-
-        console.log(selection);
 
         dispatch('selectFilter', {
             filterType: filterType,
@@ -55,7 +57,7 @@
     let value = 'undefined';
 </script>
 
-<div class="wrapper">
+<div class="wrapper" class:disabled title={filterData.filterTooltip}>
     <div
         on:click={() => {
             handleClick();
@@ -106,6 +108,7 @@
 <style>
     .wrapper {
         position: relative;
+        flex-shrink: 0;
     }
 
     .bt-dropdown {
@@ -114,7 +117,6 @@
         align-items: center;
         border-radius: 14px;
         color: var(--black);
-        flex-shrink: 0;
         font-family: var(--font-stack);
         font-size: var(--font-size-xsmall);
         font-weight: var(--font-weight-medium);
@@ -138,11 +140,19 @@
     }
 
     .bt-dropdown:active {
-        background: #c484da;
+        background: #a798ac;
     }
 
     .bt-dropdown.checked {
         background: #efcbfc;
+    }
+
+    .wrapper.disabled {
+        /* cursor: not-allowed; */
+    }
+
+    .wrapper.disabled > .bt-dropdown {
+        pointer-events: none;
     }
 
     input[type='checkbox'] {

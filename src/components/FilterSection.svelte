@@ -20,15 +20,10 @@
     //     { value: 'item4', label: 'Multiply', group: 'group2', selected: false },
     //     { value: 'item4', label: 'Color Burn', group: 'group2', selected: false },
     // ];
-    console.log('unmodified filters');
-    console.log(filterListArrayNodeTypeArray);
 
     let filterArray = [];
-    console.log('modified filters');
 
     filterArray = sortAndBuildNodeTypeFilter(filterListArrayNodeTypeArray);
-
-    console.log(filterArray);
 
     // Current filterListArrayNodeTypeArray
     //     0: {node_type: 'ALL', name: 'All Types', count: 0, sticky: true, default: true, …}
@@ -48,19 +43,11 @@
     // 14: {node_type: 'VECTOR', name: 'Vector', count: 0, sticky: false, checked: false, …}
 
     function sortAndBuildNodeTypeFilter(array) {
-        console.log(array);
-
         let _filterArray;
         array.forEach((el) => {
-            console.log(el);
-
             const filterType = el.filterType;
             const filters = el.filterOptions;
 
-            console.log('-----------------');
-            console.log(filterType);
-            console.log('filters');
-            console.log(filters);
             let stickyTypes = filters.filter((elem) => elem.sticky == true);
             let regularTypes = filters.filter(
                 (elem) => elem.sticky === false || elem.sticky === undefined
@@ -71,7 +58,6 @@
                 $settings.rememberNodeFilterCounts &&
                 filterType === 'node_type'
             ) {
-                console.log($settings.rememberNodeFilterCounts);
                 stickyTypes.sort((a, b) => {
                     return b.count - a.count;
                 });
@@ -79,10 +65,6 @@
                     return b.count - a.count;
                 });
             }
-            console.log('stickyTypes');
-            console.log(stickyTypes);
-            console.log('regularTypes');
-            console.log(regularTypes);
 
             let _filterOptions = stickyTypes.concat(regularTypes);
 
@@ -100,9 +82,6 @@
             });
 
             el.filterOptions = _filterOptions;
-            console.log('_filterOptions');
-            console.log(_filterOptions);
-            console.log(filters);
         });
 
         return array;
@@ -275,7 +254,7 @@
                 <FilterPill
                     on:selectFilter={handleFilter}
                     optionList={filter.filterOptions}
-                    filterType={filter.filterOptions}
+                    filterData={filter.filterData}
                 />
             {/each}
 

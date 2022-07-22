@@ -4,7 +4,12 @@ export let filterDefinitionsDefault = writable([])
 
 export let filterDefinitions = writable([
     {
-        filterType: "node_type",
+        filterData: {
+            filterType: "node_type",
+
+        },
+
+
         filterOptions: [
             {
                 node_type: "ALL",
@@ -100,22 +105,28 @@ export let filterDefinitions = writable([
         ]
     },
     {
+        filterData: {
 
-        filterType: "area_type",
+            filterType: "area_type",
+        },
+
         filterOptions: [
-            {
-                area_type: "SELECTION",
-                name: "Current selection"
-            },
             {
                 area_type: "PAGE",
                 name: "Current page",
                 default: true
+            },
+            {
+                area_type: "SELECTION",
+                name: "Current selection"
             }
         ]
     },
     {
-        filterType: "string_match",
+        filterData: {
+            filterType: "string_match",
+            filterTooltip: "More options coming soon",
+        },
         filterOptions: [
             {
                 string_match: "EXACT",
@@ -125,7 +136,11 @@ export let filterDefinitions = writable([
         ]
     },
     {
-        filterType: "case_sensitive",
+        filterData: {
+            filterType: "case_sensitive",
+
+        },
+
         filterOptions: [
             {
                 case_sensitive: false,

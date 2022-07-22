@@ -15,9 +15,6 @@
     export let active = false;
     export let pillElem;
 
-    console.log('pillElem: ');
-    console.log(pillElem);
-
     export { className as class };
 
     const dispatch = createEventDispatcher();
@@ -92,11 +89,6 @@
         //     // visible = false;
         //     return;
         // }
-
-        console.log('event: ');
-        console.log(event);
-        console.log(menuList);
-        console.log(active);
 
         // resetMenuProperties();
 
