@@ -148,7 +148,7 @@
     }
 
     .wrapper.disabled {
-        /* cursor: not-allowed; */
+        cursor: help;
     }
 
     .wrapper.disabled > .bt-dropdown {

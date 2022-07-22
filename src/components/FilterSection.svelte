@@ -143,6 +143,8 @@
 
         $activeFilters[filterType] = selection;
         console.log($activeFilters);
+
+        initScrollPosition();
     }
 
     let filterDefinitionsElem;
@@ -160,8 +162,7 @@
             -1 *
                 (filterDefinitionsElem.scrollWidth -
                     filterDefinitionsElem.parentElement.clientWidth) -
-                8 -
-                45,
+                8,
         ];
 
         //TODO: fix figma not correctly assigning scrolllWidth
@@ -180,6 +181,8 @@
     afterUpdate(() => {});
 
     function handleScroll(event) {
+        // TODO: there has to be a better way than recalculating the scroll bounds on every scroll
+        initScrollPosition();
         moveFilterList(event.deltaY);
     }
 

@@ -80,13 +80,15 @@
         });
     }
 
-    $: active, menuClick();
+    // $: active, menuClick();
 
     //run for all menu click events
     //this opens/closes the menu
     function menuClick(event) {
-        // if (!event) {
-        //     // visible = false;
+        console.log(event);
+
+        // if (event != undefined && event.target == null) {
+        //     active = false;
         //     return;
         // }
 
@@ -257,7 +259,7 @@
                         {/if}
                     {/if}
                     <SelectItem
-                        on:click={menuClick}
+                        on:click={(event) => menuClick(event)}
                         on:mouseenter={removeHighlight}
                         itemId={item.id}
                         bind:selected={item.selected}>{item.label}</SelectItem
