@@ -51,6 +51,7 @@
 
 	$: $searchQuery.query_text = searchString;
 	$: $activeFilters.query_text = searchString;
+	$: $activeFilters.selected_node_ids = [];
 
 	$: disabled = searchString === '' && filterChanged == false;
 	//this is a reactive variable that will return false when a value is selected from
@@ -88,34 +89,54 @@
 				event.data.pluginMessage.type == 'loaded-plugin-filter-counts'
 			) {
 				filterListNodeTypeList = $filterDefinitions;
-
 				console.log(filterListNodeTypeList);
+
+				// TODO: build active filters from default filters here
+
+				let _activeFilters = new Object();
+
+				filterListNodeTypeList.forEach((filter) => {
+					const filterType = filter.filterData.filterType;
+					const filterOptions = filter.filterOptions;
+
+					let defaultOption = filterOptions.find(
+						(elem) => elem.default === true
+					);
+
+					$activeFilters[filterType] = [defaultOption.value];
+				});
+
 				if (event.data.pluginMessage.data.length == 0) {
 					console.log('no filters used previously');
 					return;
 				}
 
 				//update node type filter with counts
-
-				const index = filterListNodeTypeList.findIndex(
-					(elem) => elem.filterType == 'node_type'
-				);
-
-				console.log(index);
-
-				filterListNodeTypeList.forEach((filter) => {
-					let loadedFilter = event.data.pluginMessage.data.find(
-						(elem) => elem.node_type === filter.node_type
+				// Sort by filter counts if rememberNodeFilterCounts is on
+				if (
+					$settings.rememberNodeFilterCounts &&
+					filterType === 'node_type'
+				) {
+					const index = filterListNodeTypeList.findIndex(
+						(elem) => elem.filterType == 'node_type'
 					);
-					filter.count = loadedFilter.count;
-				});
 
-				// filterListNodeTypeList.sort((a, b) => {
-				// 	return b.count - a.count;
-				// });
+					console.log(index);
 
-				// console.log('update node filter list');
-				// console.log(filterListNodeTypeList);
+					filterListNodeTypeList.forEach((filter) => {
+						let loadedFilter = event.data.pluginMessage.data.find(
+							(elem) => elem.node_type === filter.node_type
+						);
+						filter.count = loadedFilter.count;
+					});
+
+					// filterListNodeTypeList.sort((a, b) => {
+					// 	return b.count - a.count;
+					// });
+
+					// console.log('update node filter list');
+					// console.log(filterListNodeTypeList);
+				}
 			}
 
 			// TODO: save filter list without checked state

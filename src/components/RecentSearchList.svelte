@@ -8,6 +8,7 @@
 
     let classList = '';
 
+    //node types are in the first array (might be necessary to make this dynamic in the future)
     let filterListNodeTypeList = $filterDefinitions[0].filterOptions;
 
     function getNodeName(types) {
@@ -19,7 +20,7 @@
             nodes.push(
                 filterListNodeTypeList.find(
                     (element) =>
-                        element.node_type.toLowerCase() == type.toLowerCase()
+                        element.value.toLowerCase() == type.toLowerCase()
                 ).name
             );
         });

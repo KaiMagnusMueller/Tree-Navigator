@@ -1,7 +1,7 @@
 <script>
     import { GlobalCSS, Icon } from 'figma-plugin-ds-svelte';
 
-    import { createEventDispatcher, onMount } from 'svelte';
+    import { createEventDispatcher } from 'svelte';
     import IconFlexible from './IconFlexible';
     import DropdownMenu from './DropdownMenu';
 
@@ -54,7 +54,7 @@
 
     let active = false;
     let pillElem;
-    let value = 'undefined';
+    let value = optionList.find((elem) => elem.selected == true);
 </script>
 
 <div class="wrapper" class:disabled title={filterData.filterTooltip}>
@@ -93,16 +93,18 @@
             <slot>{value.label}</slot>
         </label>
     </div>
-    <DropdownMenu
-        bind:menuItems={optionList}
-        bind:active
-        bind:pillElem
-        bind:value
-        on:change={(event) => {
-            handleClick();
-            dispatchEvent(event);
-        }}
-    />
+    {#if active}
+        <DropdownMenu
+            bind:menuItems={optionList}
+            bind:active
+            bind:pillElem
+            bind:value
+            on:change={(event) => {
+                handleClick();
+                dispatchEvent(event);
+            }}
+        />
+    {/if}
 </div>
 
 <style>

@@ -21,6 +21,8 @@
     //     { value: 'item4', label: 'Color Burn', group: 'group2', selected: false },
     // ];
 
+    $: console.log($activeFilters);
+
     let filterArray = [];
 
     filterArray = sortAndBuildNodeTypeFilter(filterListArrayNodeTypeArray);
@@ -71,7 +73,6 @@
             _filterOptions.forEach((element) => {
                 const enabled = element?.default ? true : false;
                 element.selected = enabled;
-                element.value = element[filterType];
                 element.label = element.name;
 
                 if (element.sticky == true) {
@@ -97,6 +98,7 @@
     function handleFilter(event) {
         //detail: [NODE_TYPE, checked]
 
+        console.log('Filter section event');
         console.log(event);
 
         // if (event.detail[0] == 'ALL') {
@@ -138,11 +140,10 @@
 
         const selection = [];
         event.detail.selection.forEach((elem) => {
-            selection.push(elem.node_type);
+            selection.push(elem.value);
         });
 
         $activeFilters[filterType] = selection;
-        console.log($activeFilters);
 
         initScrollPosition();
     }
@@ -155,7 +156,7 @@
         initScrollPosition();
     });
 
-    // TODO: 20.07. fix being able to scroll even when th efilter is smaller than the plugin window
+    // TODO: 20.07. fix being able to scroll even when the filter is smaller than the plugin window
     function initScrollPosition() {
         scrollMinMax = [
             0,
@@ -213,18 +214,6 @@
     let _searchQuery = $searchQuery;
 
     $: _searchQuery.node_types = _activeFilters;
-
-    //TODO: check what _activeFilters contains, especially when no layer filter is selected and an ALL filer should be in there
-
-    let selectionCheck = false;
-    $: _searchQuery.area_type = selectionCheck;
-    $: $activeFilters.area_type = selectionCheck;
-    // $: console.log(selectionCheck);
-
-    let selectedTypes;
-    let selectedArea;
-    let selectedStringMatch;
-    let selectedCase;
 </script>
 
 <svelte:window on:resize={initScrollPosition} />
@@ -276,9 +265,6 @@
         >
     {/if} -->
     </div>
-    <Checkbox class="pl-xxsmall" bind:checked={selectionCheck}
-        >Limit to selection</Checkbox
-    >
 </div>
 
 <style>

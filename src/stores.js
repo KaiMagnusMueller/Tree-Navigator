@@ -5,99 +5,98 @@ export let filterDefinitionsDefault = writable([])
 export let filterDefinitions = writable([
     {
         filterData: {
-            filterType: "node_type",
+            filterType: "node_types",
 
         },
 
-
         filterOptions: [
             {
-                node_type: "ALL",
+                value: "ALL",
                 name: "All types",
                 count: 0,
                 sticky: true,
                 default: true
             },
             {
-                node_type: "BOOLEAN_OPERATION",
+                value: "BOOLEAN_OPERATION",
                 name: "Boolean Operation",
                 count: 0,
                 sticky: false,
             },
             {
-                node_type: "COMPONENT",
+                value: "COMPONENT",
                 name: "Component",
                 count: 0,
                 sticky: false
             },
             {
-                node_type: "COMPONENT_SET",
+                value: "COMPONENT_SET",
                 name: "Component Set",
                 count: 0,
                 sticky: false
             },
             {
-                node_type: "ELLIPSE",
+                value: "ELLIPSE",
                 name: "Ellipse",
                 count: 0,
                 sticky: false
             },
             {
-                node_type: "FRAME",
+                value: "FRAME",
                 name: "Frame",
                 count: 0,
                 sticky: false
             },
             {
-                node_type: "GROUP",
+                value: "GROUP",
                 name: "Group",
                 count: 0,
                 sticky: false
             },
             {
-                node_type: "INSTANCE",
+                value: "INSTANCE",
                 name: "Instance",
                 count: 0,
                 sticky: false
             },
             {
-                node_type: "LINE",
+                value: "LINE",
                 name: "Line",
                 count: 0,
                 sticky: false
             },
             {
-                node_type: "POLYGON",
+                value: "POLYGON",
                 name: "Polygon",
                 count: 0,
                 sticky: false
             },
             {
-                node_type: "RECTANGLE",
+                value: "RECTANGLE",
                 name: "Rectangle",
                 count: 0,
                 sticky: false
             },
             {
-                node_type: "SLICE",
+                value: "SLICE",
                 name: "Slice",
                 count: 0,
                 sticky: false
             },
             {
-                node_type: "STAR",
+                value: "STAR",
                 name: "Star",
                 count: 0,
                 sticky: false
             },
             {
-                node_type: "TEXT",
+                value: "TEXT",
                 name: "Text",
                 count: 0,
                 sticky: false
             },
             {
-                node_type: "VECTOR",
+                value: "VECTOR",
                 name: "Vector",
                 count: 0,
                 sticky: false
@@ -106,18 +105,16 @@ export let filterDefinitions = writable([
     },
     {
         filterData: {
-
             filterType: "area_type",
         },
-
         filterOptions: [
             {
-                area_type: "PAGE",
+                value: "PAGE",
                 name: "Current page",
                 default: true
             },
             {
-                area_type: "SELECTION",
+                value: "SELECTION",
                 name: "Current selection"
             }
         ]
@@ -129,7 +126,7 @@ export let filterDefinitions = writable([
         },
         filterOptions: [
             {
-                string_match: "EXACT",
+                value: "EXACT",
                 name: "Match exact name",
                 default: true
             },
@@ -138,17 +135,15 @@ export let filterDefinitions = writable([
     {
         filterData: {
             filterType: "case_sensitive",
-
         },
-
         filterOptions: [
             {
-                case_sensitive: false,
+                value: false,
                 name: "Match case insensitive",
                 default: true
             },
             {
-                case_sensitive: true,
+                value: true,
                 name: "Match case sensitive"
             },
         ]
@@ -158,12 +153,7 @@ export let filterDefinitions = writable([
 // --------------------------------
 
 export let activeFilters = writable({
-    node_types: [],
-    query_text: "",
-    area_type: "PAGE",
-    selected_node_ids: [],
-    string_match: false,
-    case_sensitive: false
+
 })
 
 
