@@ -25,6 +25,7 @@
     //assign id's to the input array
     onMount(async () => {
         updateSelectedAndIds();
+        resizeAndPosition();
     });
 
     // this function runs everytime the menuItems array os updated
@@ -88,6 +89,7 @@
             active = false;
             console.log('close flyout');
         } else if (event.target.contains(pillElem)) {
+            // This if is never used
             let topPos = 0;
 
             if (value) {
@@ -118,6 +120,7 @@
                 resizeAndPosition();
             }
         } else if (menuList.contains(event.target)) {
+            console.log('menuList.contains(event.target)');
             //find selected item in array
             let itemId = parseInt(event.target.getAttribute('itemId'));
 
@@ -157,6 +160,11 @@
     // if its off screen it will shift the position
     function resizeAndPosition() {
         //set the max height of the menu based on plugin/iframe window
+        // TODO: 24.07. Update this function to include horizontal positioning as well
+        console.log('resizeAndPosition');
+        console.log(window.innerHeight);
+        console.log(menuList.offsetHeight);
+
         let maxMenuHeight = window.innerHeight - 16;
         let menuHeight = menuList.offsetHeight;
         let menuResized = false;
@@ -168,7 +176,7 @@
 
         //lets adjust the position of the menu if its cut off from viewport
         let bounding = menuList.getBoundingClientRect();
-        let parentBounding = menuButton.getBoundingClientRect();
+        let parentBounding = pillElem.getBoundingClientRect();
 
         if (bounding.top < 0) {
             menuList.style.top = -Math.abs(parentBounding.top - 8) + 'px';
@@ -208,6 +216,7 @@
     on:change
     on:focus
     on:blur
+    on:wheel|stopPropagation
     bind:this={menuWrapper}
     {disabled}
     {placeholder}
