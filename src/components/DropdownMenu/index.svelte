@@ -1,11 +1,8 @@
 <script>
     import { onMount } from 'svelte';
     import { createEventDispatcher } from 'svelte';
-    import ClickOutside from 'svelte-click-outside';
-    import { SelectItem, SelectDivider, Icon } from 'figma-plugin-ds-svelte';
+    import { SelectItem, SelectDivider } from 'figma-plugin-ds-svelte';
 
-    export let iconName = null;
-    export let iconText = null;
     export let disabled = false;
     export let macOSBlink = false;
     export let menuItems = []; //pass data in via this prop to generate menu items
@@ -21,8 +18,8 @@
     let className = '';
     let groups = checkGroups();
     let menuWrapper, menuList;
+    let backdropElem;
     $: menuItems, updateSelectedAndIds();
-
     //FUNCTIONS
 
     //assign id's to the input array
@@ -85,17 +82,11 @@
     //run for all menu click events
     //this opens/closes the menu
     function menuClick(event) {
-        console.log(event);
+        resetMenuProperties();
 
-        // if (event != undefined && event.target == null) {
-        //     active = false;
-        //     return;
-        // }
-
-        // resetMenuProperties();
-
-        if (!event?.target) {
-            // active = false;
+        if (event.target == backdropElem) {
+            active = false;
+            console.log('close flyout');
         } else if (event.target.contains(pillElem)) {
             let topPos = 0;
 
@@ -205,126 +196,55 @@
     }
 </script>
 
-<ClickOutside on:clickoutside={menuClick}>
-    <div
-        on:change
-        on:focus
-        on:blur
-        bind:this={menuWrapper}
-        {disabled}
-        {placeholder}
-        {showGroupLabels}
-        {macOSBlink}
-        class="wrapper {className}"
-    >
-        <!-- <button bind:this={menuButton} on:click={menuClick} {disabled}>
-            {#if iconName}
-                <span class="icon"><Icon {iconName} color="black3" /></span>
-            {:else if iconText}
-                <span class="icon"><Icon {iconText} color="black3" /></span>
-            {/if}
+<div
+    on:click|stopPropagation={menuClick}
+    on:wheel|stopPropagation
+    class="backdrop"
+    bind:this={backdropElem}
+/>
+<!-- stopPropagation used to prevent events behind the backdrop from firing  -->
 
-            {#if value}
-                <span class="label">{value.label}</span>
-            {:else}
-                <span class="placeholder">{placeholder}</span>
-            {/if}
-
-            {#if !disabled}
-                <span class="caret">
-                    <svg width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            fill-rule="evenodd"
-                            clip-rule="evenodd"
-                            d="M3.64645 5.35359L0.646454 2.35359L1.35356 1.64648L4.00001 4.29293L6.64645 1.64648L7.35356 2.35359L4.35356 5.35359L4.00001 5.70714L3.64645 5.35359Z"
-                            fill="black"
-                        />
-                    </svg>
-                </span>
-            {/if}
-        </button> -->
-        <ul class="menu" class:hidden={!active} bind:this={menuList}>
-            {#if menuItems && menuItems.length > 0}
-                {#each menuItems as item, i}
-                    {#if i === 0}
-                        {#if item.group && showGroupLabels}
-                            <SelectDivider label>{item.group}</SelectDivider>
-                        {/if}
-                    {:else if i > 0 && item.group && menuItems[i - 1].group != item.group}
-                        {#if showGroupLabels}
-                            <SelectDivider />
-                            <SelectDivider label>{item.group}</SelectDivider>
-                        {:else}
-                            <SelectDivider />
-                        {/if}
+<div
+    on:change
+    on:focus
+    on:blur
+    bind:this={menuWrapper}
+    {disabled}
+    {placeholder}
+    {showGroupLabels}
+    {macOSBlink}
+    class="wrapper {className}"
+>
+    <ul class="menu" class:hidden={!active} bind:this={menuList}>
+        {#if menuItems && menuItems.length > 0}
+            {#each menuItems as item, i}
+                {#if i === 0}
+                    {#if item.group && showGroupLabels}
+                        <SelectDivider label>{item.group}</SelectDivider>
                     {/if}
-                    <SelectItem
-                        on:click={(event) => menuClick(event)}
-                        on:mouseenter={removeHighlight}
-                        itemId={item.id}
-                        bind:selected={item.selected}>{item.label}</SelectItem
-                    >
-                {/each}
-            {/if}
-        </ul>
-    </div>
-</ClickOutside>
+                {:else if i > 0 && item.group && menuItems[i - 1].group != item.group}
+                    {#if showGroupLabels}
+                        <SelectDivider />
+                        <SelectDivider label>{item.group}</SelectDivider>
+                    {:else}
+                        <SelectDivider />
+                    {/if}
+                {/if}
+                <SelectItem
+                    on:click={(event) => menuClick(event)}
+                    on:mouseenter={removeHighlight}
+                    itemId={item.id}
+                    bind:selected={item.selected}>{item.label}</SelectItem
+                >
+            {/each}
+        {/if}
+    </ul>
+</div>
 
 <style>
     .wrapper {
         position: relative;
     }
-
-    /* button {
-        display: flex;
-        align-items: center;
-        border: 1px solid transparent;
-        height: 30px;
-        width: 100%;
-        margin: 1px 0 1px 0;
-        padding: 0px var(--size-xxsmall) 0px var(--size-xxsmall);
-        overflow-y: hidden;
-        border-radius: var(--border-radius-small);
-        background-color: var(--white);
-    }
-    button:hover {
-        border-color: var(--black1);
-    }
-    button:hover .placeholder {
-        color: var(--black8);
-    }
-    button:hover .caret svg path,
-    button:focus .caret svg path {
-        fill: var(--black8);
-    }
-    button:hover .caret,
-    button:focus .caret {
-        margin-left: auto;
-    }
-    button:focus {
-        border: 1px solid var(--blue);
-        outline: 1px solid var(--blue);
-        outline-offset: -2px;
-    }
-    button:focus .placeholder {
-        color: var(--black8);
-    }
-    button:disabled .label {
-        color: var(--black3);
-    }
-    button:disabled:hover {
-        justify-content: flex-start;
-        border-color: transparent;
-    }
-    button:disabled:hover .placeholder {
-        color: var(--black3);
-    }
-    button:disabled:hover .caret svg path {
-        fill: var(--black3);
-    }
-    button * {
-        pointer-events: none;
-    } */
 
     .label,
     .placeholder {
@@ -390,5 +310,14 @@
         border-radius: 6px;
         -webkit-box-shadow: inset 0 0 10px 10px rgba(255, 255, 255, 0.4);
         box-shadow: inset 0 0 10px 10px rgba(255, 255, 255, 0.4);
+    }
+
+    .backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        z-index: 50;
     }
 </style>

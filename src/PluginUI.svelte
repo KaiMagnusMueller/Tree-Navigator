@@ -77,10 +77,10 @@
 				'loaded-plugin-recent-search-list'
 			) {
 				if (event.data.pluginMessage.data.length > 0) {
-					console.log('data found... loading');
+					console.log('recent searches found... loading');
 					$recentSearches = event.data.pluginMessage.data;
 				} else {
-					console.log('no data... loading example');
+					console.log('no data... loading example searches');
 					$recentSearches = recentSearchExamples;
 				}
 			}
@@ -89,7 +89,6 @@
 				event.data.pluginMessage.type == 'loaded-plugin-filter-counts'
 			) {
 				filterListNodeTypeList = $filterDefinitions;
-				console.log(filterListNodeTypeList);
 
 				// TODO: build active filters from default filters here
 
@@ -115,7 +114,8 @@
 				// Sort by filter counts if rememberNodeFilterCounts is on
 				if (
 					$settings.rememberNodeFilterCounts &&
-					filterType === 'node_type'
+					filterListNodeTypeList[0].filterData.filterType ===
+						'node_type'
 				) {
 					const index = filterListNodeTypeList.findIndex(
 						(elem) => elem.filterType == 'node_type'

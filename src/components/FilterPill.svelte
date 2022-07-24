@@ -35,12 +35,9 @@
 
     function handleClick() {
         //TODO: disabled state, event stoppen
-        checked = !checked;
-        active = !active;
 
-        //     console.log('-----------------');
-        //     console.log('Dropdown: ' + active);
-        //     console.log('pill elem: ' + pillElem);
+        active = !active;
+        console.log('toggle flyout');
     }
 
     function dispatchEvent(event) {
@@ -88,10 +85,7 @@
             />
         {/if}
 
-        <label>
-            <input type="checkbox" bind:checked={active} />
-            <slot>{value.label}</slot>
-        </label>
+        <slot>{value.label}</slot>
     </div>
     {#if active}
         <DropdownMenu
@@ -100,7 +94,6 @@
             bind:pillElem
             bind:value
             on:change={(event) => {
-                handleClick();
                 dispatchEvent(event);
             }}
         />
@@ -147,6 +140,7 @@
 
     .bt-dropdown.checked {
         background: #efcbfc;
+        z-index: 50;
     }
 
     .wrapper.disabled {
