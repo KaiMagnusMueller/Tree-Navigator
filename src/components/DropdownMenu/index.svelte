@@ -162,12 +162,11 @@
         //set the max height of the menu based on plugin/iframe window
         // TODO: 24.07. Update this function to include horizontal positioning as well
         console.log('resizeAndPosition');
-        console.log(window.innerHeight);
-        console.log(menuList.offsetHeight);
 
         let maxMenuHeight = window.innerHeight - 16;
         let menuHeight = menuList.offsetHeight;
         let menuResized = false;
+        const windowWidth = window.innerWidth;
 
         if (menuHeight > maxMenuHeight) {
             menuList.style.height = maxMenuHeight + 'px';
@@ -196,6 +195,19 @@
             } else {
                 menuList.style.top = newTop + 'px';
             }
+        }
+
+        const xPos = Math.round(bounding.x);
+        const width = Math.round(bounding.width);
+
+        if (xPos + width > windowWidth - 8) {
+            const correction = (xPos + width - (windowWidth - 8)) * -1;
+            menuList.style.left = correction + 'px';
+        }
+
+        if (xPos < 0) {
+            const correction = xPos * -1 + 8;
+            menuList.style.left = correction + 'px';
         }
     }
     function resetMenuProperties() {
