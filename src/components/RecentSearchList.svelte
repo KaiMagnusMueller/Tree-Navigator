@@ -16,7 +16,17 @@
         // if (types.constructor != Array) {
         //     throw 'Expected type Array as types';
         // }
+        // console.log(types);
+        if (types == undefined) {
+            console.warn('No recent searches');
+            return null;
+        }
+
         types.forEach((type) => {
+            if (type == undefined) {
+                console.warn('No recent searches');
+                return undefined;
+            }
             nodes.push(
                 filterListNodeTypeList.find(
                     (element) =>

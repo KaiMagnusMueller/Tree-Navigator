@@ -87,7 +87,6 @@
 
         if (event.target == backdropElem) {
             active = false;
-            console.log('close flyout');
         } else if (event.target.contains(pillElem)) {
             // This if is never used
             let topPos = 0;
@@ -120,7 +119,7 @@
                 resizeAndPosition();
             }
         } else if (menuList.contains(event.target)) {
-            console.log('menuList.contains(event.target)');
+            // console.log('menuList.contains(event.target)');
             //find selected item in array
             let itemId = parseInt(event.target.getAttribute('itemId'));
 
@@ -160,8 +159,7 @@
     // if its off screen it will shift the position
     function resizeAndPosition() {
         //set the max height of the menu based on plugin/iframe window
-        // TODO: 24.07. Update this function to include horizontal positioning as well
-        console.log('resizeAndPosition');
+        //set the x position based on plugin/iframe window and the dropdown width
 
         let maxMenuHeight = window.innerHeight - 16;
         let menuHeight = menuList.offsetHeight;
@@ -197,16 +195,19 @@
             }
         }
 
+        // Adjust x position if the dropdown is wider than the plugin window or the position would be negative
         const xPos = Math.round(bounding.x);
         const width = Math.round(bounding.width);
 
         if (xPos + width > windowWidth - 8) {
-            const correction = (xPos + width - (windowWidth - 8)) * -1;
+            // Subtract 8 from windowWidth, to simulate the global 8px padding
+            const correction = (xPos + width - windowWidth) * -1;
             menuList.style.left = correction + 'px';
         }
 
         if (xPos < 0) {
-            const correction = xPos * -1 + 8;
+            // Add 8 to windowWidth, to simulate the global 8px padding
+            const correction = xPos * -1;
             menuList.style.left = correction + 'px';
         }
     }

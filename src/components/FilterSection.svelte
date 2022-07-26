@@ -98,8 +98,8 @@
     function handleFilter(event) {
         //detail: [NODE_TYPE, checked]
 
-        console.log('Filter section event');
-        console.log(event);
+        // console.log('Filter section event');
+        // console.log(event);
 
         // if (event.detail[0] == 'ALL') {
         //     console.log('reset all');
@@ -235,13 +235,6 @@
             style="left: {scrollPos}px;"
             tabindex="0"
         >
-            <!-- <FilterPill
-            on:selectFilter={handleFilter}
-            nodeType={"ALL"}
-            checked={allTypesChecked}
-            disabled={allTypesDisabled}>All Types</FilterPill
-        > -->
-
             {#each filterArray as filter}
                 <FilterPill
                     on:selectFilter={handleFilter}
@@ -249,13 +242,6 @@
                     filterData={filter.filterData}
                 />
             {/each}
-
-            <!-- TODO: add slot in filter pill that sets the correct label like: "Instances, 2 more" -->
-            <!-- <FilterPill iconName={IconComponent}>Component</FilterPill> -->
-            <!-- 
-            <FilterPill on:selectFilter={handleFilter} optionList={searchAreaArray} bind:selectedValues={selectedArea} />
-            <FilterPill on:selectFilter={handleFilter} optionList={stringMatchArray} bind:selectedValues={selectedStringMatch} />
-            <FilterPill on:selectFilter={handleFilter} optionList={caseArray} bind:selectedValues={selectedCase} /> -->
         </div>
         <!-- {#if scrollPos != scrollMinMax[1]}
         <FilterScrollButton

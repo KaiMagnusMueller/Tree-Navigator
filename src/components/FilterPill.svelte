@@ -16,8 +16,6 @@
     let size = 16;
     import SVGComponent from '../assets/icons/SVGComponent.svg';
 
-    export let checked = false;
-
     // Menu item test
     export let optionList = [];
     export let filterData;
@@ -26,7 +24,6 @@
 
     if (optionList.length == 1) {
         disabled = true;
-        console.log(disabled);
     }
 
     let className = '';
@@ -35,9 +32,7 @@
 
     function handleClick() {
         //TODO: disabled state, event stoppen
-
         active = !active;
-        console.log('toggle flyout');
     }
 
     function dispatchEvent(event) {

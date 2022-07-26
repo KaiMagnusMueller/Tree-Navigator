@@ -78,7 +78,21 @@
 			) {
 				if (event.data.pluginMessage.data.length > 0) {
 					console.log('recent searches found... loading');
-					$recentSearches = event.data.pluginMessage.data;
+
+					let recentsArray = [];
+
+					// Check if recent search object is empty (and would later cause errors in the recent search component)
+					event.data.pluginMessage.data.forEach((element) => {
+						if (Object.keys(element).length === 0) {
+							console.warn(
+								'Empty recent search object discarded'
+							);
+							return;
+						}
+						recentsArray.push(element);
+					});
+
+					$recentSearches = recentsArray;
 				} else {
 					console.log('no data... loading example searches');
 					$recentSearches = recentSearchExamples;
@@ -138,10 +152,6 @@
 					// console.log(filterListNodeTypeList);
 				}
 			}
-
-			// TODO: save filter list without checked state
-			// update filter list with new count values
-			// Send filter list to filter list component from here
 		};
 	});
 
@@ -183,18 +193,15 @@
 
 		//only add to recentlist if the item is not already on the list
 		if (isNew == true) {
-			let queryToAdd = {
-				// TODO: Make dynamic, so it loops dynamically through every property
-				node_types: $searchQuery.node_types,
-				query_text: $searchQuery.query_text,
-				area_type: $searchQuery.area_type,
-				selected_node_ids: $searchQuery.selected_node_ids,
-				query_submit_time: $searchQuery.query_submit_time,
-				string_match: $searchQuery.string_match,
-				case_sensitive: $searchQuery.case_sensitive,
-			};
+			// let queryToAdd = new Object();
 
-			$recentSearches = [queryToAdd, ...$recentSearches];
+			// const searchObj = $searchQuery;
+
+			// for (const key in searchObj) {
+			// 	queryToAdd[key] = searchObj[key];
+			// }
+
+			$recentSearches = [$searchQuery, ...$recentSearches];
 			$recentSearches = $recentSearches.slice(
 				0,
 				$settings.recentSearchLength

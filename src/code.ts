@@ -84,7 +84,7 @@ figma.ui.onmessage = msg => {
 		//
 		let nodes = []
 
-		if (query.area_type === "SELECTION" && figma.currentPage.selection.length > 0) {
+		if (query.area_type[0] === "SELECTION" && figma.currentPage.selection.length > 0) {
 
 			let _nodeSelectionSet = [...figma.currentPage.selection]
 
@@ -139,6 +139,7 @@ figma.ui.onmessage = msg => {
 		})
 
 		nodes.reverse()
+		console.log(query);
 
 		// TODO: Implement fuzzy search
 		let filteredNodes = nodes.filter(elem => {
@@ -146,7 +147,9 @@ figma.ui.onmessage = msg => {
 			let elemName = elem.name
 			let queryText = query.query_text
 
-			if (!query.exact_string_match) {
+
+			// When case_sensitive is false, compare lowercase names. Only the characters, basically.
+			if (!query.case_sensitive[0]) {
 				elemName = elemName.toLowerCase()
 				queryText = queryText.toLowerCase()
 			}
