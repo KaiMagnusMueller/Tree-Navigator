@@ -49,7 +49,7 @@
 	//this is a reactive variable that will return false when a value is selected from
 	//the select menu, its value is bound to the primary buttons disabled prop
 
-	let filterListNodeTypeList = [];
+	let filterList = [];
 
 	onMount(() => {
 		onmessage = (event) => {
@@ -87,13 +87,13 @@
 			}
 
 			if (event.data.pluginMessage.type == 'loaded-plugin-filter-counts') {
-				filterListNodeTypeList = $filterDefinitions;
+				filterList = $filterDefinitions;
 
 				// TODO: build active filters from default filters here
 
 				let _activeFilters = new Object();
 
-				filterListNodeTypeList.forEach((filter) => {
+				filterList.forEach((filter) => {
 					const filterType = filter.filterData.filterType;
 					const filterOptions = filter.filterOptions;
 
@@ -117,27 +117,25 @@
 				// Sort by filter counts if rememberNodeFilterCounts is on
 				if (
 					$settings.rememberNodeFilterCounts &&
-					filterListNodeTypeList[0].filterData.filterType === 'node_type'
+					filterList[0].filterData.filterType === 'node_type'
 				) {
-					const index = filterListNodeTypeList.findIndex(
-						(elem) => elem.filterType == 'node_type'
-					);
+					const index = filterList.findIndex((elem) => elem.filterType == 'node_type');
 
 					console.log(index);
 
-					filterListNodeTypeList.forEach((filter) => {
+					filterList.forEach((filter) => {
 						let loadedFilter = event.data.pluginMessage.data.find(
 							(elem) => elem.node_type === filter.node_type
 						);
 						filter.count = loadedFilter.count;
 					});
 
-					// filterListNodeTypeList.sort((a, b) => {
+					// filterList.sort((a, b) => {
 					// 	return b.count - a.count;
 					// });
 
 					// console.log('update node filter list');
-					// console.log(filterListNodeTypeList);
+					// console.log(filterList);
 				}
 			}
 		};
@@ -266,11 +264,11 @@
 			/>
 			<IconButton on:click={handleSubmitButton} iconName={IconForward} bind:disabled />
 		</div>
-		{#if filterListNodeTypeList.length > 0}
+		{#if filterList.length > 0}
 			<FilterSection
 				class="flex-no-shrink"
 				on:filterChanged={(event) => (filterChanged = event.detail)}
-				{filterListNodeTypeList}
+				{filterList}
 			/>
 		{/if}
 		{#if $UIState.showMainMenu}

@@ -76,6 +76,15 @@
         {/if}
 
         <slot>{value.label}</slot>
+
+        <svg width="8" height="5" viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M3.646 3.854L0.645996 0.853996L1.354 0.145996L4 2.793L6.646 0.145996L7.354 0.853996L4.354 3.854L4 4.207L3.646 3.854Z"
+                fill="black"
+            />
+        </svg>
     </div>
     {#if active}
         <DropdownMenu
@@ -100,7 +109,7 @@
         display: flex;
         gap: 4px;
         align-items: center;
-        border-radius: 14px;
+        border-radius: 6px;
         color: var(--black);
         font-family: var(--font-stack);
         font-size: var(--font-size-xsmall);
@@ -108,28 +117,32 @@
         letter-spacing: var(--font-letter-spacing-neg-small);
         line-height: var(--font-line-height);
         height: 28px;
-        padding: 6px 8px;
+        padding: 6px 10px 6px 8px;
         text-decoration: none;
         outline: none;
-        border: 1px solid #9c2ac3;
-        background: #d791ef;
+        border: 1px solid rgba(0, 0, 0, 0.12);
+        background: #ffffff;
         user-select: none;
-        transition: all 0.15s;
+        transition-duration: 0.15s;
+        transition-property: box-shadow, background, color;
     }
 
     .bt-dropdown:focus,
     .bt-dropdown:hover {
         /* outline: 2px solid var(--blue);
         outline-offset: -2px; */
-        box-shadow: 0 1px 6px rgba(128, 46, 111, 0.51);
+        box-shadow: 0 1px 6px rgba(194, 194, 194, 0.51);
     }
 
     .bt-dropdown:active {
-        background: #a798ac;
+        background: #d4d4d4;
     }
 
     .bt-dropdown.checked {
-        background: #efcbfc;
+        background: #f0f0f0;
+        border: 1px solid rgba(0, 0, 0, 0.12);
+        outline: 2px solid var(--blue);
+        outline-offset: -2px;
         z-index: 50;
     }
 
@@ -139,13 +152,11 @@
 
     .wrapper.disabled > .bt-dropdown {
         pointer-events: none;
+        color: #828282;
+        background: #ffffff;
     }
 
-    input[type='checkbox'] {
-        display: none;
-        /* visibility: hidden; */
-    }
-    label {
-        pointer-events: none;
+    .wrapper.disabled svg path {
+        fill: #828282;
     }
 </style>

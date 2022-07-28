@@ -9,42 +9,16 @@
     export { className as class };
     let className = '';
 
-    let filterListArrayNodeTypeArray = [];
-    export { filterListArrayNodeTypeArray as filterListNodeTypeList };
-
-    // Example optionlist formatting
-    // export let optionList = [
-    //     { value: 'item1', label: 'Passthrough', group: 'group1', selected: true },
-    //     { value: 'item2', label: 'Normal ', group: 'group1', selected: false },
-    //     { value: 'item3', label: 'Darken', group: 'group2', selected: false },
-    //     { value: 'item4', label: 'Multiply', group: 'group2', selected: false },
-    //     { value: 'item4', label: 'Color Burn', group: 'group2', selected: false },
-    // ];
+    let filterListArray = [];
+    export { filterListArray as filterList };
 
     // $: console.log($activeFilters);
 
     let filterArray = [];
 
-    filterArray = sortAndBuildNodeTypeFilter(filterListArrayNodeTypeArray);
+    filterArray = sortAndBuildFilter(filterListArray);
 
-    // Current filterListArrayNodeTypeArray
-    //     0: {node_type: 'ALL', name: 'All Types', count: 0, sticky: true, default: true, …}
-    // 1: {node_type: 'COMPONENT', name: 'Component', count: 1, sticky: false, checked: false, …}
-    // 2: {node_type: 'BOOLEAN_OPERATION', name: 'Boolean Operation', count: 0, sticky: false, checked: false, …}
-    // 3: {node_type: 'COMPONENT_SET', name: 'Component Set', count: 0, sticky: false, checked: false, …}
-    // 4: {node_type: 'ELLIPSE', name: 'Ellipse', count: 0, sticky: false, checked: false, …}
-    // 5: {node_type: 'FRAME', name: 'Frame', count: 0, sticky: false, checked: false, …}
-    // 6: {node_type: 'GROUP', name: 'Group', count: 0, sticky: false, checked: false, …}
-    // 7: {node_type: 'INSTANCE', name: 'Instance', count: 0, sticky: false, checked: false, …}
-    // 8: {node_type: 'LINE', name: 'Line', count: 0, sticky: false, checked: false, …}
-    // 9: {node_type: 'POLYGON', name: 'Polygon', count: 0, sticky: false, checked: false, …}
-    // 10: {node_type: 'RECTANGLE', name: 'Rectangle', count: 0, sticky: false, checked: false, …}
-    // 11: {node_type: 'SLICE', name: 'Slice', count: 0, sticky: false, checked: false, …}
-    // 12: {node_type: 'STAR', name: 'Star', count: 0, sticky: false, checked: false, …}
-    // 13: {node_type: 'TEXT', name: 'Text', count: 0, sticky: false, checked: false, …}
-    // 14: {node_type: 'VECTOR', name: 'Vector', count: 0, sticky: false, checked: false, …}
-
-    function sortAndBuildNodeTypeFilter(array) {
+    function sortAndBuildFilter(array) {
         let _filterArray;
         array.forEach((el) => {
             const filterType = el.filterType;
@@ -100,31 +74,31 @@
 
         // if (event.detail[0] == 'ALL') {
         //     console.log('reset all');
-        //     filterListArrayNodeTypeArray.forEach((elem) => {
+        //     filterListArray.forEach((elem) => {
         //         elem.checked = false;
         //     });
         // }
 
         // checkedLayerFilters = 0;
 
-        // checkedLayerFilters = filterListArrayNodeTypeArray.filter(
+        // checkedLayerFilters = filterListArray.filter(
         //     (elem) => elem.checked == true && elem.node_type != 'ALL'
         // );
 
         // console.log(checkedLayerFilters);
-        // let ALL_FILTER_I = filterListArrayNodeTypeArray.findIndex(
+        // let ALL_FILTER_I = filterListArray.findIndex(
         //     (elem) => elem.node_type == 'ALL'
         // );
         // if (checkedLayerFilters.length > 0) {
-        //     filterListArrayNodeTypeArray[ALL_FILTER_I].checked = false;
+        //     filterListArray[ALL_FILTER_I].checked = false;
 
         //     dispatch('filterChanged', true);
         // } else {
-        //     filterListArrayNodeTypeArray[ALL_FILTER_I].checked = true;
+        //     filterListArray[ALL_FILTER_I].checked = true;
         //     dispatch('filterChanged', false);
         // }
 
-        // const _activeFilterObj = filterListArrayNodeTypeArray.filter(
+        // const _activeFilterObj = filterListArray.filter(
         //     (elem) => elem.checked == true
         // );
 

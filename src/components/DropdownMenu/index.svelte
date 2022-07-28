@@ -96,9 +96,7 @@
                 menuList.classList.remove('hidden');
 
                 let id = value.id;
-                let selectedItem = menuList.querySelector(
-                    '[itemId="' + id + '"]'
-                );
+                let selectedItem = menuList.querySelector('[itemId="' + id + '"]');
                 selectedItem.focus(); //set focus to the currently selected item
 
                 // calculate distance from top so that we can position the dropdown menu
@@ -178,13 +176,8 @@
         if (bounding.top < 0) {
             menuList.style.top = -Math.abs(parentBounding.top - 8) + 'px';
         }
-        if (
-            bounding.bottom >
-            (window.innerHeight || document.documentElement.clientHeight)
-        ) {
-            let minTop = -Math.abs(
-                parentBounding.top - (window.innerHeight - menuHeight - 8)
-            );
+        if (bounding.bottom > (window.innerHeight || document.documentElement.clientHeight)) {
+            let minTop = -Math.abs(parentBounding.top - (window.innerHeight - menuHeight - 8));
             let newTop = -Math.abs(bounding.bottom - window.innerHeight + 16);
             if (menuResized) {
                 menuList.style.top = -Math.abs(parentBounding.top - 8) + 'px';
@@ -309,7 +302,7 @@
         background-color: var(--hud);
         box-shadow: var(--shadow-hud);
         padding: var(--size-xxsmall) 0 var(--size-xxsmall) 0;
-        border-radius: var(--border-radius-small);
+        border-radius: var(--border-radius-large);
         margin: 0;
         z-index: 50;
         overflow-x: overlay;

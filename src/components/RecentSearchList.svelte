@@ -9,7 +9,7 @@
     let classList = '';
 
     //node types are in the first array (might be necessary to make this dynamic in the future)
-    let filterListNodeTypeList = $filterDefinitions[0].filterOptions;
+    let filterList = $filterDefinitions[0].filterOptions;
 
     function getNodeName(types) {
         let nodes = [];
@@ -28,10 +28,7 @@
                 return undefined;
             }
             nodes.push(
-                filterListNodeTypeList.find(
-                    (element) =>
-                        element.value.toLowerCase() == type.toLowerCase()
-                ).name
+                filterList.find((element) => element.value.toLowerCase() == type.toLowerCase()).name
             );
         });
         return nodes;
@@ -53,9 +50,7 @@
 </script>
 
 <div class="recent-search-wrapper {classList}">
-    <div
-        class="recent-search-list pb-xlarge pr-xxsmall pl-xxsmall flex column flex-grow"
-    >
+    <div class="recent-search-list pb-xlarge pr-xxsmall pl-xxsmall flex column flex-grow">
         {#each $recentSearches as search, i}
             <RecentSearchItem
                 {search}
@@ -87,11 +82,7 @@
 
     .recent-search-wrapper:after {
         content: '';
-        background: linear-gradient(
-            0deg,
-            rgba(255, 255, 255) 0%,
-            rgb(255, 255, 255, 0) 40%
-        );
+        background: linear-gradient(0deg, rgba(255, 255, 255) 0%, rgb(255, 255, 255, 0) 40%);
         height: 100%;
         position: absolute;
         left: 0;
