@@ -12,23 +12,15 @@
 		defaultSettings,
 	} from './stores';
 	import { recentSearchExamples } from './assets/example-data';
-	import {
-		saveRecentSearches,
-		saveFilterRanking,
-		saveSettings,
-	} from './lib/helper-functions';
+	import { saveRecentSearches, saveFilterRanking, saveSettings } from './lib/helper-functions';
 
 	//import some Svelte Figma UI components
 	import {
 		Button,
-		Input,
-		Label,
-		SelectMenu,
 		IconAdjust,
 		IconSearch,
 		IconButton,
 		IconBack,
-		IconComponent,
 		IconForward,
 		Section,
 		Switch,
@@ -72,10 +64,7 @@
 				}
 			}
 
-			if (
-				event.data.pluginMessage.type ==
-				'loaded-plugin-recent-search-list'
-			) {
+			if (event.data.pluginMessage.type == 'loaded-plugin-recent-search-list') {
 				if (event.data.pluginMessage.data.length > 0) {
 					console.log('recent searches found... loading');
 
@@ -84,9 +73,7 @@
 					// Check if recent search object is empty (and would later cause errors in the recent search component)
 					event.data.pluginMessage.data.forEach((element) => {
 						if (Object.keys(element).length === 0) {
-							console.warn(
-								'Empty recent search object discarded'
-							);
+							console.warn('Empty recent search object discarded');
 							return;
 						}
 						recentsArray.push(element);
@@ -94,14 +81,12 @@
 
 					$recentSearches = recentsArray;
 				} else {
-					console.log('no data... loading example searches');
-					$recentSearches = recentSearchExamples;
+					// console.log('no data... loading example searches');
+					// $recentSearches = recentSearchExamples;
 				}
 			}
 
-			if (
-				event.data.pluginMessage.type == 'loaded-plugin-filter-counts'
-			) {
+			if (event.data.pluginMessage.type == 'loaded-plugin-filter-counts') {
 				filterListNodeTypeList = $filterDefinitions;
 
 				// TODO: build active filters from default filters here
@@ -112,12 +97,16 @@
 					const filterType = filter.filterData.filterType;
 					const filterOptions = filter.filterOptions;
 
-					let defaultOption = filterOptions.find(
-						(elem) => elem.default === true
-					);
+					let defaultOption = filterOptions.find((elem) => elem.default === true);
 
-					$activeFilters[filterType] = [defaultOption.value];
+					if (filter.filterData.multiSelect === true) {
+						$activeFilters[filterType] = [defaultOption.value];
+					} else {
+						$activeFilters[filterType] = defaultOption.value;
+					}
 				});
+
+				console.log($activeFilters);
 
 				if (event.data.pluginMessage.data.length == 0) {
 					console.log('no filters used previously');
@@ -128,8 +117,7 @@
 				// Sort by filter counts if rememberNodeFilterCounts is on
 				if (
 					$settings.rememberNodeFilterCounts &&
-					filterListNodeTypeList[0].filterData.filterType ===
-						'node_type'
+					filterListNodeTypeList[0].filterData.filterType === 'node_type'
 				) {
 					const index = filterListNodeTypeList.findIndex(
 						(elem) => elem.filterType == 'node_type'
@@ -202,10 +190,7 @@
 			// }
 
 			$recentSearches = [$searchQuery, ...$recentSearches];
-			$recentSearches = $recentSearches.slice(
-				0,
-				$settings.recentSearchLength
-			);
+			$recentSearches = $recentSearches.slice(0, $settings.recentSearchLength);
 			// console.log($recentSearches);
 
 			saveRecentSearches($recentSearches);
@@ -220,9 +205,7 @@
 
 	function updateNodeTypeFilterCounts(types) {
 		types.forEach((type) => {
-			let index = $filterDefinitions.findIndex(
-				(elem) => elem.node_type == type
-			);
+			let index = $filterDefinitions.findIndex((elem) => elem.node_type == type);
 
 			if (index >= 0) {
 				console.log('Update at ' + index);
@@ -273,11 +256,7 @@
 	<div class="main-section">
 		<!-- <TestComponent /> -->
 		<div class="header-group flex pr-xxsmall pl-xxsmall pt-xxsmall">
-			<IconButton
-				on:click={navBack}
-				iconName={IconBack}
-				disabled={$UIState.showMainMenu}
-			/>
+			<IconButton on:click={navBack} iconName={IconBack} disabled={$UIState.showMainMenu} />
 			<InputFlexible
 				iconName={IconSearch}
 				placeholder="Search"
@@ -285,11 +264,7 @@
 				class="flex-grow"
 				autofocus
 			/>
-			<IconButton
-				on:click={handleSubmitButton}
-				iconName={IconForward}
-				bind:disabled
-			/>
+			<IconButton on:click={handleSubmitButton} iconName={IconForward} bind:disabled />
 		</div>
 		{#if filterListNodeTypeList.length > 0}
 			<FilterSection
@@ -301,21 +276,14 @@
 		{#if $UIState.showMainMenu}
 			<div class="section--recent flex column flex-grow">
 				<Section class="flex-no-shrink">Recent Searches</Section>
-				<RecentSearchList
-					class="flex-grow"
-					on:recentSearch={handleQuerySubmit}
-				/>
+				<RecentSearchList class="flex-grow" on:recentSearch={handleQuerySubmit} />
 			</div>
 			<div
 				class="section--footer flex row justify-content-end pr-xxsmall pl-xxsmall pb-xxsmall"
 			>
 				<!-- TODO: make IconButton accept flexible color -->
 				<IconButton iconName={IconInfo} color={'black3'} />
-				<IconButton
-					iconName={IconAdjust}
-					color={'black3'}
-					on:click={openSettings}
-				/>
+				<IconButton iconName={IconAdjust} color={'black3'} on:click={openSettings} />
 			</div>
 		{:else if $UIState.showSearchResults}
 			<ResultsList {querySendTime} />
@@ -335,10 +303,7 @@
 			<div class="settings--content pr-xxsmall pl-xxsmall">
 				<div class="settings--section pb-xxsmall">
 					<Section class="">Recent Searches</Section>
-					<Button
-						variant="secondary"
-						destructive
-						on:click={deleteRecentSearches}
+					<Button variant="secondary" destructive on:click={deleteRecentSearches}
 						>Delete Recent Searches</Button
 					>
 				</div>
@@ -346,13 +311,9 @@
 					<Section class="settings--input">Filters</Section>
 					<Switch
 						bind:checked={$settings.rememberNodeFilterCounts}
-						on:change={toggleFilterReordering}
-						>Sort Filters by Usage</Switch
+						on:change={toggleFilterReordering}>Sort Filters by Usage</Switch
 					>
-					<Button
-						variant="secondary"
-						destructive
-						on:click={resetNodeTypeFilterCounts}
+					<Button variant="secondary" destructive on:click={resetNodeTypeFilterCounts}
 						>Reset Filter Order</Button
 					>
 				</div>
@@ -388,11 +349,7 @@
 		position: absolute;
 		bottom: 0;
 		right: 0;
-		background: radial-gradient(
-			ellipse farthest-corner at bottom right,
-			#fff,
-			#fff0
-		);
+		background: radial-gradient(ellipse farthest-corner at bottom right, #fff, #fff0);
 	}
 
 	.menu--settings {

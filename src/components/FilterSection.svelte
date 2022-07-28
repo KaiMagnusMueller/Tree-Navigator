@@ -21,7 +21,7 @@
     //     { value: 'item4', label: 'Color Burn', group: 'group2', selected: false },
     // ];
 
-    $: console.log($activeFilters);
+    // $: console.log($activeFilters);
 
     let filterArray = [];
 
@@ -56,10 +56,7 @@
             );
 
             // Sort by filter counts if rememberNodeFilterCounts is on
-            if (
-                $settings.rememberNodeFilterCounts &&
-                filterType === 'node_type'
-            ) {
+            if ($settings.rememberNodeFilterCounts && filterType === 'node_type') {
                 stickyTypes.sort((a, b) => {
                     return b.count - a.count;
                 });
@@ -137,14 +134,19 @@
         // });
 
         const filterType = event.detail.filterType;
+        const evtSelection = event.detail.selection;
 
-        const selection = [];
-        event.detail.selection.forEach((elem) => {
-            selection.push(elem.value);
-        });
+        let selection = [];
+
+        if (event.detail.multiSelect) {
+            evtSelection.forEach((elem) => {
+                selection.push(elem.value);
+            });
+        } else {
+            selection = evtSelection[0].value;
+        }
 
         $activeFilters[filterType] = selection;
-
         initScrollPosition();
     }
 

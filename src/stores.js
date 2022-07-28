@@ -6,7 +6,7 @@ export let filterDefinitions = writable([
     {
         filterData: {
             filterType: "node_types",
-
+            multiSelect: true
         },
 
         filterOptions: [
@@ -106,6 +106,7 @@ export let filterDefinitions = writable([
     {
         filterData: {
             filterType: "area_type",
+            multiSelect: false
         },
         filterOptions: [
             {
@@ -121,20 +122,9 @@ export let filterDefinitions = writable([
     },
     {
         filterData: {
-            filterType: "string_match",
-            filterTooltip: "More options coming soon",
-        },
-        filterOptions: [
-            {
-                value: "EXACT",
-                name: "Match exact name",
-                default: true
-            },
-        ]
-    },
-    {
-        filterData: {
             filterType: "case_sensitive",
+            multiSelect: false
+
         },
         filterOptions: [
             {
@@ -147,6 +137,21 @@ export let filterDefinitions = writable([
                 name: "Match case sensitive"
             },
         ]
+    },
+    {
+        filterData: {
+            filterType: "string_match",
+            multiSelect: false,
+            filterTooltip: "More options coming soon",
+        },
+        filterOptions: [
+            {
+                value: "EXACT",
+                name: "Match exact name",
+                default: true
+            },
+        ]
+
     }
 ]);
 

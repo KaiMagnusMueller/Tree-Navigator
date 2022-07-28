@@ -40,6 +40,7 @@
 
         dispatch('selectFilter', {
             filterType: filterType,
+            multiSelect: filterData.multiSelect,
             selection: selection,
         });
     }
@@ -59,7 +60,6 @@
         on:keydown={(event) => {
             if (event.key == 'Enter') {
                 handleClick();
-                dispatchEvent();
             }
         }}
         onclick="this.blur();"
@@ -72,12 +72,7 @@
         bind:this={pillElem}
     >
         {#if iconName}
-            <IconFlexible
-                iconName={SVGComponent}
-                {iconText}
-                {size}
-                color="transparent"
-            />
+            <IconFlexible iconName={SVGComponent} {iconText} {size} color="transparent" />
         {/if}
 
         <slot>{value.label}</slot>
