@@ -11,6 +11,7 @@
     export let showGroupLabels = false; //default prop, true will show option group labels
     export let active = false;
     export let pillElem;
+    export let rounded = false;
 
     export { className as class };
 
@@ -230,7 +231,7 @@
     {macOSBlink}
     class="wrapper {className}"
 >
-    <ul class="menu" class:hidden={!active} bind:this={menuList}>
+    <ul class="menu" class:rounded bind:this={menuList}>
         {#if menuItems && menuItems.length > 0}
             {#each menuItems as item, i}
                 {#if i === 0}
@@ -247,9 +248,10 @@
                 {/if}
                 <SelectItem
                     on:click={(event) => menuClick(event)}
-                    on:mouseenter={removeHighlight}
+                    on:mouseenter|once={removeHighlight}
                     itemId={item.id}
-                    bind:selected={item.selected}>{item.label}</SelectItem
+                    bind:selected={item.selected}
+                    {rounded}>{item.label}</SelectItem
                 >
             {/each}
         {/if}
@@ -296,13 +298,12 @@
 
     .menu {
         position: absolute;
-        top: 8px;
+        top: 7px;
         left: 0;
         /* width: 100%; */
         background-color: var(--hud);
         box-shadow: var(--shadow-hud);
         padding: var(--size-xxsmall) 0 var(--size-xxsmall) 0;
-        border-radius: var(--border-radius-large);
         margin: 0;
         z-index: 50;
         overflow-x: overlay;
@@ -325,6 +326,11 @@
         border-radius: 6px;
         -webkit-box-shadow: inset 0 0 10px 10px rgba(255, 255, 255, 0.4);
         box-shadow: inset 0 0 10px 10px rgba(255, 255, 255, 0.4);
+    }
+
+    .rounded {
+        border-radius: var(--border-radius-large);
+        padding: 4px;
     }
 
     .backdrop {

@@ -87,6 +87,27 @@
         </svg>
     </div>
     {#if active}
+        <div class="arrow">
+            <svg
+                width="12"
+                height="7"
+                viewBox="0 0 12 7"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+            >
+                <g clip-path="url(#clip0_351_2932)">
+                    <path d="M0 7L6 1L12 7H0Z" fill="#1E1E1E" />
+                    <line x1="6.35355" y1="1.35355" x2="0.353554" y2="7.35355" stroke="#393939" />
+                    <line x1="11.6464" y1="7.35355" x2="5.64645" y2="1.35355" stroke="#393939" />
+                </g>
+                <defs>
+                    <clipPath id="clip0_351_2932">
+                        <rect width="12" height="7" fill="white" />
+                    </clipPath>
+                </defs>
+            </svg>
+        </div>
+
         <DropdownMenu
             bind:menuItems={optionList}
             bind:active
@@ -95,6 +116,7 @@
             on:change={(event) => {
                 dispatchEvent(event);
             }}
+            rounded
         />
     {/if}
 </div>
@@ -146,6 +168,9 @@
         z-index: 50;
     }
 
+    .bt-dropdown.checked svg {
+        transform: rotate(180deg);
+    }
     .wrapper.disabled {
         cursor: help;
     }
@@ -158,5 +183,11 @@
 
     .wrapper.disabled svg path {
         fill: #828282;
+    }
+
+    .arrow {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
     }
 </style>
