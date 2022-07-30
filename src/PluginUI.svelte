@@ -369,24 +369,4 @@
 	.settings--input {
 		width: fit-content;
 	}
-
-	:global(html) {
-		--scrollbarBG: #cfd8dc;
-		--thumbBG: #90a4ae;
-	}
-	:global(body)::-webkit-scrollbar {
-		width: 11px;
-	}
-	:global(body) {
-		scrollbar-width: thin;
-		scrollbar-color: var(--thumbBG) var(--scrollbarBG);
-	}
-	:global(::-webkit-scrollbar-track) {
-		background: var(--scrollbarBG);
-	}
-	:global(::-webkit-scrollbar-thumb) {
-		background-color: var(--thumbBG);
-		border-radius: 6px;
-		border: 3px solid var(--scrollbarBG);
-	}
 </style>
