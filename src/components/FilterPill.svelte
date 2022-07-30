@@ -89,20 +89,25 @@
     {#if active}
         <div class="arrow">
             <svg
-                width="16"
+                width="22"
                 height="9"
-                viewBox="0 0 16 9"
+                viewBox="0 0 22 9"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
             >
-                <g clip-path="url(#clip0_351_2932)">
-                    <path d="M0 9L8 1L16 9H0Z" fill="#1E1E1E" />
-                    <line x1="8.35355" y1="1.35355" x2="0.353554" y2="9.35355" stroke="#393939" />
-                    <line x1="15.6464" y1="9.35355" x2="7.64645" y2="1.35355" stroke="#393939" />
+                <g clip-path="url(#clip0_356_2938)">
+                    <path
+                        d="M0 8C4 8 8 4 11 1L11 1.00001C14 4.00001 18 8 22 8V10H0V8Z"
+                        fill="#1E1E1E"
+                    />
+                    <path
+                        d="M11 1.70689C12.4185 3.12274 14.0667 4.73564 15.8293 6.02821C17.5861 7.3165 19.5155 8.33176 21.5 8.48106V9.5H0.5V8.48106C2.48454 8.33176 4.41391 7.3165 6.17068 6.0282C7.93327 4.73564 9.5815 3.12274 11 1.70689Z"
+                        stroke="#393939"
+                    />
                 </g>
                 <defs>
-                    <clipPath id="clip0_351_2932">
-                        <rect width="16" height="9" fill="white" />
+                    <clipPath id="clip0_356_2938">
+                        <rect width="22" height="9" fill="white" />
                     </clipPath>
                 </defs>
             </svg>
@@ -135,7 +140,7 @@
         color: var(--black);
         font-family: var(--font-stack);
         font-size: var(--font-size-xsmall);
-        font-weight: var(--font-weight-medium);
+        font-weight: var(--font-weight-normal);
         letter-spacing: var(--font-letter-spacing-neg-small);
         line-height: var(--font-line-height);
         height: 28px;
