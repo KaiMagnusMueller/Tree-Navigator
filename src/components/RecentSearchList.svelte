@@ -37,7 +37,7 @@
 </script>
 
 <div class="recent-search-wrapper {classList}">
-    <div class="recent-search-list pb-xlarge pr-xxsmall pl-xxsmall flex column flex-grow">
+    <div class="recent-search-list pb-xlarge flex column flex-grow">
         {#each $recentSearches as search, i}
             <RecentSearchItem
                 {search}
