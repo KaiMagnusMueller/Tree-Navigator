@@ -2,28 +2,32 @@
 	//import Global CSS from the svelte boilerplate
 	//contains Figma color vars, spacing vars, utility classes and more
 	import { GlobalCSS } from 'figma-plugin-ds-svelte';
-	import { searchQuery, recentSearches, UIState, activeFilters, nodeTypeFilterList, settings, defaultSettings } from './stores';
+	import {
+		searchQuery,
+		recentSearches,
+		UIState,
+		activeFilters,
+		filterDefinitions,
+		settings,
+		defaultSettings,
+	} from './stores';
 	import { recentSearchExamples } from './assets/example-data';
 	import { saveRecentSearches, saveFilterRanking, saveSettings } from './lib/helper-functions';
 
 	//import some Svelte Figma UI components
 	import {
 		Button,
-		Input,
-		Label,
-		SelectMenu,
 		IconAdjust,
 		IconSearch,
 		IconButton,
 		IconBack,
-		IconComponent,
 		IconForward,
 		Section,
 		Switch,
 	} from 'figma-plugin-ds-svelte';
 
 	import InputFlexible from './components/InputFlexible';
-	import FilterList from './components/FilterList.svelte';
+	import FilterSection from './components/FilterSection.svelte';
 	import RecentSearchList from './components/RecentSearchList.svelte';
 	import { onMount } from 'svelte/internal';
 	import IconInfo from './assets/icons/information.svg';
@@ -39,6 +43,7 @@
 
 	$: $searchQuery.query_text = searchString;
 	$: $activeFilters.query_text = searchString;
+	$: $activeFilters.selected_node_ids = [];
 
 	$: disabled = searchString === '' && filterChanged == false;
 	//this is a reactive variable that will return false when a value is selected from
@@ -61,37 +66,78 @@
 
 			if (event.data.pluginMessage.type == 'loaded-plugin-recent-search-list') {
 				if (event.data.pluginMessage.data.length > 0) {
-					console.log('data found... loading');
-					$recentSearches = event.data.pluginMessage.data;
+					console.log('recent searches found... loading');
+
+					let recentsArray = [];
+
+					// Check if recent search object is empty (and would later cause errors in the recent search component)
+					event.data.pluginMessage.data.forEach((element) => {
+						if (Object.keys(element).length === 0) {
+							console.warn('Empty recent search object discarded');
+							return;
+						}
+						recentsArray.push(element);
+					});
+
+					$recentSearches = recentsArray;
 				} else {
-					console.log('no data... loading example');
-					$recentSearches = recentSearchExamples;
+					// console.log('no data... loading example searches');
+					// $recentSearches = recentSearchExamples;
 				}
 			}
 
 			if (event.data.pluginMessage.type == 'loaded-plugin-filter-counts') {
-				filterList = $nodeTypeFilterList;
+				filterList = $filterDefinitions;
+
+				// TODO: build active filters from default filters here
+
+				let _activeFilters = new Object();
+
+				filterList.forEach((filter) => {
+					const filterType = filter.filterData.filterType;
+					const filterOptions = filter.filterOptions;
+
+					let defaultOption = filterOptions.find((elem) => elem.default === true);
+
+					if (filter.filterData.multiSelect === true) {
+						$activeFilters[filterType] = [defaultOption.value];
+					} else {
+						$activeFilters[filterType] = defaultOption.value;
+					}
+				});
+
+				console.log($activeFilters);
+
 				if (event.data.pluginMessage.data.length == 0) {
 					console.log('no filters used previously');
 					return;
 				}
 
-				filterList.forEach((filter) => {
-					let loadedFilter = event.data.pluginMessage.data.find((elem) => elem.node_type === filter.node_type);
-					filter.count = loadedFilter.count;
-				});
+				//update node type filter with counts
+				// Sort by filter counts if rememberNodeFilterCounts is on
+				if (
+					$settings.rememberNodeFilterCounts &&
+					filterList[0].filterData.filterType === 'node_type'
+				) {
+					const index = filterList.findIndex((elem) => elem.filterType == 'node_type');
 
-				// filterList.sort((a, b) => {
-				// 	return b.count - a.count;
-				// });
+					console.log(index);
 
-				// console.log('update node filter list');
-				// console.log(filterList);
+					filterList.forEach((filter) => {
+						let loadedFilter = event.data.pluginMessage.data.find(
+							(elem) => elem.node_type === filter.node_type
+						);
+						filter.count = loadedFilter.count;
+					});
+
+					// filterList.sort((a, b) => {
+					// 	return b.count - a.count;
+					// });
+
+					// console.log('update node filter list');
+					// console.log(filterList);
+				}
 			}
-
-			// TODO: save filter list without checked state
-			// update filter list with new count values
-			// Send filter list to filter list component from here
 		};
 	});
 
@@ -133,20 +179,20 @@
 
 		//only add to recentlist if the item is not already on the list
 		if (isNew == true) {
-			let queryToAdd = {
-				node_types: $searchQuery.node_types,
-				query_text: $searchQuery.query_text,
-				restrict_to_selection: $searchQuery.restrict_to_selection,
-				selected_node_ids: $searchQuery.selected_node_ids,
-				query_submit_time: $searchQuery.query_submit_time,
-			};
+			// let queryToAdd = new Object();
 
-			$recentSearches = [queryToAdd, ...$recentSearches];
+			// const searchObj = $searchQuery;
+
+			// for (const key in searchObj) {
+			// 	queryToAdd[key] = searchObj[key];
+			// }
+
+			$recentSearches = [$searchQuery, ...$recentSearches];
 			$recentSearches = $recentSearches.slice(0, $settings.recentSearchLength);
 			// console.log($recentSearches);
 
 			saveRecentSearches($recentSearches);
-			saveFilterRanking($nodeTypeFilterList);
+			saveFilterRanking($filterDefinitions);
 		} else {
 		}
 	}
@@ -157,15 +203,15 @@
 
 	function updateNodeTypeFilterCounts(types) {
 		types.forEach((type) => {
-			let index = $nodeTypeFilterList.findIndex((elem) => elem.node_type == type);
+			let index = $filterDefinitions.findIndex((elem) => elem.node_type == type);
 
 			if (index >= 0) {
 				console.log('Update at ' + index);
-				$nodeTypeFilterList[index].count++;
+				$filterDefinitions[index].count++;
 			}
 		});
 
-		// TODO: sort nodeTypeFilterList by count value (possibly in filter component)
+		// TODO: sort filterDefinitions by count value (possibly in filter component)
 	}
 
 	function deleteRecentSearches() {
@@ -173,15 +219,15 @@
 		saveRecentSearches($recentSearches);
 	}
 
-	function resetFilterCounts() {
-		$nodeTypeFilterList.forEach((elem) => {
+	function resetNodeTypeFilterCounts() {
+		$filterDefinitions.forEach((elem) => {
 			elem.count = 0;
 		});
-		saveFilterRanking($nodeTypeFilterList);
+		saveFilterRanking($filterDefinitions);
 	}
 
 	function toggleFilterReordering() {
-		// resetFilterCounts();
+		// resetNodeTypeFilterCounts();
 		saveSettings($settings);
 	}
 
@@ -209,18 +255,30 @@
 		<!-- <TestComponent /> -->
 		<div class="header-group flex pr-xxsmall pl-xxsmall pt-xxsmall">
 			<IconButton on:click={navBack} iconName={IconBack} disabled={$UIState.showMainMenu} />
-			<InputFlexible iconName={IconSearch} placeholder="Search" bind:value={searchString} class="flex-grow" autofocus />
+			<InputFlexible
+				iconName={IconSearch}
+				placeholder="Search"
+				bind:value={searchString}
+				class="flex-grow"
+				autofocus
+			/>
 			<IconButton on:click={handleSubmitButton} iconName={IconForward} bind:disabled />
 		</div>
 		{#if filterList.length > 0}
-			<FilterList class="flex-no-shrink" on:filterChanged={(event) => (filterChanged = event.detail)} bind:filterList />
+			<FilterSection
+				class="flex-no-shrink"
+				on:filterChanged={(event) => (filterChanged = event.detail)}
+				{filterList}
+			/>
 		{/if}
 		{#if $UIState.showMainMenu}
 			<div class="section--recent flex column flex-grow">
 				<Section class="flex-no-shrink">Recent Searches</Section>
 				<RecentSearchList class="flex-grow" on:recentSearch={handleQuerySubmit} />
 			</div>
-			<div class="section--footer flex row justify-content-end pr-xxsmall pl-xxsmall pb-xxsmall">
+			<div
+				class="section--footer flex row justify-content-end pr-xxsmall pl-xxsmall pb-xxsmall"
+			>
 				<!-- TODO: make IconButton accept flexible color -->
 				<IconButton iconName={IconInfo} color={'black3'} />
 				<IconButton iconName={IconAdjust} color={'black3'} on:click={openSettings} />
@@ -243,14 +301,19 @@
 			<div class="settings--content pr-xxsmall pl-xxsmall">
 				<div class="settings--section pb-xxsmall">
 					<Section class="">Recent Searches</Section>
-					<Button variant="secondary" destructive on:click={deleteRecentSearches}>Delete Recent Searches</Button>
+					<Button variant="secondary" destructive on:click={deleteRecentSearches}
+						>Delete Recent Searches</Button
+					>
 				</div>
 				<div class="settings--section pb-xxsmall">
 					<Section class="settings--input">Filters</Section>
-					<Switch bind:checked={$settings.rememberNodeFilterCounts} on:change={toggleFilterReordering}
-						>Sort Filters by Usage</Switch
+					<Switch
+						bind:checked={$settings.rememberNodeFilterCounts}
+						on:change={toggleFilterReordering}>Sort Filters by Usage</Switch
 					>
-					<Button variant="secondary" destructive on:click={resetFilterCounts}>Reset Filter Order</Button>
+					<Button variant="secondary" destructive on:click={resetNodeTypeFilterCounts}
+						>Reset Filter Order</Button
+					>
 				</div>
 			</div>
 		</div>
@@ -305,25 +368,5 @@
 
 	.settings--input {
 		width: fit-content;
-	}
-
-	:global(html) {
-		--scrollbarBG: #cfd8dc;
-		--thumbBG: #90a4ae;
-	}
-	:global(body)::-webkit-scrollbar {
-		width: 11px;
-	}
-	:global(body) {
-		scrollbar-width: thin;
-		scrollbar-color: var(--thumbBG) var(--scrollbarBG);
-	}
-	:global(::-webkit-scrollbar-track) {
-		background: var(--scrollbarBG);
-	}
-	:global(::-webkit-scrollbar-thumb) {
-		background-color: var(--thumbBG);
-		border-radius: 6px;
-		border: 3px solid var(--scrollbarBG);
 	}
 </style>

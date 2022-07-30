@@ -92,13 +92,12 @@
         width: 100%;
         height: 30px;
         margin: 1px 0 1px 0;
-        padding: var(--size-xxsmall) var(--size-xxxsmall) var(--size-xxsmall)
-            var(--size-xxsmall);
+        padding: var(--size-xxsmall) var(--size-xxxsmall) var(--size-xxsmall) var(--size-xxsmall);
         color: var(--black8);
         border: 1px solid transparent;
-        border-radius: var(--border-radius-small);
+        border-radius: var(--border-radius-large);
         outline: none;
-        background-color: var(--white);
+        background-color: #ececec;
     }
     input:hover,
     input:placeholder-shown:hover {

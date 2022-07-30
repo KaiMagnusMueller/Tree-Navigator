@@ -13,7 +13,7 @@
 
     // node_types: [],
     // query_text: "",
-    // restrict_to_selection: false,
+    // area_type: false,
     // selected_node_ids: [],
     // query_submit_time: "",
 
@@ -54,12 +54,12 @@
     .recent-search-item {
         gap: var(--size-xsmall);
         border: 1px solid transparent;
-        border-radius: 4px;
+        border-radius: 6px;
     }
 
     .recent-search-item:hover {
         border: 1px solid #e3e3e3;
-        box-shadow: 0px 0.5px 4px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 1px 6px rgba(194, 194, 194, 0.51);
     }
 
     .item-content {
