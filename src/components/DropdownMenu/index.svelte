@@ -298,9 +298,9 @@
 
     .menu {
         position: absolute;
-        top: 7px;
+        top: 8px;
         left: 0;
-        /* width: 100%; */
+        border: 1px solid rgba(255, 255, 255, 0.12);
         background-color: var(--hud);
         box-shadow: var(--shadow-hud);
         padding: var(--size-xxsmall) 0 var(--size-xxsmall) 0;
@@ -309,28 +309,10 @@
         overflow-x: overlay;
         overflow-y: auto;
     }
-    .menu::-webkit-scrollbar {
-        width: 12px;
-        background-color: transparent;
-        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=);
-        background-repeat: repeat;
-        background-size: 100% auto;
-    }
-    .menu::-webkit-scrollbar-track {
-        border: solid 3px transparent;
-        -webkit-box-shadow: inset 0 0 10px 10px transparent;
-        box-shadow: inset 0 0 10px 10px transparent;
-    }
-    .menu::-webkit-scrollbar-thumb {
-        border: solid 3px transparent;
-        border-radius: 6px;
-        -webkit-box-shadow: inset 0 0 10px 10px rgba(255, 255, 255, 0.4);
-        box-shadow: inset 0 0 10px 10px rgba(255, 255, 255, 0.4);
-    }
-
     .rounded {
         border-radius: var(--border-radius-large);
-        padding: 4px;
+        /* 4px padding, together with .menu border */
+        padding: 3px;
     }
 
     .backdrop {

@@ -89,20 +89,20 @@
     {#if active}
         <div class="arrow">
             <svg
-                width="12"
-                height="7"
-                viewBox="0 0 12 7"
+                width="16"
+                height="9"
+                viewBox="0 0 16 9"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
             >
                 <g clip-path="url(#clip0_351_2932)">
-                    <path d="M0 7L6 1L12 7H0Z" fill="#1E1E1E" />
-                    <line x1="6.35355" y1="1.35355" x2="0.353554" y2="7.35355" stroke="#393939" />
-                    <line x1="11.6464" y1="7.35355" x2="5.64645" y2="1.35355" stroke="#393939" />
+                    <path d="M0 9L8 1L16 9H0Z" fill="#1E1E1E" />
+                    <line x1="8.35355" y1="1.35355" x2="0.353554" y2="9.35355" stroke="#393939" />
+                    <line x1="15.6464" y1="9.35355" x2="7.64645" y2="1.35355" stroke="#393939" />
                 </g>
                 <defs>
                     <clipPath id="clip0_351_2932">
-                        <rect width="12" height="7" fill="white" />
+                        <rect width="16" height="9" fill="white" />
                     </clipPath>
                 </defs>
             </svg>
@@ -189,5 +189,8 @@
         position: absolute;
         left: 50%;
         transform: translateX(-50%);
+        bottom: -9px;
+        /* On top of flyout, with z-index: 50 */
+        z-index: 51;
     }
 </style>
