@@ -34,6 +34,8 @@
 	import ResultsList from './components/ResultsList.svelte';
 	import TestComponent from './components/TestComponent.svelte';
 
+	import Acknowledgements from './assets/text/licenses.svx';
+
 	//current input of search field
 	let searchString = '';
 	//value provided by filter list, if there is a specific layer filter set
@@ -248,6 +250,10 @@
 	function openSettings() {
 		$UIState.showSettingsMenu = true;
 	}
+
+	function openAboutScreen() {
+		$UIState.showAboutScreen = true;
+	}
 </script>
 
 <div class="wrapper">
@@ -280,7 +286,7 @@
 				class="section--footer flex row justify-content-end pr-xxsmall pl-xxsmall pb-xxsmall"
 			>
 				<!-- TODO: make IconButton accept flexible color -->
-				<IconButton iconName={IconInfo} color={'black3'} />
+				<IconButton iconName={IconInfo} color={'black3'} on:click={openAboutScreen} />
 				<IconButton iconName={IconAdjust} color={'black3'} on:click={openSettings} />
 			</div>
 		{:else if $UIState.showSearchResults}
@@ -314,6 +320,24 @@
 					<Button variant="secondary" destructive on:click={resetNodeTypeFilterCounts}
 						>Reset Filter Order</Button
 					>
+				</div>
+			</div>
+		</div>
+	{/if}
+	{#if $UIState.showAboutScreen}
+		<div class="menu--settings flex column">
+			<div class="settings--header flex pt-xxsmall pr-xxsmall pl-xxsmall">
+				<IconButton
+					on:click={() => {
+						$UIState.showSettingsMenu = false;
+					}}
+					iconName={IconBack}
+				/>
+				<Section class="">About</Section>
+			</div>
+			<div class="settings--content pr-xxsmall pl-xxsmall">
+				<div class="license--section markdown pb-xxsmall">
+					<Acknowledgements />
 				</div>
 			</div>
 		</div>
@@ -363,7 +387,7 @@
 		background-color: var(--white);
 	}
 
-	.settings--section {
+	.license--section h1 {
 	}
 
 	.settings--input {

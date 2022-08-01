@@ -179,6 +179,7 @@ export let searchQuery = writable({
 export let UIState = writable({
     showMainMenu: true,
     showSearchResults: false,
+    showAboutScreen: false
 })
 
 export let defaultSettings = readable({
