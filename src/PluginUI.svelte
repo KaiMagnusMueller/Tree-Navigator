@@ -34,6 +34,8 @@
 	import ResultsList from './components/ResultsList.svelte';
 	import TestComponent from './components/TestComponent.svelte';
 
+	// Markdown texts
+	import About from './assets/text/about.svx';
 	import Acknowledgements from './assets/text/licenses.svx';
 
 	//current input of search field
@@ -181,17 +183,24 @@
 
 		//only add to recentlist if the item is not already on the list
 		if (isNew == true) {
-			// let queryToAdd = new Object();
+			// for some reason we have to clone the $searchQuery object, otherwise if we would do this:
+			// $recentSearches = [$searchQuery, ...$recentSearches];
+			// all recent queries during the plugin runtime would get reset to the new recent search
+			//
+			// so if search for "Test Component"
+			// and we did a previous search of "Test Instance" while the plugin is running
+			// the list would look like "Test Component", "Test Component"
 
-			// const searchObj = $searchQuery;
+			let queryToAdd = new Object();
 
-			// for (const key in searchObj) {
-			// 	queryToAdd[key] = searchObj[key];
-			// }
+			const searchObj = $searchQuery;
 
-			$recentSearches = [$searchQuery, ...$recentSearches];
+			for (const key in searchObj) {
+				queryToAdd[key] = searchObj[key];
+			}
+
+			$recentSearches = [queryToAdd, ...$recentSearches];
 			$recentSearches = $recentSearches.slice(0, $settings.recentSearchLength);
-			// console.log($recentSearches);
 
 			saveRecentSearches($recentSearches);
 			saveFilterRanking($filterDefinitions);
@@ -337,6 +346,7 @@
 			</div>
 			<div class="settings--content pr-xxsmall pl-xxsmall">
 				<div class="license--section markdown pb-xxsmall">
+					<About />
 					<Acknowledgements />
 				</div>
 			</div>
