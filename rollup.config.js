@@ -5,6 +5,7 @@ import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
 import svg from 'rollup-plugin-svg';
 import typescript from 'rollup-plugin-typescript';
+import { mdsvex } from "mdsvex";
 
 /* Post CSS */
 import postcss from 'rollup-plugin-postcss';
@@ -25,7 +26,11 @@ export default [{
 	plugins: [
 		svelte({
 			// enable run-time checks when not in production
-			dev: !production
+			dev: !production,
+			extensions: [".svelte", ".svx"],
+			preprocess: mdsvex({
+				smartypants: {}
+			})
 		}),
 
 		// If you have external dependencies installed from

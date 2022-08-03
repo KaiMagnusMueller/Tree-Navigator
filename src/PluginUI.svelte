@@ -34,6 +34,10 @@
 	import ResultsList from './components/ResultsList.svelte';
 	import TestComponent from './components/TestComponent.svelte';
 
+	// Markdown texts
+	import About from './assets/text/about.svx';
+	import Acknowledgements from './assets/text/licenses.svx';
+
 	//current input of search field
 	let searchString = '';
 	//value provided by filter list, if there is a specific layer filter set
@@ -179,17 +183,24 @@
 
 		//only add to recentlist if the item is not already on the list
 		if (isNew == true) {
-			// let queryToAdd = new Object();
+			// for some reason we have to clone the $searchQuery object, otherwise if we would do this:
+			// $recentSearches = [$searchQuery, ...$recentSearches];
+			// all recent queries during the plugin runtime would get reset to the new recent search
+			//
+			// so if search for "Test Component"
+			// and we did a previous search of "Test Instance" while the plugin is running
+			// the list would look like "Test Component", "Test Component"
 
-			// const searchObj = $searchQuery;
+			let queryToAdd = new Object();
 
-			// for (const key in searchObj) {
-			// 	queryToAdd[key] = searchObj[key];
-			// }
+			const searchObj = $searchQuery;
 
-			$recentSearches = [$searchQuery, ...$recentSearches];
+			for (const key in searchObj) {
+				queryToAdd[key] = searchObj[key];
+			}
+
+			$recentSearches = [queryToAdd, ...$recentSearches];
 			$recentSearches = $recentSearches.slice(0, $settings.recentSearchLength);
-			// console.log($recentSearches);
 
 			saveRecentSearches($recentSearches);
 			saveFilterRanking($filterDefinitions);
@@ -248,6 +259,10 @@
 	function openSettings() {
 		$UIState.showSettingsMenu = true;
 	}
+
+	function openAboutScreen() {
+		$UIState.showAboutScreen = true;
+	}
 </script>
 
 <div class="wrapper">
@@ -280,7 +295,7 @@
 				class="section--footer flex row justify-content-end pr-xxsmall pl-xxsmall pb-xxsmall"
 			>
 				<!-- TODO: make IconButton accept flexible color -->
-				<IconButton iconName={IconInfo} color={'black3'} />
+				<IconButton iconName={IconInfo} color={'black3'} on:click={openAboutScreen} />
 				<IconButton iconName={IconAdjust} color={'black3'} on:click={openSettings} />
 			</div>
 		{:else if $UIState.showSearchResults}
@@ -314,6 +329,25 @@
 					<Button variant="secondary" destructive on:click={resetNodeTypeFilterCounts}
 						>Reset Filter Order</Button
 					>
+				</div>
+			</div>
+		</div>
+	{/if}
+	{#if $UIState.showAboutScreen}
+		<div class="menu--settings flex column">
+			<div class="settings--header flex pt-xxsmall pr-xxsmall pl-xxsmall">
+				<IconButton
+					on:click={() => {
+						$UIState.showSettingsMenu = false;
+					}}
+					iconName={IconBack}
+				/>
+				<Section class="">About</Section>
+			</div>
+			<div class="settings--content pr-xxsmall pl-xxsmall">
+				<div class="license--section markdown pb-xxsmall">
+					<About />
+					<Acknowledgements />
 				</div>
 			</div>
 		</div>
@@ -363,7 +397,7 @@
 		background-color: var(--white);
 	}
 
-	.settings--section {
+	.license--section h1 {
 	}
 
 	.settings--input {

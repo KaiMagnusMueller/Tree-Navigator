@@ -161,10 +161,10 @@ figma.ui.onmessage = msg => {
 		})
 
 
-		console.log('Found ' + nodes.length + ' nodes');
-		console.log(nodes);
-		console.log('Found ' + filteredNodes.length + ' nodes after filtering names');
-		console.log(filteredNodes);
+		// console.log('Found ' + nodes.length + ' nodes');
+		// console.log(nodes);
+		// console.log('Found ' + filteredNodes.length + ' nodes after filtering names');
+		// console.log(filteredNodes);
 		// for (let index = 0; index < nodes.length; index++) {
 		// 	const element = nodes[index];
 
