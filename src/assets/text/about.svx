@@ -1,0 +1,19 @@
+<script>
+	import  Link  from "./Link.svelte";
+</script>
+
+
+## Find Nodes 
+
+Developed with ♥️ by. <a href="https://www.kaimagnus.de" target="_blank">Kai Magnus Müller</a>
+
+I created this plugin mainly for myself and my workflow, but I hope you will find is useful as much as I do. 
+
+If you have any thoughts, suggestions or requests, feel free to message me <a href="https://www.twitter.com/_kaimagnus" target="_blank">@_kaimagnus</a>.
+
+
+The plugin source code is released under the MIT license on <a href="https://github.com/KaiMagnusMueller/Find-Nodes" target="_blank">GitHub</a>.
+
+### Bug Reports and Feature Requests
+
+To file bug reports, open a new issue <a href="https://github.com/KaiMagnusMueller/Find-Nodes/issues/new?assignees=&labels=bug&template=bug_report.md&title=" target="_blank">here</a> for feature requests use this <a href="https://github.com/KaiMagnusMueller/Find-Nodes/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=" target="_blank">template</a> or write me on Twitter.

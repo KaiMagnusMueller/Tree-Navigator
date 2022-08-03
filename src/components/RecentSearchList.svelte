@@ -1,6 +1,6 @@
 <script>
     import { Section } from 'figma-plugin-ds-svelte';
-    import { recentSearches, nodeTypeFilterList } from '../stores.js';
+    import { recentSearches, filterDefinitions } from '../stores.js';
     import RecentSearchItem from './RecentSearchItem.svelte';
     import { saveRecentSearches } from '../lib/helper-functions';
 
@@ -8,15 +8,28 @@
 
     let classList = '';
 
-    let nodeTypeList = $nodeTypeFilterList;
+    //node types are in the first array (might be necessary to make this dynamic in the future)
+    let filterList = $filterDefinitions[0].filterOptions;
 
     function getNodeName(types) {
         let nodes = [];
         // if (types.constructor != Array) {
         //     throw 'Expected type Array as types';
         // }
+        // console.log(types);
+        if (types == undefined) {
+            console.warn('No recent searches');
+            return null;
+        }
+
         types.forEach((type) => {
-            nodes.push(nodeTypeList.find((element) => element.node_type == type).name);
+            if (type == undefined) {
+                console.warn('No recent searches');
+                return undefined;
+            }
+            nodes.push(
+                filterList.find((element) => element.value.toLowerCase() == type.toLowerCase()).name
+            );
         });
         return nodes;
     }

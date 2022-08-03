@@ -13,12 +13,13 @@ figma.showUI(__html__, { width: 320, height: 500, themeColors: false });
 // callback. The callback will be passed the "pluginMessage" property of the
 // posted message.
 
+// Possibly offer this as option
 figma.skipInvisibleInstanceChildren = true
 let documentNode = figma.root
 
 //reset plugindata
-// documentNode.setPluginData("recentSearchList", "[]")
-let nodeTypeFilterList = documentNode.getPluginData("nodeTypeFilterList")
+// documentNode.setPluginData("filterDefinitions", "[]")
+let filterDefinitions = documentNode.getPluginData("filterDefinitions")
 let recentSearchList = documentNode.getPluginData("recentSearchList")
 let settings = documentNode.getPluginData("settings")
 
@@ -26,8 +27,8 @@ if (recentSearchList) {
 	recentSearchList = JSON.parse(recentSearchList)
 }
 
-if (nodeTypeFilterList) {
-	nodeTypeFilterList = JSON.parse(nodeTypeFilterList)
+if (filterDefinitions) {
+	filterDefinitions = JSON.parse(filterDefinitions)
 }
 
 if (settings) {
@@ -36,7 +37,7 @@ if (settings) {
 
 figma.ui.postMessage({ type: "loaded-plugin-settings", data: settings })
 figma.ui.postMessage({ type: "loaded-plugin-recent-search-list", data: recentSearchList })
-figma.ui.postMessage({ type: "loaded-plugin-filter-counts", data: nodeTypeFilterList })
+figma.ui.postMessage({ type: "loaded-plugin-filter-counts", data: filterDefinitions })
 
 function sendPluginmessage(params) {
 	figma.ui.postMessage({ type: "plugin", data: params })
@@ -84,7 +85,7 @@ figma.ui.onmessage = msg => {
 		//
 		let nodes = []
 
-		if (query.restrict_to_selection && figma.currentPage.selection.length > 0) {
+		if (query.area_type === "SELECTION" && figma.currentPage.selection.length > 0) {
 
 			let _nodeSelectionSet = [...figma.currentPage.selection]
 
@@ -96,6 +97,7 @@ figma.ui.onmessage = msg => {
 
 				const searchable = node.findAllWithCriteria ? true : false
 				const typeIsInQuery = query.node_types.indexOf(node.type) !== -1 ? true : false
+				const typeFilterIsAll = query.node_types.indexOf("ALL") !== -1 ? true : false
 				const typeFilterExists = query.node_types.length > 0 ? true : false
 
 				// typeIsInQuery -  we add all non-searchable nodes to nodes[], so they get searched 
@@ -107,7 +109,9 @@ figma.ui.onmessage = msg => {
 				//              an instance will be part of the nodeSearchSet, because it is searchable
 				//              however, it would otherwise not be returned and get added to the nodes array
 
-				if (typeIsInQuery || !typeFilterExists || searchable) {
+
+
+				if ((typeIsInQuery || typeFilterIsAll) && searchable) {
 					// console.log("add node to list");
 					// console.log(node);
 
@@ -122,7 +126,7 @@ figma.ui.onmessage = msg => {
 		}
 
 		// console.log("---------------");
-		// console.log(nodeSet);
+		// console.log(nodeSearchSet);
 		// console.log(figma.currentPage.selection);
 		// console.log("---------------");
 
@@ -146,7 +150,9 @@ figma.ui.onmessage = msg => {
 			let elemName = elem.name
 			let queryText = query.query_text
 
-			if (!query.exact_string_match) {
+
+			// When case_sensitive is false, compare lowercase names. Only the characters, basically.
+			if (!query.case_sensitive) {
 				elemName = elemName.toLowerCase()
 				queryText = queryText.toLowerCase()
 			}
@@ -155,10 +161,10 @@ figma.ui.onmessage = msg => {
 		})
 
 
-		console.log('Found ' + nodes.length + ' nodes');
-		console.log(nodes);
-		console.log('Found ' + filteredNodes.length + ' nodes after filtering names');
-		console.log(filteredNodes);
+		// console.log('Found ' + nodes.length + ' nodes');
+		// console.log(nodes);
+		// console.log('Found ' + filteredNodes.length + ' nodes after filtering names');
+		// console.log(filteredNodes);
 		// for (let index = 0; index < nodes.length; index++) {
 		// 	const element = nodes[index];
 
@@ -216,7 +222,7 @@ figma.ui.onmessage = msg => {
 		}
 
 		const string = JSON.stringify(msg.parameters)
-		documentNode.setPluginData("nodeTypeFilterList", string)
+		documentNode.setPluginData("filterDefinitions", string)
 	}
 
 

@@ -1,108 +1,164 @@
 import { readable, writable } from 'svelte/store';
 
-export let nodeTypeFilterListDefault = writable([])
+export let filterDefinitionsDefault = writable([])
 
-export let nodeTypeFilterList = writable([
+export let filterDefinitions = writable([
     {
-        node_type: "ALL",
-        name: "All Types",
-        count: 0,
-        sticky: true,
-        default: true
-    },
-    {
-        node_type: "BOOLEAN_OPERATION",
-        name: "Boolean Operation",
-        count: 0,
-        sticky: false,
-    },
-    {
-        node_type: "COMPONENT",
-        name: "Component",
-        count: 0,
-        sticky: false
-    },
-    {
-        node_type: "COMPONENT_SET",
-        name: "Component Set",
-        count: 0,
-        sticky: false
-    },
-    {
-        node_type: "ELLIPSE",
-        name: "Ellipse",
-        count: 0,
-        sticky: false
-    },
-    {
-        node_type: "FRAME",
-        name: "Frame",
-        count: 0,
-        sticky: false
-    },
-    {
-        node_type: "GROUP",
-        name: "Group",
-        count: 0,
-        sticky: false
-    },
-    {
-        node_type: "INSTANCE",
-        name: "Instance",
-        count: 0,
-        sticky: false
-    },
-    {
-        node_type: "LINE",
-        name: "Line",
-        count: 0,
-        sticky: false
-    },
-    {
-        node_type: "POLYGON",
-        name: "Polygon",
-        count: 0,
-        sticky: false
-    },
-    {
-        node_type: "RECTANGLE",
-        name: "Rectangle",
-        count: 0,
-        sticky: false
-    },
-    {
-        node_type: "SLICE",
-        name: "Slice",
-        count: 0,
-        sticky: false
-    },
-    {
-        node_type: "STAR",
-        name: "Star",
-        count: 0,
-        sticky: false
-    },
-    {
-        node_type: "TEXT",
-        name: "Text",
-        count: 0,
-        sticky: false
-    },
-    {
-        node_type: "VECTOR",
-        name: "Vector",
-        count: 0,
-        sticky: false
-    },
+        filterData: {
+            filterType: "node_types",
+            multiSelect: true
+        },
 
+        filterOptions: [
+            {
+                value: "ALL",
+                name: "All types",
+                count: 0,
+                sticky: true,
+                default: true
+            },
+            {
+                value: "BOOLEAN_OPERATION",
+                name: "Boolean Operation",
+                count: 0,
+                sticky: false,
+            },
+            {
+                value: "COMPONENT",
+                name: "Component",
+                count: 0,
+                sticky: false
+            },
+            {
+                value: "COMPONENT_SET",
+                name: "Component Set",
+                count: 0,
+                sticky: false
+            },
+            {
+                value: "ELLIPSE",
+                name: "Ellipse",
+                count: 0,
+                sticky: false
+            },
+            {
+                value: "FRAME",
+                name: "Frame",
+                count: 0,
+                sticky: false
+            },
+            {
+                value: "GROUP",
+                name: "Group",
+                count: 0,
+                sticky: false
+            },
+            {
+                value: "INSTANCE",
+                name: "Instance",
+                count: 0,
+                sticky: false
+            },
+            {
+                value: "LINE",
+                name: "Line",
+                count: 0,
+                sticky: false
+            },
+            {
+                value: "POLYGON",
+                name: "Polygon",
+                count: 0,
+                sticky: false
+            },
+            {
+                value: "RECTANGLE",
+                name: "Rectangle",
+                count: 0,
+                sticky: false
+            },
+            {
+                value: "SLICE",
+                name: "Slice",
+                count: 0,
+                sticky: false
+            },
+            {
+                value: "STAR",
+                name: "Star",
+                count: 0,
+                sticky: false
+            },
+            {
+                value: "TEXT",
+                name: "Text",
+                count: 0,
+                sticky: false
+            },
+            {
+                value: "VECTOR",
+                name: "Vector",
+                count: 0,
+                sticky: false
+            }
+        ]
+    },
+    {
+        filterData: {
+            filterType: "area_type",
+            multiSelect: false
+        },
+        filterOptions: [
+            {
+                value: "PAGE",
+                name: "Current page",
+                default: true
+            },
+            {
+                value: "SELECTION",
+                name: "Current selection"
+            }
+        ]
+    },
+    {
+        filterData: {
+            filterType: "case_sensitive",
+            multiSelect: false
+
+        },
+        filterOptions: [
+            {
+                value: false,
+                name: "Match case insensitive",
+                default: true
+            },
+            {
+                value: true,
+                name: "Match case sensitive"
+            },
+        ]
+    },
+    {
+        filterData: {
+            filterType: "string_match",
+            multiSelect: false,
+            filterTooltip: "More options coming soon",
+        },
+        filterOptions: [
+            {
+                value: "EXACT",
+                name: "Match exact name",
+                default: true
+            },
+        ]
+
+    }
 ]);
 
+// --------------------------------
+
 export let activeFilters = writable({
-    node_types: [],
-    query_text: "",
-    restrict_to_selection: false,
-    selected_node_ids: [],
-    exact_string_match: false
+
 })
 
 
@@ -113,16 +169,17 @@ export let recentSearches = writable([
 export let searchQuery = writable({
     node_types: [],
     query_text: "",
-    restrict_to_selection: false,
+    area_type: "PAGE",
     selected_node_ids: [],
+    string_match: false,
+    case_sensitive: false,
     query_submit_time: "",
-    exact_string_match: false
-
 })
 
 export let UIState = writable({
     showMainMenu: true,
     showSearchResults: false,
+    showAboutScreen: false
 })
 
 export let defaultSettings = readable({
