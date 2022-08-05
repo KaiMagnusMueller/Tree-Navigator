@@ -209,7 +209,6 @@
             class="filter-pill-group flex pl-xxsmall"
             on:wheel|preventDefault|stopPropagation={handleScroll}
             style="left: {scrollPos}px;"
-            tabindex="0"
         >
             {#each filterArray as filter}
                 <FilterPill

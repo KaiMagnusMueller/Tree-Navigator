@@ -29,6 +29,14 @@
         resizeAndPosition();
     });
 
+    onMount(() => {
+        focusELem(menuList);
+    });
+
+    function focusELem(elem) {
+        elem.focus();
+    }
+
     // this function runs everytime the menuItems array os updated
     // it will auto assign ids and keep the value var updated
     function updateSelectedAndIds() {
@@ -86,7 +94,9 @@
     function menuClick(event) {
         resetMenuProperties();
 
-        if (event.target == backdropElem) {
+        console.log(event);
+
+        if (event.target == backdropElem || event.target == menuList) {
             active = false;
         } else if (event.target.contains(pillElem)) {
             // This if is never used
@@ -99,6 +109,8 @@
                 let id = value.id;
                 let selectedItem = menuList.querySelector('[itemId="' + id + '"]');
                 selectedItem.focus(); //set focus to the currently selected item
+
+                console.log('focus');
 
                 // calculate distance from top so that we can position the dropdown menu
                 let parentTop = menuList.getBoundingClientRect().top;
@@ -209,6 +221,18 @@
         menuList.style.height = 'auto';
         menuList.style.top = '0px';
     }
+
+    function handleKeydown(params) {
+        console.log(params.code);
+        if (params.code === 'ArrowDown') {
+            // next menu entry
+            console.log(menuItems);
+            // evtl. ändern in fokus klasse, sodass die liste alles selbst handelt
+            const selectedIndex = menuItems.findIndex((elem) => elem.selected === true);
+            menuItems[selectedIndex].highlight = false;
+            menuItems[selectedIndex + 1].highlight = true;
+        }
+    }
 </script>
 
 <div
@@ -231,7 +255,14 @@
     {macOSBlink}
     class="wrapper {className}"
 >
-    <ul class="menu" class:rounded bind:this={menuList}>
+    <ul
+        on:blur={menuClick}
+        on:keydown={handleKeydown}
+        class="menu"
+        class:rounded
+        bind:this={menuList}
+        tabindex="0"
+    >
         {#if menuItems && menuItems.length > 0}
             {#each menuItems as item, i}
                 {#if i === 0}
@@ -251,8 +282,10 @@
                     on:mouseenter|once={removeHighlight}
                     itemId={item.id}
                     bind:selected={item.selected}
-                    {rounded}>{item.label}</SelectItem
-                >
+                    {rounded}
+                    highlight={item.highlight}
+                    >{item.label}
+                </SelectItem>
             {/each}
         {/if}
     </ul>
@@ -261,6 +294,10 @@
 <style>
     .wrapper {
         position: relative;
+    }
+
+    .wrapper:focus {
+        background-color: red;
     }
 
     .label,
@@ -309,6 +346,11 @@
         overflow-x: overlay;
         overflow-y: auto;
     }
+
+    .menu:focus {
+        background-color: red;
+    }
+
     .rounded {
         border-radius: var(--border-radius-large);
         /* 4px padding, together with .menu border */

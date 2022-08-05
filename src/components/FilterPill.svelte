@@ -159,6 +159,8 @@
         /* outline: 2px solid var(--blue);
         outline-offset: -2px; */
         box-shadow: 0 1px 6px rgba(194, 194, 194, 0.51);
+        outline: 2px solid var(--blue);
+        outline-offset: -2px;
     }
 
     .bt-dropdown:active {
