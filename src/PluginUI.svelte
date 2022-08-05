@@ -338,15 +338,17 @@
 			<div class="settings--header flex pt-xxsmall pr-xxsmall pl-xxsmall">
 				<IconButton
 					on:click={() => {
-						$UIState.showSettingsMenu = false;
+						$UIState.showAboutScreen = false;
 					}}
 					iconName={IconBack}
 				/>
 				<Section class="">About</Section>
 			</div>
-			<div class="settings--content pr-xxsmall pl-xxsmall">
-				<div class="license--section markdown pb-xxsmall">
+			<div class="settings--content markdown pr-xxsmall pl-xxsmall">
+				<div class="pb-medium">
 					<About />
+				</div>
+				<div>
 					<Acknowledgements />
 				</div>
 			</div>
