@@ -2,7 +2,7 @@
 name: Bug report
 about: Create a report to help us improve
 title: ''
-labels: bug
+labels: bug, enhancement
 assignees: ''
 
 ---
@@ -11,7 +11,12 @@ assignees: ''
 A clear and concise description of what the bug is.
 
 **To Reproduce**
-Steps to reproduce the behavior:
+Providing the following information will be of great help to me in tracking down any bugs:
+1. Steps to reproduce the behavior
+2. Screenshot showing the filter settings and the relevant elements in Figma if possible. 
+3. A link a File where the bug can be reproduced. 
+
+Example step-by-step description:
 1. Go to '...'
 2. Click on '....'
 3. Scroll down to '....'
@@ -19,9 +24,6 @@ Steps to reproduce the behavior:
 
 **Expected behavior**
 A clear and concise description of what you expected to happen.
-
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
 
 **Additional context**
 Add any other context about the problem here.
