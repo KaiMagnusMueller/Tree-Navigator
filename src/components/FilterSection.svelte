@@ -159,8 +159,17 @@
 
     function handleScroll(event) {
         // TODO: there has to be a better way than recalculating the scroll bounds on every scroll
-        initScrollPosition();
-        moveFilterList(event.deltaY);
+
+        let delta;
+        if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) {
+            delta = event.deltaX;
+        } else {
+            delta = event.deltaY;
+        }
+
+        if (delta >= 5 || delta <= -5) {
+            moveFilterList(delta);
+        }
     }
 
     function moveFilterList(delta) {
