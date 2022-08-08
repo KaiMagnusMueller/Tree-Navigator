@@ -46,6 +46,7 @@
 	let querySendTime;
 
 	$: $searchQuery.query_text = searchString;
+
 	$: $activeFilters.query_text = searchString;
 	$: $activeFilters.selected_node_ids = [];
 
@@ -156,6 +157,12 @@
 		//true if event comes from recent list item
 		// console.log(event.detail);
 		const isNew = event.detail;
+
+		if (!isNew) {
+			// Update search field value when a recent search is selected
+			console.log('recent search');
+			searchString = $searchQuery.query_text;
+		}
 
 		querySendTime = Date.now();
 		$searchQuery.query_submit_time = querySendTime;
