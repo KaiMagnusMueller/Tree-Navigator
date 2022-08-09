@@ -199,6 +199,47 @@
     let _searchQuery = $searchQuery;
 
     $: _searchQuery.node_types = _activeFilters;
+
+    export let _externalSearchQuery;
+
+    $: {
+        console.log(_externalSearchQuery);
+        updateSelectedFilters(_externalSearchQuery);
+    }
+
+    function updateSelectedFilters(params) {
+        if (_externalSearchQuery == undefined) {
+            return;
+        }
+
+        filterListArray.forEach((filter) => {
+            const filterType = filter.filterData.filterType;
+            const filters = filter.filterOptions;
+
+            console.log(filter);
+            console.log(filterType);
+
+            filter.filterOptions.forEach((option) => {
+                console.log(option);
+
+                option.selected = false;
+
+                if (_externalSearchQuery[filterType]?.constructor === Array) {
+                    let selectedOption = _externalSearchQuery[filterType].includes(option.value);
+
+                    console.log(selectedOption);
+
+                    option.selected = selectedOption;
+                }
+
+                if (_externalSearchQuery[filterType] == option.value) {
+                    option.selected = true;
+                }
+            });
+        });
+
+        console.log(filterListArray);
+    }
 </script>
 
 <svelte:window on:resize={initScrollPosition} />
