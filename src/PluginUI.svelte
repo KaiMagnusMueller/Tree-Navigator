@@ -57,6 +57,8 @@
 	let filterList = $filterDefinitions;
 
 	onMount(() => {
+		buildSearchQuery();
+
 		onmessage = (event) => {
 			if (event.data.pluginMessage.type == 'loaded-plugin-settings') {
 				if (event.data.pluginMessage.data) {
@@ -184,6 +186,8 @@
 
 			const searchObj = $searchQuery;
 
+			console.log(searchObj);
+
 			for (const key in searchObj) {
 				queryToAdd[key] = searchObj[key];
 			}
@@ -207,6 +211,30 @@
 
 		_externalSearchQuery = $searchQuery;
 		handleQuerySubmit(params);
+	}
+
+	function buildSearchQuery() {
+		$filterDefinitions.forEach((filter) => {
+			const filterType = filter.filterData.filterType;
+			const options = filter.filterOptions;
+
+			const isMultiselect = filter.filterData.multiSelect;
+
+			if (isMultiselect) {
+				const selectedFilters = options.filter((option) => option.default == true);
+
+				let selectedValues = [];
+				selectedFilters.forEach((elem) => {
+					selectedValues.push(elem.value);
+				});
+
+				$searchQuery[filterType] = selectedValues;
+			} else {
+				const selectedFilter = options.find((option) => option.default == true);
+				$searchQuery[filterType] = selectedFilter.value;
+			}
+		});
+		console.log($searchQuery);
 	}
 
 	function cancel() {
