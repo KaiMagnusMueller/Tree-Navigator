@@ -203,7 +203,6 @@
     export let _externalSearchQuery;
 
     $: {
-        console.log(_externalSearchQuery);
         updateSelectedFilters(_externalSearchQuery);
     }
 
@@ -212,33 +211,33 @@
             return;
         }
 
-        filterListArray.forEach((filter) => {
+        console.log('update selected');
+        filterArray.forEach((filter) => {
             const filterType = filter.filterData.filterType;
             const filters = filter.filterOptions;
 
-            console.log(filter);
-            console.log(filterType);
-
             filter.filterOptions.forEach((option) => {
-                console.log(option);
-
                 option.selected = false;
 
                 if (_externalSearchQuery[filterType]?.constructor === Array) {
                     let selectedOption = _externalSearchQuery[filterType].includes(option.value);
 
-                    console.log(selectedOption);
-
                     option.selected = selectedOption;
                 }
 
+                // _externalSearchQuery[filterType] could be "EXACT", true, false and option.value as well
+                // so if _externalSearchQuery[filterType] is equal to the value, that means the value
+                // is/should be selected
                 if (_externalSearchQuery[filterType] == option.value) {
                     option.selected = true;
                 }
             });
         });
 
-        console.log(filterListArray);
+        // console.log('-------------');
+        // console.log(filterListArray);
+        // filterArray = sortAndBuildFilter(filterListArray);
+        // console.log(filterArray);
     }
 </script>
 
@@ -261,7 +260,7 @@
             style="left: {scrollPos}px;"
             tabindex="0"
         >
-            {#each filterArray as filter}
+            {#each filterArray as filter (filter.filterData.filterType)}
                 <FilterPill
                     on:selectFilter={handleFilter}
                     optionList={filter.filterOptions}

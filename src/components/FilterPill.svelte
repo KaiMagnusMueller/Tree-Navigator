@@ -1,7 +1,7 @@
 <script>
     import { GlobalCSS, Icon } from 'figma-plugin-ds-svelte';
 
-    import { createEventDispatcher } from 'svelte';
+    import { createEventDispatcher, onMount } from 'svelte';
     import IconFlexible from './IconFlexible';
     import DropdownMenu from './DropdownMenu';
 
@@ -47,7 +47,14 @@
 
     let active = false;
     let pillElem;
-    let value = optionList.find((elem) => elem.selected == true);
+    let value;
+    let labelText = '';
+    $: optionList, updateValue();
+
+    function updateValue() {
+        value = optionList.find((elem) => elem.selected == true);
+        labelText = value?.label;
+    }
 </script>
 
 <div class="wrapper" class:disabled title={filterData.filterTooltip}>
@@ -75,7 +82,7 @@
             <IconFlexible iconName={SVGComponent} {iconText} {size} color="transparent" />
         {/if}
 
-        <slot>{value?.label}</slot>
+        <slot>{labelText}</slot>
 
         <svg width="8" height="5" viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
