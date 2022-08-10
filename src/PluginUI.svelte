@@ -46,7 +46,6 @@
 	let querySendTime;
 
 	$: $searchQuery.query_text = searchString;
-
 	$: $activeFilters.query_text = searchString;
 	$: $activeFilters.selected_node_ids = [];
 
@@ -54,11 +53,9 @@
 	//this is a reactive variable that will return false when a value is selected from
 	//the select menu, its value is bound to the primary buttons disabled prop
 
-	let filterList = $filterDefinitions;
+	let filterList = [];
 
 	onMount(() => {
-		buildSearchQuery();
-
 		onmessage = (event) => {
 			if (event.data.pluginMessage.type == 'loaded-plugin-settings') {
 				if (event.data.pluginMessage.data) {
@@ -94,44 +91,56 @@
 			}
 
 			if (event.data.pluginMessage.type == 'loaded-plugin-filter-counts') {
-				// filterList = $filterDefinitions;
-				// // TODO: build active filters from default filters here
-				// let _activeFilters = new Object();
-				// filterList.forEach((filter) => {
-				// 	const filterType = filter.filterData.filterType;
-				// 	const filterOptions = filter.filterOptions;
-				// 	let defaultOption = filterOptions.find((elem) => elem.default === true);
-				// 	if (filter.filterData.multiSelect === true) {
-				// 		$activeFilters[filterType] = [defaultOption.value];
-				// 	} else {
-				// 		$activeFilters[filterType] = defaultOption.value;
-				// 	}
-				// });
-				// console.log($activeFilters);
-				// if (event.data.pluginMessage.data.length == 0) {
-				// 	console.log('no filters used previously');
-				// 	return;
-				// }
-				// //update node type filter with counts
-				// // Sort by filter counts if rememberNodeFilterCounts is on
-				// if (
-				// 	$settings.rememberNodeFilterCounts &&
-				// 	filterList[0].filterData.filterType === 'node_type'
-				// ) {
-				// 	const index = filterList.findIndex((elem) => elem.filterType == 'node_type');
-				// 	console.log(index);
-				// 	filterList.forEach((filter) => {
-				// 		let loadedFilter = event.data.pluginMessage.data.find(
-				// 			(elem) => elem.node_type === filter.node_type
-				// 		);
-				// 		filter.count = loadedFilter.count;
-				// 	});
-				// 	// filterList.sort((a, b) => {
-				// 	// 	return b.count - a.count;
-				// 	// });
-				// 	// console.log('update node filter list');
-				// 	// console.log(filterList);
-				// }
+				filterList = $filterDefinitions;
+
+				// TODO: build active filters from default filters here
+
+				let _activeFilters = new Object();
+
+				filterList.forEach((filter) => {
+					const filterType = filter.filterData.filterType;
+					const filterOptions = filter.filterOptions;
+
+					let defaultOption = filterOptions.find((elem) => elem.default === true);
+
+					if (filter.filterData.multiSelect === true) {
+						$activeFilters[filterType] = [defaultOption.value];
+					} else {
+						$activeFilters[filterType] = defaultOption.value;
+					}
+				});
+
+				console.log($activeFilters);
+
+				if (event.data.pluginMessage.data.length == 0) {
+					console.log('no filters used previously');
+					return;
+				}
+
+				//update node type filter with counts
+				// Sort by filter counts if rememberNodeFilterCounts is on
+				if (
+					$settings.rememberNodeFilterCounts &&
+					filterList[0].filterData.filterType === 'node_type'
+				) {
+					const index = filterList.findIndex((elem) => elem.filterType == 'node_type');
+
+					console.log(index);
+
+					filterList.forEach((filter) => {
+						let loadedFilter = event.data.pluginMessage.data.find(
+							(elem) => elem.node_type === filter.node_type
+						);
+						filter.count = loadedFilter.count;
+					});
+
+					// filterList.sort((a, b) => {
+					// 	return b.count - a.count;
+					// });
+
+					// console.log('update node filter list');
+					// console.log(filterList);
+				}
 			}
 		};
 	});
@@ -170,7 +179,7 @@
 			//prevent the postMessage function from locking up the main plugin by delaying it a few milliseconds
 		}, 50);
 
-		// updateNodeTypeFilterCounts($searchQuery.node_types);
+		updateNodeTypeFilterCounts($searchQuery.node_types);
 
 		//only add to recentlist if the item is not already on the list
 		if (isNew == true) {
@@ -186,8 +195,6 @@
 
 			const searchObj = $searchQuery;
 
-			console.log(searchObj);
-
 			for (const key in searchObj) {
 				queryToAdd[key] = searchObj[key];
 			}
@@ -196,45 +203,9 @@
 			$recentSearches = $recentSearches.slice(0, $settings.recentSearchLength);
 
 			saveRecentSearches($recentSearches);
-			// saveFilterRanking($filterDefinitions);
+			saveFilterRanking($filterDefinitions);
 		} else {
 		}
-	}
-
-	let _externalSearchQuery;
-	function handleExternallyChangedFilters(params) {
-		// Update search field value when a recent search is selected
-		console.log('recent search');
-		searchString = $searchQuery.query_text;
-		console.log($searchQuery);
-		console.log($filterDefinitions);
-
-		_externalSearchQuery = $searchQuery;
-		handleQuerySubmit(params);
-	}
-
-	function buildSearchQuery() {
-		$filterDefinitions.forEach((filter) => {
-			const filterType = filter.filterData.filterType;
-			const options = filter.filterOptions;
-
-			const isMultiselect = filter.filterData.multiSelect;
-
-			if (isMultiselect) {
-				const selectedFilters = options.filter((option) => option.default == true);
-
-				let selectedValues = [];
-				selectedFilters.forEach((elem) => {
-					selectedValues.push(elem.value);
-				});
-
-				$searchQuery[filterType] = selectedValues;
-			} else {
-				const selectedFilter = options.find((option) => option.default == true);
-				$searchQuery[filterType] = selectedFilter.value;
-			}
-		});
-		console.log($searchQuery);
 	}
 
 	function cancel() {
@@ -263,7 +234,7 @@
 		$filterDefinitions.forEach((elem) => {
 			elem.count = 0;
 		});
-		// saveFilterRanking($filterDefinitions);
+		saveFilterRanking($filterDefinitions);
 	}
 
 	function toggleFilterReordering() {
@@ -313,16 +284,12 @@
 				class="flex-no-shrink"
 				on:filterChanged={(event) => (filterChanged = event.detail)}
 				{filterList}
-				bind:_externalSearchQuery
 			/>
 		{/if}
 		{#if $UIState.showMainMenu}
 			<div class="section--recent flex column flex-grow">
 				<Section class="flex-no-shrink">Recent Searches</Section>
-				<RecentSearchList
-					class="flex-grow"
-					on:recentSearch={handleExternallyChangedFilters}
-				/>
+				<RecentSearchList class="flex-grow" on:recentSearch={handleQuerySubmit} />
 			</div>
 			<div
 				class="section--footer flex row justify-content-end pr-xxsmall pl-xxsmall pb-xxsmall"

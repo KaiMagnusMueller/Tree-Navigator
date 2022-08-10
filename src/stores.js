@@ -167,6 +167,13 @@ export let recentSearches = writable([
 ])
 
 export let searchQuery = writable({
+    node_types: [],
+    query_text: "",
+    area_type: "PAGE",
+    selected_node_ids: [],
+    string_match: false,
+    case_sensitive: false,
+    query_submit_time: "",
 })
 
 export let UIState = writable({

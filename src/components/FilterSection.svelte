@@ -159,17 +159,8 @@
 
     function handleScroll(event) {
         // TODO: there has to be a better way than recalculating the scroll bounds on every scroll
-
-        let delta;
-        if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) {
-            delta = event.deltaX;
-        } else {
-            delta = event.deltaY;
-        }
-
-        if (delta >= 5 || delta <= -5) {
-            moveFilterList(delta);
-        }
+        initScrollPosition();
+        moveFilterList(event.deltaY);
     }
 
     function moveFilterList(delta) {
@@ -199,46 +190,6 @@
     let _searchQuery = $searchQuery;
 
     $: _searchQuery.node_types = _activeFilters;
-
-    export let _externalSearchQuery;
-
-    $: {
-        updateSelectedFilters(_externalSearchQuery);
-    }
-
-    function updateSelectedFilters(params) {
-        if (_externalSearchQuery == undefined) {
-            return;
-        }
-
-        console.log('update selected');
-        filterArray.forEach((filter) => {
-            const filterType = filter.filterData.filterType;
-            const filters = filter.filterOptions;
-
-            filter.filterOptions.forEach((option) => {
-                option.selected = false;
-
-                if (_externalSearchQuery[filterType]?.constructor === Array) {
-                    let selectedOption = _externalSearchQuery[filterType].includes(option.value);
-
-                    option.selected = selectedOption;
-                }
-
-                // _externalSearchQuery[filterType] could be "EXACT", true, false and option.value as well
-                // so if _externalSearchQuery[filterType] is equal to the value, that means the value
-                // is/should be selected
-                if (_externalSearchQuery[filterType] == option.value) {
-                    option.selected = true;
-                }
-            });
-        });
-
-        // console.log('-------------');
-        // console.log(filterListArray);
-        // filterArray = sortAndBuildFilter(filterListArray);
-        // console.log(filterArray);
-    }
 </script>
 
 <svelte:window on:resize={initScrollPosition} />
@@ -260,7 +211,7 @@
             style="left: {scrollPos}px;"
             tabindex="0"
         >
-            {#each filterArray as filter (filter.filterData.filterType)}
+            {#each filterArray as filter}
                 <FilterPill
                     on:selectFilter={handleFilter}
                     optionList={filter.filterOptions}
