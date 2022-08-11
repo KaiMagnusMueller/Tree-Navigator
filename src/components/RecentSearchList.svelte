@@ -51,7 +51,7 @@
 
 <div class="recent-search-wrapper {classList}">
     <div class="recent-search-list pb-xlarge pr-xxsmall pl-xxsmall flex column flex-grow">
-        {#each $recentSearches as search, i}
+        {#each $recentSearches as search, i (search.query_send_time)}
             <RecentSearchItem
                 {search}
                 {i}

@@ -1,7 +1,7 @@
 <script>
     import { GlobalCSS, Icon } from 'figma-plugin-ds-svelte';
 
-    import { createEventDispatcher, onMount } from 'svelte';
+    import { createEventDispatcher } from 'svelte';
     import IconFlexible from './IconFlexible';
     import DropdownMenu from './DropdownMenu';
 
@@ -44,16 +44,15 @@
             selection: selection,
         });
     }
+    export let currentQuery;
 
     let active = false;
     let pillElem;
     let value;
-    let labelText = '';
-    $: optionList, updateValue();
+    $: currentQuery, updateValue();
 
     function updateValue() {
         value = optionList.find((elem) => elem.selected == true);
-        labelText = value?.label;
     }
 </script>
 
@@ -82,7 +81,7 @@
             <IconFlexible iconName={SVGComponent} {iconText} {size} color="transparent" />
         {/if}
 
-        <slot>{labelText}</slot>
+        <slot>{value?.label}</slot>
 
         <svg width="8" height="5" viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path

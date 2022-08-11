@@ -202,11 +202,11 @@
 
     export let _externalSearchQuery;
 
-    $: {
-        updateSelectedFilters(_externalSearchQuery);
-    }
+    $: _externalSearchQuery, updateSelectedFilters();
 
     function updateSelectedFilters(params) {
+        // console.log('external search query changed');
+
         if (_externalSearchQuery == undefined) {
             return;
         }
@@ -214,7 +214,7 @@
         console.log('update selected');
         filterArray.forEach((filter) => {
             const filterType = filter.filterData.filterType;
-            const filters = filter.filterOptions;
+            const options = filter.filterOptions;
 
             filter.filterOptions.forEach((option) => {
                 option.selected = false;
@@ -237,7 +237,8 @@
         // console.log('-------------');
         // console.log(filterListArray);
         // filterArray = sortAndBuildFilter(filterListArray);
-        // console.log(filterArray);
+        console.log(_externalSearchQuery);
+        console.log(filterArray);
     }
 </script>
 
@@ -265,6 +266,7 @@
                     on:selectFilter={handleFilter}
                     optionList={filter.filterOptions}
                     filterData={filter.filterData}
+                    bind:currentQuery={_externalSearchQuery}
                 />
             {/each}
         </div>

@@ -186,6 +186,7 @@
 
 			const searchObj = $searchQuery;
 
+			console.log('add to recent search');
 			console.log(searchObj);
 
 			for (const key in searchObj) {
@@ -205,9 +206,10 @@
 	function handleExternallyChangedFilters(params) {
 		// Update search field value when a recent search is selected
 		console.log('recent search');
-		searchString = $searchQuery.query_text;
+
 		console.log($searchQuery);
-		console.log($filterDefinitions);
+
+		searchString = $searchQuery.query_text;
 
 		_externalSearchQuery = $searchQuery;
 		handleQuerySubmit(params);
@@ -235,6 +237,7 @@
 			}
 		});
 		console.log($searchQuery);
+		$activeFilters = $searchQuery;
 	}
 
 	function cancel() {
@@ -281,6 +284,10 @@
 	}
 
 	function navBack(params) {
+		searchString = '';
+		buildSearchQuery();
+		_externalSearchQuery = $searchQuery;
+
 		$UIState.showMainMenu = true;
 		$UIState.showSearchResults = false;
 	}

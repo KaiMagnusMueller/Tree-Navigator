@@ -25,7 +25,7 @@
 
     //assign id's to the input array
     onMount(async () => {
-        updateSelectedAndIds();
+        // updateSelectedAndIds();
         resizeAndPosition();
     });
 
