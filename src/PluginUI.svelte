@@ -4,7 +4,6 @@
 	import { GlobalCSS } from 'figma-plugin-ds-svelte';
 	import {
 		searchQuery,
-		recentSearches,
 		UIState,
 		activeFilters,
 		filterDefinitions,
@@ -86,7 +85,7 @@
 						recentsArray.push(element);
 					});
 
-					$recentSearches = recentsArray;
+					_recentSearches = recentsArray;
 				} else {
 					// console.log('no data... loading example searches');
 					// $recentSearches = recentSearchExamples;
@@ -154,7 +153,7 @@
 		// console.log($searchQuery);
 
 		const queryToSend = $searchQuery;
-		console.log('loading');
+		// console.log('loading');
 		displayResults();
 
 		setTimeout(() => {
@@ -193,29 +192,32 @@
 				queryToAdd[key] = searchObj[key];
 			}
 
-			$recentSearches = [queryToAdd, ...$recentSearches];
-			$recentSearches = $recentSearches.slice(0, $settings.recentSearchLength);
+			_recentSearches = [queryToAdd, ..._recentSearches];
+			_recentSearches = _recentSearches.slice(0, $settings.recentSearchLength);
 
-			saveRecentSearches($recentSearches);
+			saveRecentSearches(_recentSearches);
 			// saveFilterRanking($filterDefinitions);
 		} else {
 		}
 	}
 
 	let _externalSearchQuery;
-	function handleExternallyChangedFilters(params) {
+	function handleExternallyChangedFilters(event) {
 		// Update search field value when a recent search is selected
-		console.log('recent search');
 
-		console.log($searchQuery);
+		const search = event.detail.search;
 
-		searchString = $searchQuery.query_text;
+		$searchQuery = search;
 
-		_externalSearchQuery = $searchQuery;
-		handleQuerySubmit(params);
+		searchString = search.query_text;
+
+		_externalSearchQuery = search;
+		handleQuerySubmit(event.detail.isNew);
 	}
 
 	function buildSearchQuery() {
+		$searchQuery = {};
+
 		$filterDefinitions.forEach((filter) => {
 			const filterType = filter.filterData.filterType;
 			const options = filter.filterOptions;
@@ -236,7 +238,6 @@
 				$searchQuery[filterType] = selectedFilter.value;
 			}
 		});
-		console.log($searchQuery);
 		$activeFilters = $searchQuery;
 	}
 
@@ -257,11 +258,6 @@
 		// TODO: sort filterDefinitions by count value (possibly in filter component)
 	}
 
-	function deleteRecentSearches() {
-		$recentSearches = [];
-		saveRecentSearches($recentSearches);
-	}
-
 	function resetNodeTypeFilterCounts() {
 		$filterDefinitions.forEach((elem) => {
 			elem.count = 0;
@@ -272,6 +268,16 @@
 	function toggleFilterReordering() {
 		// resetNodeTypeFilterCounts();
 		saveSettings($settings);
+	}
+
+	// -------------------------
+	// RECENT SEARCHES
+	// -------------------------
+	let _recentSearches;
+
+	function deleteRecentSearches() {
+		_recentSearches = [];
+		saveRecentSearches(_recentSearches);
 	}
 
 	// -------------------------
@@ -326,10 +332,13 @@
 		{#if $UIState.showMainMenu}
 			<div class="section--recent flex column flex-grow">
 				<Section class="flex-no-shrink">Recent Searches</Section>
-				<RecentSearchList
-					class="flex-grow"
-					on:recentSearch={handleExternallyChangedFilters}
-				/>
+				{#if _recentSearches}
+					<RecentSearchList
+						class="flex-grow"
+						on:recentSearch={handleExternallyChangedFilters}
+						bind:recentSearches={_recentSearches}
+					/>
+				{/if}
 			</div>
 			<div
 				class="section--footer flex row justify-content-end pr-xxsmall pl-xxsmall pb-xxsmall"

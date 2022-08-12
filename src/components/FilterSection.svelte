@@ -159,6 +159,7 @@
 
     function handleScroll(event) {
         // TODO: there has to be a better way than recalculating the scroll bounds on every scroll
+        initScrollPosition();
 
         let delta;
         if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) {
@@ -211,7 +212,7 @@
             return;
         }
 
-        console.log('update selected');
+        // console.log('update selected');
         filterArray.forEach((filter) => {
             const filterType = filter.filterData.filterType;
             const options = filter.filterOptions;
@@ -237,8 +238,8 @@
         // console.log('-------------');
         // console.log(filterListArray);
         // filterArray = sortAndBuildFilter(filterListArray);
-        console.log(_externalSearchQuery);
-        console.log(filterArray);
+        // console.log(_externalSearchQuery);
+        // console.log(filterArray);
     }
 </script>
 

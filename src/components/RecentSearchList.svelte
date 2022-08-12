@@ -1,10 +1,12 @@
 <script>
     import { Section } from 'figma-plugin-ds-svelte';
-    import { recentSearches, filterDefinitions } from '../stores.js';
+    import { filterDefinitions } from '../stores.js';
     import RecentSearchItem from './RecentSearchItem.svelte';
     import { saveRecentSearches } from '../lib/helper-functions';
 
     export { classList as class };
+
+    export let recentSearches;
 
     let classList = '';
 
@@ -36,22 +38,28 @@
 
     function handleRemoveSearch(event) {
         const index = event.detail;
-        $recentSearches.splice(index, 1);
-        $recentSearches = $recentSearches;
-        saveRecentSearches($recentSearches);
+        recentSearches.splice(index, 1);
+        recentSearches = recentSearches;
+        saveRecentSearches(recentSearches);
     }
 
     function handleMoveToTop(event) {
         const index = event.detail;
-        const cutArray = $recentSearches.splice(index, 1);
-        $recentSearches = [...cutArray, ...$recentSearches];
-        saveRecentSearches($recentSearches);
+        const cutArray = recentSearches.splice(index, 1);
+
+        // console.log('--------move to top');
+        // console.log(recentSearches);
+        // console.log(cutArray);
+        // console.log(recentSearches);
+
+        recentSearches = [...cutArray, ...recentSearches];
+        saveRecentSearches(recentSearches);
     }
 </script>
 
 <div class="recent-search-wrapper {classList}">
     <div class="recent-search-list pb-xlarge pr-xxsmall pl-xxsmall flex column flex-grow">
-        {#each $recentSearches as search, i (search.query_send_time)}
+        {#each recentSearches as search, i (search.query_submit_time)}
             <RecentSearchItem
                 {search}
                 {i}
@@ -62,7 +70,7 @@
                 >{search.query_text}
             </RecentSearchItem>
         {/each}
-        {#if $recentSearches.length == 0}
+        {#if recentSearches.length == 0}
             <p>Nothing to see...</p>
         {/if}
     </div>
