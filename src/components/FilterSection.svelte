@@ -171,6 +171,7 @@
         if (delta >= 5 || delta <= -5) {
             moveFilterList(delta);
         }
+
     }
 
     function moveFilterList(delta) {
@@ -262,7 +263,7 @@
             style="left: {scrollPos}px;"
             tabindex="0"
         >
-            {#each filterArray as filter (filter.filterData.filterType)}
+            {#each filterArray as filter}
                 <FilterPill
                     on:selectFilter={handleFilter}
                     optionList={filter.filterOptions}
