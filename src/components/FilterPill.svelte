@@ -44,10 +44,16 @@
             selection: selection,
         });
     }
+    export let currentQuery;
 
     let active = false;
     let pillElem;
-    let value = optionList.find((elem) => elem.selected == true);
+    let value;
+    $: currentQuery, updateValue();
+
+    function updateValue() {
+        value = optionList.find((elem) => elem.selected == true);
+    }
 </script>
 
 <div class="wrapper" class:disabled title={filterData.filterTooltip}>
@@ -75,7 +81,8 @@
             <IconFlexible iconName={SVGComponent} {iconText} {size} color="transparent" />
         {/if}
 
-        <slot>{value.label}</slot>
+        <slot>{value?.label}</slot>
+
 
         <svg width="8" height="5" viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path

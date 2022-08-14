@@ -161,11 +161,6 @@ export let activeFilters = writable({
 
 })
 
-
-export let recentSearches = writable([
-
-])
-
 export let searchQuery = writable({
     node_types: [],
     query_text: "",

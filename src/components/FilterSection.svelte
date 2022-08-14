@@ -160,7 +160,18 @@
     function handleScroll(event) {
         // TODO: there has to be a better way than recalculating the scroll bounds on every scroll
         initScrollPosition();
-        moveFilterList(event.deltaY);
+
+        let delta;
+        if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) {
+            delta = event.deltaX;
+        } else {
+            delta = event.deltaY;
+        }
+
+        if (delta >= 5 || delta <= -5) {
+            moveFilterList(delta);
+        }
+
     }
 
     function moveFilterList(delta) {
@@ -190,6 +201,47 @@
     let _searchQuery = $searchQuery;
 
     $: _searchQuery.node_types = _activeFilters;
+
+    export let _externalSearchQuery;
+
+    $: _externalSearchQuery, updateSelectedFilters();
+
+    function updateSelectedFilters(params) {
+        // console.log('external search query changed');
+
+        if (_externalSearchQuery == undefined) {
+            return;
+        }
+
+        // console.log('update selected');
+        filterArray.forEach((filter) => {
+            const filterType = filter.filterData.filterType;
+            const options = filter.filterOptions;
+
+            filter.filterOptions.forEach((option) => {
+                option.selected = false;
+
+                if (_externalSearchQuery[filterType]?.constructor === Array) {
+                    let selectedOption = _externalSearchQuery[filterType].includes(option.value);
+
+                    option.selected = selectedOption;
+                }
+
+                // _externalSearchQuery[filterType] could be "EXACT", true, false and option.value as well
+                // so if _externalSearchQuery[filterType] is equal to the value, that means the value
+                // is/should be selected
+                if (_externalSearchQuery[filterType] == option.value) {
+                    option.selected = true;
+                }
+            });
+        });
+
+        // console.log('-------------');
+        // console.log(filterListArray);
+        // filterArray = sortAndBuildFilter(filterListArray);
+        // console.log(_externalSearchQuery);
+        // console.log(filterArray);
+    }
 </script>
 
 <svelte:window on:resize={initScrollPosition} />
@@ -216,6 +268,7 @@
                     on:selectFilter={handleFilter}
                     optionList={filter.filterOptions}
                     filterData={filter.filterData}
+                    bind:currentQuery={_externalSearchQuery}
                 />
             {/each}
         </div>

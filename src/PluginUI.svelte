@@ -4,7 +4,6 @@
 	import { GlobalCSS } from 'figma-plugin-ds-svelte';
 	import {
 		searchQuery,
-		recentSearches,
 		UIState,
 		activeFilters,
 		filterDefinitions,
@@ -83,7 +82,7 @@
 						recentsArray.push(element);
 					});
 
-					$recentSearches = recentsArray;
+					_recentSearches = recentsArray;
 				} else {
 					// console.log('no data... loading example searches');
 					// $recentSearches = recentSearchExamples;
@@ -163,7 +162,7 @@
 		// console.log($searchQuery);
 
 		const queryToSend = $searchQuery;
-		console.log('loading');
+		// console.log('loading');
 		displayResults();
 
 		setTimeout(() => {
@@ -199,15 +198,55 @@
 				queryToAdd[key] = searchObj[key];
 			}
 
-			$recentSearches = [queryToAdd, ...$recentSearches];
-			$recentSearches = $recentSearches.slice(0, $settings.recentSearchLength);
+			_recentSearches = [queryToAdd, ..._recentSearches];
+			_recentSearches = _recentSearches.slice(0, $settings.recentSearchLength);
 
-			saveRecentSearches($recentSearches);
-			saveFilterRanking($filterDefinitions);
+			saveRecentSearches(_recentSearches);
+			// saveFilterRanking($filterDefinitions);
+
 		} else {
 		}
 	}
 
+	let _externalSearchQuery;
+	function handleExternallyChangedFilters(event) {
+		// Update search field value when a recent search is selected
+
+		const search = event.detail.search;
+
+		$searchQuery = search;
+
+		searchString = search.query_text;
+
+		_externalSearchQuery = search;
+		handleQuerySubmit(event.detail.isNew);
+	}
+
+	function buildSearchQuery() {
+		$searchQuery = {};
+
+		$filterDefinitions.forEach((filter) => {
+			const filterType = filter.filterData.filterType;
+			const options = filter.filterOptions;
+
+			const isMultiselect = filter.filterData.multiSelect;
+
+			if (isMultiselect) {
+				const selectedFilters = options.filter((option) => option.default == true);
+
+				let selectedValues = [];
+				selectedFilters.forEach((elem) => {
+					selectedValues.push(elem.value);
+				});
+
+				$searchQuery[filterType] = selectedValues;
+			} else {
+				const selectedFilter = options.find((option) => option.default == true);
+				$searchQuery[filterType] = selectedFilter.value;
+			}
+		});
+		$activeFilters = $searchQuery;
+	}
 	function cancel() {
 		parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*');
 	}
@@ -225,11 +264,6 @@
 		// TODO: sort filterDefinitions by count value (possibly in filter component)
 	}
 
-	function deleteRecentSearches() {
-		$recentSearches = [];
-		saveRecentSearches($recentSearches);
-	}
-
 	function resetNodeTypeFilterCounts() {
 		$filterDefinitions.forEach((elem) => {
 			elem.count = 0;
@@ -243,6 +277,16 @@
 	}
 
 	// -------------------------
+	// RECENT SEARCHES
+	// -------------------------
+	let _recentSearches;
+
+	function deleteRecentSearches() {
+		_recentSearches = [];
+		saveRecentSearches(_recentSearches);
+	}
+
+	// -------------------------
 	// UI
 	// -------------------------
 
@@ -252,6 +296,10 @@
 	}
 
 	function navBack(params) {
+		searchString = '';
+		buildSearchQuery();
+		_externalSearchQuery = $searchQuery;
+
 		$UIState.showMainMenu = true;
 		$UIState.showSearchResults = false;
 	}
@@ -289,7 +337,13 @@
 		{#if $UIState.showMainMenu}
 			<div class="section--recent flex column flex-grow">
 				<Section class="flex-no-shrink">Recent Searches</Section>
-				<RecentSearchList class="flex-grow" on:recentSearch={handleQuerySubmit} />
+				{#if _recentSearches}
+					<RecentSearchList
+						class="flex-grow"
+						on:recentSearch={handleExternallyChangedFilters}
+						bind:recentSearches={_recentSearches}
+					/>
+				{/if}
 			</div>
 			<div
 				class="section--footer flex row justify-content-end pr-xxsmall pl-xxsmall pb-xxsmall"
