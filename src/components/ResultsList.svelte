@@ -1,5 +1,5 @@
 <script>
-    import { IconButton } from 'figma-plugin-ds-svelte';
+    import { IconButton, IconSpinner } from 'figma-plugin-ds-svelte';
     import ResultsListItem from './ResultsListItem.svelte';
 
     export let querySendTime;
@@ -119,26 +119,26 @@
 
 <div class="results-container pr-xxsmall pl-xxsmall">
     {#if searchResults.length > 0 && queryDuration != undefined}
-        <p class="text--results-info">
-            Found {searchResults.length} nodes in {Math.round(queryDuration / 100) / 10}
-            seconds.
-        </p>
-        <!-- 
-        {#each searchResults as result}
-            <p>{result.name}, {result.id}, {result.type}</p>
-        {/each} -->
-
         <div class="results-list" bind:this={resultsListElem}>
             {#each searchResults as result (result.id)}
-                <ResultsListItem {result} on:result-clicked={handleClick} on:focus-selection={handleFocSelection} />
+                <ResultsListItem
+                    {result}
+                    on:result-clicked={handleClick}
+                    on:focus-selection={handleFocSelection}
+                />
             {/each}
         </div>
+        <p class="text--results-info">
+            Found {searchResults.length} node{#if searchResults.length > 1}s{/if} in {Math.round(
+                queryDuration / 100
+            ) / 10} seconds.
+        </p>
     {:else if searchResults.length === 0 && queryDuration != undefined}
         <p>no results</p>
     {:else if searchResults.length === 0}
-        <div class="loading-spinner-container">
+        <div class="empty-state-container">
             <div class="loading-spinner-wrapper">
-                <span class="loading-spinner">Loading...</span>
+                <IconButton spin iconName={IconSpinner} />
             </div>
         </div>
     {/if}
@@ -149,13 +149,14 @@
         overflow: auto;
         height: 100%;
         font-size: var(--font-size-xsmall);
-        font-weight: var(--font-weight-medium);
+        font-weight: var(--font-weight-normal);
         letter-spacing: var(--font-letter-spacing-neg-small);
         line-height: var(--font-line-height);
     }
 
     .text--results-info {
-        color: var(--black8-opaque);
+        color: rgba(0, 0, 0, 0.5);
+        text-align: center;
     }
 
     .results-list {
@@ -163,24 +164,14 @@
         flex-direction: column;
     }
 
-    .loading-spinner-container {
+    .empty-state-container {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0.7;
     }
 
     .loading-spinner-wrapper {
-    }
-
-    .loading-spinner {
-        animation: loading 1.5s infinite alternate steps(4, end);
-        overflow: hidden;
-        font-weight: var(--font-weight-bold);
-    }
-
-    @keyframes loading {
-        from {
-            width: 100%;
-        }
-        to {
-            width: 75%;
-        }
     }
 </style>
