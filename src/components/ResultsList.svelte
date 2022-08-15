@@ -1,6 +1,9 @@
 <script>
-    import { IconButton, IconSpinner } from 'figma-plugin-ds-svelte';
+    import { Button, IconButton, IconSpinner } from 'figma-plugin-ds-svelte';
     import ResultsListItem from './ResultsListItem.svelte';
+    import { createEventDispatcher } from 'svelte';
+
+    let dispatch = createEventDispatcher();
 
     export let querySendTime;
     let queryDuration;
@@ -115,6 +118,10 @@
         // See the "selection-changed" message handler above, where the toggle is reset
         ignoreSelection = true;
     }
+
+    function resetSearch() {
+        dispatch('resetSearch', 'reset');
+    }
 </script>
 
 <div class="results-container pr-xxsmall pl-xxsmall">
@@ -134,9 +141,40 @@
             ) / 10} seconds.
         </p>
     {:else if searchResults.length === 0 && queryDuration != undefined}
-        <p>no results</p>
-    {:else if searchResults.length === 0}
         <div class="empty-state-container">
+            <svg
+                id="icon"
+                xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                viewBox="0 0 32 32"
+            >
+                <defs>
+                    <style>
+                        .cls-1 {
+                            fill: none;
+                        }
+                    </style>
+                </defs>
+                <path
+                    d="M30,28.5859l-4.6885-4.6884a8.028,8.028,0,1,0-1.414,1.414L28.5859,30ZM19,25a6,6,0,1,1,6-6A6.0066,6.0066,0,0,1,19,25Z"
+                />
+                <rect x="2" y="12" width="8" height="2" />
+                <rect x="2" y="2" width="16" height="2" />
+                <rect x="2" y="7" width="16" height="2" />
+                <rect
+                    id="_Transparent_Rectangle_"
+                    data-name="&lt;Transparent Rectangle&gt;"
+                    class="cls-1"
+                    width="32"
+                    height="32"
+                />
+            </svg>
+            <p class="text--results-info">No elements found.</p>
+            <Button on:click={resetSearch}>Clear</Button>
+        </div>
+    {:else if searchResults.length === 0}
+        <div class="empty-state-container color--fake-grey">
             <div class="loading-spinner-wrapper">
                 <IconButton spin iconName={IconSpinner} />
             </div>
@@ -167,9 +205,17 @@
     .empty-state-container {
         height: 100%;
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
+    }
+
+    .color--fake-grey {
         opacity: 0.7;
+    }
+
+    svg {
+        fill: rgba(0, 0, 0, 0.5);
     }
 
     .loading-spinner-wrapper {

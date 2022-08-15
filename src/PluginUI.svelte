@@ -203,7 +203,6 @@
 
 			saveRecentSearches(_recentSearches);
 			// saveFilterRanking($filterDefinitions);
-
 		} else {
 		}
 	}
@@ -247,6 +246,14 @@
 		});
 		$activeFilters = $searchQuery;
 	}
+
+	function resetSearchQuery() {
+		console.log('reset');
+		searchString = '';
+		buildSearchQuery();
+		_externalSearchQuery = $searchQuery;
+	}
+
 	function cancel() {
 		parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*');
 	}
@@ -296,10 +303,6 @@
 	}
 
 	function navBack(params) {
-		searchString = '';
-		buildSearchQuery();
-		_externalSearchQuery = $searchQuery;
-
 		$UIState.showMainMenu = true;
 		$UIState.showSearchResults = false;
 	}
@@ -317,7 +320,12 @@
 	<div class="main-section">
 		<!-- <TestComponent /> -->
 		<div class="header-group flex pr-xxsmall pl-xxsmall pt-xxsmall">
-			<IconButton on:click={navBack} iconName={IconBack} disabled={$UIState.showMainMenu} />
+			<IconButton
+				on:click={navBack}
+				on:click={resetSearchQuery}
+				iconName={IconBack}
+				disabled={$UIState.showMainMenu}
+			/>
 			<InputFlexible
 				iconName={IconSearch}
 				placeholder="Search"
@@ -353,7 +361,7 @@
 				<IconButton iconName={IconAdjust} color={'black3'} on:click={openSettings} />
 			</div>
 		{:else if $UIState.showSearchResults}
-			<ResultsList {querySendTime} />
+			<ResultsList {querySendTime} on:resetSearch={resetSearchQuery} />
 		{/if}
 	</div>
 	{#if $UIState.showSettingsMenu}
