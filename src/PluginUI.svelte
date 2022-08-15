@@ -52,9 +52,11 @@
 	//this is a reactive variable that will return false when a value is selected from
 	//the select menu, its value is bound to the primary buttons disabled prop
 
-	let filterList = [];
+	let filterList = $filterDefinitions;
 
 	onMount(() => {
+		buildSearchQuery();
+
 		onmessage = (event) => {
 			if (event.data.pluginMessage.type == 'loaded-plugin-settings') {
 				if (event.data.pluginMessage.data) {
@@ -90,56 +92,44 @@
 			}
 
 			if (event.data.pluginMessage.type == 'loaded-plugin-filter-counts') {
-				filterList = $filterDefinitions;
-
-				// TODO: build active filters from default filters here
-
-				let _activeFilters = new Object();
-
-				filterList.forEach((filter) => {
-					const filterType = filter.filterData.filterType;
-					const filterOptions = filter.filterOptions;
-
-					let defaultOption = filterOptions.find((elem) => elem.default === true);
-
-					if (filter.filterData.multiSelect === true) {
-						$activeFilters[filterType] = [defaultOption.value];
-					} else {
-						$activeFilters[filterType] = defaultOption.value;
-					}
-				});
-
-				console.log($activeFilters);
-
-				if (event.data.pluginMessage.data.length == 0) {
-					console.log('no filters used previously');
-					return;
-				}
-
-				//update node type filter with counts
-				// Sort by filter counts if rememberNodeFilterCounts is on
-				if (
-					$settings.rememberNodeFilterCounts &&
-					filterList[0].filterData.filterType === 'node_type'
-				) {
-					const index = filterList.findIndex((elem) => elem.filterType == 'node_type');
-
-					console.log(index);
-
-					filterList.forEach((filter) => {
-						let loadedFilter = event.data.pluginMessage.data.find(
-							(elem) => elem.node_type === filter.node_type
-						);
-						filter.count = loadedFilter.count;
-					});
-
-					// filterList.sort((a, b) => {
-					// 	return b.count - a.count;
-					// });
-
-					// console.log('update node filter list');
-					// console.log(filterList);
-				}
+				// filterList = $filterDefinitions;
+				// // TODO: build active filters from default filters here
+				// let _activeFilters = new Object();
+				// filterList.forEach((filter) => {
+				// 	const filterType = filter.filterData.filterType;
+				// 	const filterOptions = filter.filterOptions;
+				// 	let defaultOption = filterOptions.find((elem) => elem.default === true);
+				// 	if (filter.filterData.multiSelect === true) {
+				// 		$activeFilters[filterType] = [defaultOption.value];
+				// 	} else {
+				// 		$activeFilters[filterType] = defaultOption.value;
+				// 	}
+				// });
+				// console.log($activeFilters);
+				// if (event.data.pluginMessage.data.length == 0) {
+				// 	console.log('no filters used previously');
+				// 	return;
+				// }
+				// //update node type filter with counts
+				// // Sort by filter counts if rememberNodeFilterCounts is on
+				// if (
+				// 	$settings.rememberNodeFilterCounts &&
+				// 	filterList[0].filterData.filterType === 'node_type'
+				// ) {
+				// 	const index = filterList.findIndex((elem) => elem.filterType == 'node_type');
+				// 	console.log(index);
+				// 	filterList.forEach((filter) => {
+				// 		let loadedFilter = event.data.pluginMessage.data.find(
+				// 			(elem) => elem.node_type === filter.node_type
+				// 		);
+				// 		filter.count = loadedFilter.count;
+				// 	});
+				// 	// filterList.sort((a, b) => {
+				// 	// 	return b.count - a.count;
+				// 	// });
+				// 	// console.log('update node filter list');
+				// 	// console.log(filterList);
+				// }
 			}
 		};
 	});
@@ -178,7 +168,7 @@
 			//prevent the postMessage function from locking up the main plugin by delaying it a few milliseconds
 		}, 50);
 
-		updateNodeTypeFilterCounts($searchQuery.node_types);
+		// updateNodeTypeFilterCounts($searchQuery.node_types);
 
 		//only add to recentlist if the item is not already on the list
 		if (isNew == true) {
@@ -275,7 +265,7 @@
 		$filterDefinitions.forEach((elem) => {
 			elem.count = 0;
 		});
-		saveFilterRanking($filterDefinitions);
+		// saveFilterRanking($filterDefinitions);
 	}
 
 	function toggleFilterReordering() {
@@ -286,7 +276,7 @@
 	// -------------------------
 	// RECENT SEARCHES
 	// -------------------------
-	let _recentSearches;
+	let _recentSearches = [];
 
 	function deleteRecentSearches() {
 		_recentSearches = [];
@@ -340,6 +330,7 @@
 				class="flex-no-shrink"
 				on:filterChanged={(event) => (filterChanged = event.detail)}
 				{filterList}
+				bind:_externalSearchQuery
 			/>
 		{/if}
 		{#if $UIState.showMainMenu}
@@ -361,7 +352,11 @@
 				<IconButton iconName={IconAdjust} color={'black3'} on:click={openSettings} />
 			</div>
 		{:else if $UIState.showSearchResults}
-			<ResultsList {querySendTime} on:resetSearch={resetSearchQuery} />
+			<ResultsList
+				{querySendTime}
+				on:resetSearch={navBack}
+				on:resetSearch={resetSearchQuery}
+			/>
 		{/if}
 	</div>
 	{#if $UIState.showSettingsMenu}

@@ -170,8 +170,8 @@
                     height="32"
                 />
             </svg>
-            <p class="text--results-info">No elements found.</p>
-            <Button on:click={resetSearch}>Clear</Button>
+            <p class="text--results-info">No matching elements found.</p>
+            <Button variant="primary" on:click={resetSearch}>Clear search</Button>
         </div>
     {:else if searchResults.length === 0}
         <div class="empty-state-container color--fake-grey">
