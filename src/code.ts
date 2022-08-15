@@ -181,12 +181,14 @@ figma.ui.onmessage = msg => {
 				children: element.children,
 				type: element.type,
 				selected: true
-
 			})
 		});
 
-		figma.currentPage.selection = filteredNodes
-		figma.viewport.scrollAndZoomIntoView(filteredNodes);
+		// If no nodes found (length === 0), don't change the selection
+		if (filteredNodes.length > 0) {
+			figma.currentPage.selection = filteredNodes
+			figma.viewport.scrollAndZoomIntoView(filteredNodes);
+		}
 
 		sendResultsList(nodesToSend)
 	}
