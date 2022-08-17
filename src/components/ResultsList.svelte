@@ -125,30 +125,28 @@
 </script>
 
 <div class="results-container pr-xxsmall pl-xxsmall">
+    <!-- --------------------------------- -->
+    <!-- Display RESULTS LIST and METADATA -->
+    <!-- Results exist (.length > 0) and the query was returned (duration != undefined) -->
     {#if searchResults.length > 0 && queryDuration != undefined}
-        <div class="results-list" bind:this={resultsListElem}>
+        <!-- RESULTS LIST -->
+        <div class="results-list flex column" bind:this={resultsListElem}>
             {#each searchResults as result (result.id)}
-                <ResultsListItem
-                    {result}
-                    on:result-clicked={handleClick}
-                    on:focus-selection={handleFocSelection}
-                />
+                <ResultsListItem {result} on:result-clicked={handleClick} on:focus-selection={handleFocSelection} />
             {/each}
         </div>
+        <!-- METADATA -->
         <p class="text--results-info">
-            Found {searchResults.length} node{#if searchResults.length > 1}s{/if} in {Math.round(
-                queryDuration / 100
-            ) / 10} seconds.
+            Found {searchResults.length} node{#if searchResults.length > 1}s{/if}
+            in {Math.round(queryDuration / 100) / 10} seconds.
         </p>
+
+        <!-- ------------------- -->
+        <!-- Display EMPTY STATE -->
+        <!-- No results (.length == 0) and the query was returned (duration != undefined) -->
     {:else if searchResults.length === 0 && queryDuration != undefined}
         <div class="empty-state-container">
-            <svg
-                id="icon"
-                xmlns="http://www.w3.org/2000/svg"
-                width="32"
-                height="32"
-                viewBox="0 0 32 32"
-            >
+            <svg id="icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
                 <defs>
                     <style>
                         .cls-1 {
@@ -173,6 +171,9 @@
             <p class="text--results-info">No matching elements found.</p>
             <Button variant="primary" on:click={resetSearch}>Clear search</Button>
         </div>
+        <!-- ----------------------- -->
+        <!-- Display LOADING SPINNER -->
+        <!-- No results (.length == 0) and the query not returned (duration = undefined) -->
     {:else if searchResults.length === 0}
         <div class="empty-state-container color--fake-grey">
             <div class="loading-spinner-wrapper">
