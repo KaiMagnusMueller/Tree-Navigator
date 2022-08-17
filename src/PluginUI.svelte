@@ -29,6 +29,7 @@
 	import FilterSection from './components/FilterSection.svelte';
 	import RecentSearchList from './components/RecentSearchList.svelte';
 	import { onMount } from 'svelte/internal';
+	import { slide } from 'svelte/transition';
 	import IconInfo from './assets/icons/information.svg';
 	import ResultsList from './components/ResultsList.svelte';
 	import TestComponent from './components/TestComponent.svelte';
@@ -48,7 +49,7 @@
 	$: $activeFilters.query_text = searchString;
 	$: $activeFilters.selected_node_ids = [];
 
-	$: disabled = searchString === '' && filterChanged == false;
+	$: disabledSubmit = searchString === '' && filterChanged == false;
 	//this is a reactive variable that will return false when a value is selected from
 	//the select menu, its value is bound to the primary buttons disabled prop
 
@@ -310,20 +311,32 @@
 	<div class="main-section">
 		<!-- <TestComponent /> -->
 		<div class="header-group flex pr-xxsmall pl-xxsmall pt-xxsmall">
-			<IconButton
-				on:click={navBack}
-				on:click={resetSearchQuery}
-				iconName={IconBack}
-				disabled={$UIState.showMainMenu}
-			/>
 			<InputFlexible
 				iconName={IconSearch}
 				placeholder="Search"
 				bind:value={searchString}
 				class="flex-grow"
 				autofocus
-			/>
-			<IconButton on:click={handleSubmitButton} iconName={IconForward} bind:disabled />
+				navBackPossible={$UIState.showSearchResults}
+			>
+				<!-- Slots for buttons to prevent "Error: Function called outside component initialization"  -->
+				<IconButton
+					slot="back-button"
+					on:click={() => {
+						navBack();
+						resetSearchQuery();
+					}}
+					iconName={IconBack}
+					rounded={true}
+				/>
+				<IconButton
+					slot="submit-button"
+					on:click={handleSubmitButton}
+					iconName={IconForward}
+					bind:disabled={disabledSubmit}
+					rounded={true}
+				/>
+			</InputFlexible>
 		</div>
 		{#if filterList.length > 0}
 			<FilterSection
