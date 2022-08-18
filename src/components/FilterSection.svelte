@@ -67,46 +67,6 @@
     const dispatch = createEventDispatcher();
 
     function handleFilter(event) {
-        //detail: [NODE_TYPE, checked]
-
-        // console.log('Filter section event');
-        // console.log(event);
-
-        // if (event.detail[0] == 'ALL') {
-        //     console.log('reset all');
-        //     filterListArray.forEach((elem) => {
-        //         elem.checked = false;
-        //     });
-        // }
-
-        // checkedLayerFilters = 0;
-
-        // checkedLayerFilters = filterListArray.filter(
-        //     (elem) => elem.checked == true && elem.node_type != 'ALL'
-        // );
-
-        // console.log(checkedLayerFilters);
-        // let ALL_FILTER_I = filterListArray.findIndex(
-        //     (elem) => elem.node_type == 'ALL'
-        // );
-        // if (checkedLayerFilters.length > 0) {
-        //     filterListArray[ALL_FILTER_I].checked = false;
-
-        //     dispatch('filterChanged', true);
-        // } else {
-        //     filterListArray[ALL_FILTER_I].checked = true;
-        //     dispatch('filterChanged', false);
-        // }
-
-        // const _activeFilterObj = filterListArray.filter(
-        //     (elem) => elem.checked == true
-        // );
-
-        // let _activeFilters = [];
-        // _activeFilterObj.forEach((element) => {
-        //     _activeFilters.push(element.node_type);
-        // });
-
         const filterType = event.detail.filterType;
         const evtSelection = event.detail.selection;
 
@@ -116,6 +76,12 @@
             evtSelection.forEach((elem) => {
                 selection.push(elem.value);
             });
+
+            if (selection.find((element) => element.value !== 'ALL')) {
+                dispatch('filterChanged', true);
+            } else {
+                dispatch('filterChanged', false);
+            }
         } else {
             selection = evtSelection[0].value;
         }
@@ -171,7 +137,6 @@
         if (delta >= 5 || delta <= -5) {
             moveFilterList(delta);
         }
-
     }
 
     function moveFilterList(delta) {

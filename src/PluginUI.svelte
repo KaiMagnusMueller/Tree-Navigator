@@ -296,6 +296,7 @@
 	function navBack(params) {
 		$UIState.showMainMenu = true;
 		$UIState.showSearchResults = false;
+		filterChanged = false;
 	}
 
 	function openSettings() {
