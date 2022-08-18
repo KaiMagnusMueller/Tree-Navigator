@@ -26,7 +26,7 @@
 
         types.forEach((type) => {
             if (type == undefined) {
-                console.warn('No recent searches');
+                console.warn('Invalid recent search item');
                 return undefined;
             }
             nodes.push(

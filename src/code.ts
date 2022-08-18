@@ -7,7 +7,7 @@
 
 console.clear()
 // This shows the HTML page in "ui.html".
-figma.showUI(__html__, { width: 320, height: 500, themeColors: false });
+figma.showUI(__html__, { width: 300, height: 500, themeColors: false });
 
 // Calls to "parent.postMessage" from within the HTML page will trigger this
 // callback. The callback will be passed the "pluginMessage" property of the
@@ -181,12 +181,14 @@ figma.ui.onmessage = msg => {
 				children: element.children,
 				type: element.type,
 				selected: true
-
 			})
 		});
 
-		figma.currentPage.selection = filteredNodes
-		figma.viewport.scrollAndZoomIntoView(filteredNodes);
+		// If no nodes found (length === 0), don't change the selection
+		if (filteredNodes.length > 0) {
+			figma.currentPage.selection = filteredNodes
+			figma.viewport.scrollAndZoomIntoView(filteredNodes);
+		}
 
 		sendResultsList(nodesToSend)
 	}
