@@ -122,6 +122,7 @@
         border-radius: var(--border-radius-large);
         outline: none;
         background-color: #ececec;
+        outline-offset: -1px;
     }
     input:hover,
     input:placeholder-shown:hover {
@@ -144,7 +145,6 @@
     }
     input:focus:placeholder-shown {
         outline: 2px solid var(--blue);
-        outline-offset: -2px;
     }
     input:disabled:hover {
         border: 1px solid transparent;

@@ -144,21 +144,27 @@ figma.ui.onmessage = msg => {
 
 		nodes.reverse()
 
+
+		let filteredNodes
 		// TODO: Implement fuzzy search
-		let filteredNodes = nodes.filter(elem => {
+		if (query.query_text != undefined) {
 
-			let elemName = elem.name
-			let queryText = query.query_text
+			filteredNodes = nodes.filter(elem => {
 
+				let elemName = elem.name
+				let queryText = query.query_text
 
-			// When case_sensitive is false, compare lowercase names. Only the characters, basically.
-			if (!query.case_sensitive) {
-				elemName = elemName.toLowerCase()
-				queryText = queryText.toLowerCase()
-			}
+				// When case_sensitive is false, compare lowercase names. Only the characters, basically.
+				if (!query.case_sensitive) {
+					elemName = elemName.toLowerCase()
+					queryText = queryText.toLowerCase()
+				}
 
-			return elemName === queryText
-		})
+				return elemName === queryText
+			})
+		} else {
+			filteredNodes = nodes
+		}
 
 
 		// console.log('Found ' + nodes.length + ' nodes');
