@@ -2,33 +2,41 @@
 	//import Global CSS from the svelte boilerplate
 	//contains Figma color vars, spacing vars, utility classes and more
 	import { GlobalCSS } from 'figma-plugin-ds-svelte';
-	import { searchQuery, recentSearches, UIState, activeFilters, nodeTypeFilterList, settings, defaultSettings } from './stores';
+	import {
+		searchQuery,
+		UIState,
+		activeFilters,
+		filterDefinitions,
+		settings,
+		defaultSettings,
+	} from './stores';
 	import { recentSearchExamples } from './assets/example-data';
 	import { saveRecentSearches, saveFilterRanking, saveSettings } from './lib/helper-functions';
 
 	//import some Svelte Figma UI components
 	import {
 		Button,
-		Input,
-		Label,
-		SelectMenu,
 		IconAdjust,
 		IconSearch,
 		IconButton,
 		IconBack,
-		IconComponent,
 		IconForward,
 		Section,
 		Switch,
 	} from 'figma-plugin-ds-svelte';
 
 	import InputFlexible from './components/InputFlexible';
-	import FilterList from './components/FilterList.svelte';
+	import FilterSection from './components/FilterSection.svelte';
 	import RecentSearchList from './components/RecentSearchList.svelte';
 	import { onMount } from 'svelte/internal';
+	import { slide } from 'svelte/transition';
 	import IconInfo from './assets/icons/information.svg';
 	import ResultsList from './components/ResultsList.svelte';
 	import TestComponent from './components/TestComponent.svelte';
+
+	// Markdown texts
+	import About from './assets/text/about.svx';
+	import Acknowledgements from './assets/text/licenses.svx';
 
 	//current input of search field
 	let searchString = '';
@@ -39,14 +47,17 @@
 
 	$: $searchQuery.query_text = searchString;
 	$: $activeFilters.query_text = searchString;
+	$: $activeFilters.selected_node_ids = [];
 
-	$: disabled = searchString === '' && filterChanged == false;
+	$: disabledSubmit = searchString === '' && filterChanged == false;
 	//this is a reactive variable that will return false when a value is selected from
 	//the select menu, its value is bound to the primary buttons disabled prop
 
-	let filterList = [];
+	let filterList = $filterDefinitions;
 
 	onMount(() => {
+		buildSearchQuery();
+
 		onmessage = (event) => {
 			if (event.data.pluginMessage.type == 'loaded-plugin-settings') {
 				if (event.data.pluginMessage.data) {
@@ -61,37 +72,66 @@
 
 			if (event.data.pluginMessage.type == 'loaded-plugin-recent-search-list') {
 				if (event.data.pluginMessage.data.length > 0) {
-					console.log('data found... loading');
-					$recentSearches = event.data.pluginMessage.data;
+					console.log('recent searches found... loading');
+
+					let recentsArray = [];
+
+					// Check if recent search object is empty (and would later cause errors in the recent search component)
+					event.data.pluginMessage.data.forEach((element) => {
+						if (Object.keys(element).length === 0) {
+							console.warn('Empty recent search object discarded');
+							return;
+						}
+						recentsArray.push(element);
+					});
+
+					_recentSearches = recentsArray;
 				} else {
-					console.log('no data... loading example');
-					$recentSearches = recentSearchExamples;
+					// console.log('no data... loading example searches');
+					// $recentSearches = recentSearchExamples;
 				}
 			}
 
 			if (event.data.pluginMessage.type == 'loaded-plugin-filter-counts') {
-				filterList = $nodeTypeFilterList;
-				if (event.data.pluginMessage.data.length == 0) {
-					console.log('no filters used previously');
-					return;
-				}
-
-				filterList.forEach((filter) => {
-					let loadedFilter = event.data.pluginMessage.data.find((elem) => elem.node_type === filter.node_type);
-					filter.count = loadedFilter.count;
-				});
-
-				// filterList.sort((a, b) => {
-				// 	return b.count - a.count;
+				// filterList = $filterDefinitions;
+				// // TODO: build active filters from default filters here
+				// let _activeFilters = new Object();
+				// filterList.forEach((filter) => {
+				// 	const filterType = filter.filterData.filterType;
+				// 	const filterOptions = filter.filterOptions;
+				// 	let defaultOption = filterOptions.find((elem) => elem.default === true);
+				// 	if (filter.filterData.multiSelect === true) {
+				// 		$activeFilters[filterType] = [defaultOption.value];
+				// 	} else {
+				// 		$activeFilters[filterType] = defaultOption.value;
+				// 	}
 				// });
-
-				// console.log('update node filter list');
-				// console.log(filterList);
+				// console.log($activeFilters);
+				// if (event.data.pluginMessage.data.length == 0) {
+				// 	console.log('no filters used previously');
+				// 	return;
+				// }
+				// //update node type filter with counts
+				// // Sort by filter counts if rememberNodeFilterCounts is on
+				// if (
+				// 	$settings.rememberNodeFilterCounts &&
+				// 	filterList[0].filterData.filterType === 'node_type'
+				// ) {
+				// 	const index = filterList.findIndex((elem) => elem.filterType == 'node_type');
+				// 	console.log(index);
+				// 	filterList.forEach((filter) => {
+				// 		let loadedFilter = event.data.pluginMessage.data.find(
+				// 			(elem) => elem.node_type === filter.node_type
+				// 		);
+				// 		filter.count = loadedFilter.count;
+				// 	});
+				// 	// filterList.sort((a, b) => {
+				// 	// 	return b.count - a.count;
+				// 	// });
+				// 	// console.log('update node filter list');
+				// 	// console.log(filterList);
+				// }
 			}
-
-			// TODO: save filter list without checked state
-			// update filter list with new count values
-			// Send filter list to filter list component from here
 		};
 	});
 
@@ -113,7 +153,7 @@
 		// console.log($searchQuery);
 
 		const queryToSend = $searchQuery;
-		console.log('loading');
+		// console.log('loading');
 		displayResults();
 
 		setTimeout(() => {
@@ -129,26 +169,80 @@
 			//prevent the postMessage function from locking up the main plugin by delaying it a few milliseconds
 		}, 50);
 
-		updateNodeTypeFilterCounts($searchQuery.node_types);
+		// updateNodeTypeFilterCounts($searchQuery.node_types);
 
 		//only add to recentlist if the item is not already on the list
 		if (isNew == true) {
-			let queryToAdd = {
-				node_types: $searchQuery.node_types,
-				query_text: $searchQuery.query_text,
-				restrict_to_selection: $searchQuery.restrict_to_selection,
-				selected_node_ids: $searchQuery.selected_node_ids,
-				query_submit_time: $searchQuery.query_submit_time,
-			};
+			// for some reason we have to clone the $searchQuery object, otherwise if we would do this:
+			// $recentSearches = [$searchQuery, ...$recentSearches];
+			// all recent queries during the plugin runtime would get reset to the new recent search
+			//
+			// so if search for "Test Component"
+			// and we did a previous search of "Test Instance" while the plugin is running
+			// the list would look like "Test Component", "Test Component"
 
-			$recentSearches = [queryToAdd, ...$recentSearches];
-			$recentSearches = $recentSearches.slice(0, $settings.recentSearchLength);
-			// console.log($recentSearches);
+			let queryToAdd = new Object();
 
-			saveRecentSearches($recentSearches);
-			saveFilterRanking($nodeTypeFilterList);
+			const searchObj = $searchQuery;
+
+			for (const key in searchObj) {
+				queryToAdd[key] = searchObj[key];
+			}
+
+			_recentSearches = [queryToAdd, ..._recentSearches];
+			_recentSearches = _recentSearches.slice(0, $settings.recentSearchLength);
+
+			saveRecentSearches(_recentSearches);
+			// saveFilterRanking($filterDefinitions);
 		} else {
 		}
+	}
+
+	let _externalSearchQuery;
+	function handleExternallyChangedFilters(event) {
+		// Update search field value when a recent search is selected
+
+		const search = event.detail.search;
+
+		$searchQuery = search;
+
+		searchString = search.query_text;
+
+		_externalSearchQuery = search;
+		handleQuerySubmit(event.detail.isNew);
+	}
+
+	function buildSearchQuery() {
+		$searchQuery = {};
+
+		$filterDefinitions.forEach((filter) => {
+			const filterType = filter.filterData.filterType;
+			const options = filter.filterOptions;
+
+			const isMultiselect = filter.filterData.multiSelect;
+
+			if (isMultiselect) {
+				const selectedFilters = options.filter((option) => option.default == true);
+
+				let selectedValues = [];
+				selectedFilters.forEach((elem) => {
+					selectedValues.push(elem.value);
+				});
+
+				$searchQuery[filterType] = selectedValues;
+			} else {
+				const selectedFilter = options.find((option) => option.default == true);
+				$searchQuery[filterType] = selectedFilter.value;
+			}
+		});
+		$activeFilters = $searchQuery;
+	}
+
+	function resetSearchQuery() {
+		console.log('reset');
+		searchString = '';
+		buildSearchQuery();
+		_externalSearchQuery = $searchQuery;
 	}
 
 	function cancel() {
@@ -157,32 +251,37 @@
 
 	function updateNodeTypeFilterCounts(types) {
 		types.forEach((type) => {
-			let index = $nodeTypeFilterList.findIndex((elem) => elem.node_type == type);
+			let index = $filterDefinitions.findIndex((elem) => elem.node_type == type);
 
 			if (index >= 0) {
 				console.log('Update at ' + index);
-				$nodeTypeFilterList[index].count++;
+				$filterDefinitions[index].count++;
 			}
 		});
 
-		// TODO: sort nodeTypeFilterList by count value (possibly in filter component)
+		// TODO: sort filterDefinitions by count value (possibly in filter component)
 	}
 
-	function deleteRecentSearches() {
-		$recentSearches = [];
-		saveRecentSearches($recentSearches);
-	}
-
-	function resetFilterCounts() {
-		$nodeTypeFilterList.forEach((elem) => {
+	function resetNodeTypeFilterCounts() {
+		$filterDefinitions.forEach((elem) => {
 			elem.count = 0;
 		});
-		saveFilterRanking($nodeTypeFilterList);
+		// saveFilterRanking($filterDefinitions);
 	}
 
 	function toggleFilterReordering() {
-		// resetFilterCounts();
+		// resetNodeTypeFilterCounts();
 		saveSettings($settings);
+	}
+
+	// -------------------------
+	// RECENT SEARCHES
+	// -------------------------
+	let _recentSearches = [];
+
+	function deleteRecentSearches() {
+		_recentSearches = [];
+		saveRecentSearches(_recentSearches);
 	}
 
 	// -------------------------
@@ -197,10 +296,15 @@
 	function navBack(params) {
 		$UIState.showMainMenu = true;
 		$UIState.showSearchResults = false;
+		filterChanged = false;
 	}
 
 	function openSettings() {
 		$UIState.showSettingsMenu = true;
+	}
+
+	function openAboutScreen() {
+		$UIState.showAboutScreen = true;
 	}
 </script>
 
@@ -208,25 +312,65 @@
 	<div class="main-section">
 		<!-- <TestComponent /> -->
 		<div class="header-group flex pr-xxsmall pl-xxsmall pt-xxsmall">
-			<IconButton on:click={navBack} iconName={IconBack} disabled={$UIState.showMainMenu} />
-			<InputFlexible iconName={IconSearch} placeholder="Search" bind:value={searchString} class="flex-grow" autofocus />
-			<IconButton on:click={handleSubmitButton} iconName={IconForward} bind:disabled />
+			<InputFlexible
+				iconName={IconSearch}
+				placeholder="Search"
+				bind:value={searchString}
+				class="flex-grow"
+				autofocus
+				navBackPossible={$UIState.showSearchResults}
+			>
+				<!-- Slots for buttons to prevent "Error: Function called outside component initialization"  -->
+				<IconButton
+					slot="back-button"
+					on:click={() => {
+						navBack();
+						resetSearchQuery();
+					}}
+					iconName={IconBack}
+					rounded={true}
+				/>
+				<IconButton
+					slot="submit-button"
+					on:click={handleSubmitButton}
+					iconName={IconForward}
+					bind:disabled={disabledSubmit}
+					rounded={true}
+				/>
+			</InputFlexible>
 		</div>
 		{#if filterList.length > 0}
-			<FilterList class="flex-no-shrink" on:filterChanged={(event) => (filterChanged = event.detail)} bind:filterList />
+			<FilterSection
+				class="flex-no-shrink"
+				on:filterChanged={(event) => (filterChanged = event.detail)}
+				{filterList}
+				bind:_externalSearchQuery
+			/>
 		{/if}
 		{#if $UIState.showMainMenu}
 			<div class="section--recent flex column flex-grow">
 				<Section class="flex-no-shrink">Recent Searches</Section>
-				<RecentSearchList class="flex-grow" on:recentSearch={handleQuerySubmit} />
+				{#if _recentSearches}
+					<RecentSearchList
+						class="flex-grow"
+						on:recentSearch={handleExternallyChangedFilters}
+						bind:recentSearches={_recentSearches}
+					/>
+				{/if}
 			</div>
-			<div class="section--footer flex row justify-content-end pr-xxsmall pl-xxsmall pb-xxsmall">
+			<div
+				class="section--footer flex row justify-content-end pr-xxsmall pl-xxsmall pb-xxsmall"
+			>
 				<!-- TODO: make IconButton accept flexible color -->
-				<IconButton iconName={IconInfo} color={'black3'} />
+				<IconButton iconName={IconInfo} color={'black3'} on:click={openAboutScreen} />
 				<IconButton iconName={IconAdjust} color={'black3'} on:click={openSettings} />
 			</div>
 		{:else if $UIState.showSearchResults}
-			<ResultsList {querySendTime} />
+			<ResultsList
+				{querySendTime}
+				on:resetSearch={navBack}
+				on:resetSearch={resetSearchQuery}
+			/>
 		{/if}
 	</div>
 	{#if $UIState.showSettingsMenu}
@@ -243,14 +387,40 @@
 			<div class="settings--content pr-xxsmall pl-xxsmall">
 				<div class="settings--section pb-xxsmall">
 					<Section class="">Recent Searches</Section>
-					<Button variant="secondary" destructive on:click={deleteRecentSearches}>Delete Recent Searches</Button>
+					<Button variant="secondary" destructive on:click={deleteRecentSearches}
+						>Delete Recent Searches</Button
+					>
 				</div>
 				<div class="settings--section pb-xxsmall">
 					<Section class="settings--input">Filters</Section>
-					<Switch bind:checked={$settings.rememberNodeFilterCounts} on:change={toggleFilterReordering}
-						>Sort Filters by Usage</Switch
+					<Switch
+						bind:checked={$settings.rememberNodeFilterCounts}
+						on:change={toggleFilterReordering}>Sort Filters by Usage</Switch
 					>
-					<Button variant="secondary" destructive on:click={resetFilterCounts}>Reset Filter Order</Button>
+					<Button variant="secondary" destructive on:click={resetNodeTypeFilterCounts}
+						>Reset Filter Order</Button
+					>
+				</div>
+			</div>
+		</div>
+	{/if}
+	{#if $UIState.showAboutScreen}
+		<div class="menu--settings flex column">
+			<div class="settings--header flex pt-xxsmall pr-xxsmall pl-xxsmall">
+				<IconButton
+					on:click={() => {
+						$UIState.showAboutScreen = false;
+					}}
+					iconName={IconBack}
+				/>
+				<Section class="">About</Section>
+			</div>
+			<div class="settings--content markdown pr-xxsmall pl-xxsmall">
+				<div class="pb-medium">
+					<About />
+				</div>
+				<div>
+					<Acknowledgements />
 				</div>
 			</div>
 		</div>
@@ -300,30 +470,10 @@
 		background-color: var(--white);
 	}
 
-	.settings--section {
+	.license--section h1 {
 	}
 
 	.settings--input {
 		width: fit-content;
-	}
-
-	:global(html) {
-		--scrollbarBG: #cfd8dc;
-		--thumbBG: #90a4ae;
-	}
-	:global(body)::-webkit-scrollbar {
-		width: 11px;
-	}
-	:global(body) {
-		scrollbar-width: thin;
-		scrollbar-color: var(--thumbBG) var(--scrollbarBG);
-	}
-	:global(::-webkit-scrollbar-track) {
-		background: var(--scrollbarBG);
-	}
-	:global(::-webkit-scrollbar-thumb) {
-		background-color: var(--thumbBG);
-		border-radius: 6px;
-		border: 3px solid var(--scrollbarBG);
 	}
 </style>

@@ -1,7 +1,6 @@
 <script>
     import { Icon, IconClose, IconSearch, IconButton, IconForward } from 'figma-plugin-ds-svelte';
 
-    import { searchQuery } from '../stores';
     import { createEventDispatcher } from 'svelte';
     let dispatch = createEventDispatcher();
 
@@ -13,16 +12,18 @@
 
     // node_types: [],
     // query_text: "",
-    // restrict_to_selection: false,
+    // area_type: false,
     // selected_node_ids: [],
     // query_submit_time: "",
 
     function handleClick() {
         console.log('start recent search');
-        $searchQuery = search;
 
         //isNew = false
-        dispatch('recentSearch', false);
+        dispatch('recentSearch', {
+            isNew: false,
+            search: search,
+        });
         dispatch('moveToTop', i);
     }
 

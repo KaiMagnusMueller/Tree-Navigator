@@ -1,6 +1,9 @@
 <script>
-    import { IconButton } from 'figma-plugin-ds-svelte';
+    import { Button, IconButton, IconSpinner } from 'figma-plugin-ds-svelte';
     import ResultsListItem from './ResultsListItem.svelte';
+    import { createEventDispatcher } from 'svelte';
+
+    let dispatch = createEventDispatcher();
 
     export let querySendTime;
     let queryDuration;
@@ -115,30 +118,66 @@
         // See the "selection-changed" message handler above, where the toggle is reset
         ignoreSelection = true;
     }
+
+    function resetSearch() {
+        dispatch('resetSearch', 'reset');
+    }
 </script>
 
 <div class="results-container pr-xxsmall pl-xxsmall">
+    <!-- --------------------------------- -->
+    <!-- Display RESULTS LIST and METADATA -->
+    <!-- Results exist (.length > 0) and the query was returned (duration != undefined) -->
     {#if searchResults.length > 0 && queryDuration != undefined}
-        <p class="text--results-info">
-            Found {searchResults.length} nodes in {Math.round(queryDuration / 100) / 10}
-            seconds.
-        </p>
-        <!-- 
-        {#each searchResults as result}
-            <p>{result.name}, {result.id}, {result.type}</p>
-        {/each} -->
-
-        <div class="results-list" bind:this={resultsListElem}>
+        <!-- RESULTS LIST -->
+        <div class="results-list flex column" bind:this={resultsListElem}>
             {#each searchResults as result (result.id)}
                 <ResultsListItem {result} on:result-clicked={handleClick} on:focus-selection={handleFocSelection} />
             {/each}
         </div>
+        <!-- METADATA -->
+        <p class="text--results-info">
+            Found {searchResults.length} node{#if searchResults.length > 1}s{/if}
+            in {Math.round(queryDuration / 100) / 10} seconds.
+        </p>
+
+        <!-- ------------------- -->
+        <!-- Display EMPTY STATE -->
+        <!-- No results (.length == 0) and the query was returned (duration != undefined) -->
     {:else if searchResults.length === 0 && queryDuration != undefined}
-        <p>no results</p>
+        <div class="empty-state-container">
+            <svg id="icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                <defs>
+                    <style>
+                        .cls-1 {
+                            fill: none;
+                        }
+                    </style>
+                </defs>
+                <path
+                    d="M30,28.5859l-4.6885-4.6884a8.028,8.028,0,1,0-1.414,1.414L28.5859,30ZM19,25a6,6,0,1,1,6-6A6.0066,6.0066,0,0,1,19,25Z"
+                />
+                <rect x="2" y="12" width="8" height="2" />
+                <rect x="2" y="2" width="16" height="2" />
+                <rect x="2" y="7" width="16" height="2" />
+                <rect
+                    id="_Transparent_Rectangle_"
+                    data-name="&lt;Transparent Rectangle&gt;"
+                    class="cls-1"
+                    width="32"
+                    height="32"
+                />
+            </svg>
+            <p class="text--results-info">No matching elements found.</p>
+            <Button variant="primary" on:click={resetSearch}>Clear search</Button>
+        </div>
+        <!-- ----------------------- -->
+        <!-- Display LOADING SPINNER -->
+        <!-- No results (.length == 0) and the query not returned (duration = undefined) -->
     {:else if searchResults.length === 0}
-        <div class="loading-spinner-container">
+        <div class="empty-state-container color--fake-grey">
             <div class="loading-spinner-wrapper">
-                <span class="loading-spinner">Loading...</span>
+                <IconButton spin iconName={IconSpinner} />
             </div>
         </div>
     {/if}
@@ -149,13 +188,14 @@
         overflow: auto;
         height: 100%;
         font-size: var(--font-size-xsmall);
-        font-weight: var(--font-weight-medium);
+        font-weight: var(--font-weight-normal);
         letter-spacing: var(--font-letter-spacing-neg-small);
         line-height: var(--font-line-height);
     }
 
     .text--results-info {
-        color: var(--black8-opaque);
+        color: rgba(0, 0, 0, 0.5);
+        text-align: center;
     }
 
     .results-list {
@@ -163,24 +203,22 @@
         flex-direction: column;
     }
 
-    .loading-spinner-container {
+    .empty-state-container {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .color--fake-grey {
+        opacity: 0.7;
+    }
+
+    svg {
+        fill: rgba(0, 0, 0, 0.5);
     }
 
     .loading-spinner-wrapper {
-    }
-
-    .loading-spinner {
-        animation: loading 1.5s infinite alternate steps(4, end);
-        overflow: hidden;
-        font-weight: var(--font-weight-bold);
-    }
-
-    @keyframes loading {
-        from {
-            width: 100%;
-        }
-        to {
-            width: 75%;
-        }
     }
 </style>

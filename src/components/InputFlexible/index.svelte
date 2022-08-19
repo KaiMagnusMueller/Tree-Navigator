@@ -1,5 +1,7 @@
 <script>
-    import { Icon } from 'figma-plugin-ds-svelte';
+    import { Icon, IconButton, IconForward } from 'figma-plugin-ds-svelte';
+    import { createEventDispatcher } from 'svelte';
+    import { fly } from 'svelte/transition';
 
     export let id = null;
     export let value = null;
@@ -16,13 +18,24 @@
     export { className as class };
 
     let className = '';
+
+    export let disabledSubmit = true;
+    export let navBackPossible = false;
+
+    const dispatch = createEventDispatcher;
 </script>
 
 {#if iconName || iconText}
     <div class="input {className}">
-        <div class="icon">
-            <Icon {iconName} {iconText} {spin} color="black3" />
-        </div>
+        {#if navBackPossible}
+            <div transition:fly={{ x: 10, duration: 300 }} class="back-button">
+                <slot name="back-button" />
+            </div>
+        {:else}
+            <div transition:fly={{ x: -10, duration: 300 }} class="icon">
+                <Icon {iconName} {iconText} {spin} color="black3" />
+            </div>
+        {/if}
         <!-- svelte-ignore a11y-autofocus -->
         <input
             type="input"
@@ -42,6 +55,9 @@
             class:borders
             class:invalid
         />
+        <div class="submit-button">
+            <slot name="submit-button" />
+        </div>
         {#if invalid}
             <div class="error">
                 {errorMessage}
@@ -49,6 +65,7 @@
         {/if}
     </div>
 {:else}
+    <!-- Unused variant -->
     <div class="input {className}">
         <input
             type="input"
@@ -66,6 +83,13 @@
             class:borders
             class:invalid
         />
+        <div class="submit-button">
+            <IconButton
+                on:click={dispatch('handleSubmit')}
+                iconName={IconForward}
+                bind:disabled={disabledSubmit}
+            />
+        </div>
         {#if invalid}
             <div class="error">
                 {errorMessage}
@@ -92,13 +116,13 @@
         width: 100%;
         height: 30px;
         margin: 1px 0 1px 0;
-        padding: var(--size-xxsmall) var(--size-xxxsmall) var(--size-xxsmall)
-            var(--size-xxsmall);
+        padding: var(--size-xxsmall) var(--size-xxxsmall) var(--size-xxsmall) var(--size-xxsmall);
         color: var(--black8);
         border: 1px solid transparent;
-        border-radius: var(--border-radius-small);
+        border-radius: var(--border-radius-large);
         outline: none;
-        background-color: var(--white);
+        background-color: #ececec;
+        outline-offset: -1px;
     }
     input:hover,
     input:placeholder-shown:hover {
@@ -121,7 +145,6 @@
     }
     input:focus:placeholder-shown {
         outline: 2px solid var(--blue);
-        outline-offset: -2px;
     }
     input:disabled:hover {
         border: 1px solid transparent;
@@ -178,6 +201,19 @@
         width: var(--size-medium);
         height: var(--size-medium);
         z-index: 1;
+    }
+
+    .back-button {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 2;
+    }
+
+    .submit-button {
+        right: 0;
+        top: 0;
+        position: absolute;
     }
 
     .error {
