@@ -193,16 +193,20 @@
         const xPos = Math.round(bounding.x);
         const width = Math.round(bounding.width);
 
+        const xPosDefault = (parentBounding.width - bounding.width) / 2;
+
         if (xPos + width > windowWidth - 8) {
             // Subtract 8 from windowWidth, to simulate the global 8px padding
             const correction = (xPos + width - windowWidth) * -1;
             menuList.style.left = correction + 'px';
-        }
-
-        if (xPos < 0) {
+        } else if (xPos + xPosDefault < 0) {
+            // Example: 8 + -40 = -32 => true
+            // xPosDefault
             // Add 8 to windowWidth, to simulate the global 8px padding
             const correction = xPos * -1;
             menuList.style.left = correction + 'px';
+        } else {
+            menuList.style.left = xPosDefault;
         }
     }
     function resetMenuProperties() {

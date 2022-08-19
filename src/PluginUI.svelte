@@ -311,12 +311,12 @@
 <div class="wrapper">
 	<div class="main-section">
 		<!-- <TestComponent /> -->
-		<div class="header-group flex pr-xxsmall pl-xxsmall pt-xxsmall">
+		<div class="header-group flex column pt-xxsmall pb-xxsmall">
 			<InputFlexible
 				iconName={IconSearch}
 				placeholder="Search"
 				bind:value={searchString}
-				class="flex-grow"
+				class="flex-grow mr-xxsmall ml-xxsmall"
 				autofocus
 				navBackPossible={$UIState.showSearchResults}
 			>
@@ -338,18 +338,17 @@
 					rounded={true}
 				/>
 			</InputFlexible>
+			{#if filterList.length > 0}
+				<FilterSection
+					class="flex-no-shrink"
+					on:filterChanged={(event) => (filterChanged = event.detail)}
+					{filterList}
+					bind:_externalSearchQuery
+				/>
+			{/if}
 		</div>
-		{#if filterList.length > 0}
-			<FilterSection
-				class="flex-no-shrink"
-				on:filterChanged={(event) => (filterChanged = event.detail)}
-				{filterList}
-				bind:_externalSearchQuery
-			/>
-		{/if}
 		{#if $UIState.showMainMenu}
 			<div class="section--recent flex column flex-grow">
-				<Section class="flex-no-shrink">Recent Searches</Section>
 				{#if _recentSearches}
 					<RecentSearchList
 						class="flex-grow"
@@ -431,6 +430,8 @@
 	/* Add additional global or scoped styles here */
 	.header-group {
 		gap: 12px;
+		background-color: #f8f8f8;
+		border-bottom: 1px solid #e0e0e0;
 	}
 
 	.main-section {

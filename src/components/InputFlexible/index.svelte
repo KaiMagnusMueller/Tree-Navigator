@@ -118,16 +118,15 @@
         margin: 1px 0 1px 0;
         padding: var(--size-xxsmall) var(--size-xxxsmall) var(--size-xxsmall) var(--size-xxsmall);
         color: var(--black8);
-        border: 1px solid transparent;
+        border: 1px solid rgba(0, 0, 0, 0.12);
         border-radius: var(--border-radius-large);
         outline: none;
-        background-color: #ececec;
+        background-color: white;
         outline-offset: -1px;
     }
     input:hover,
     input:placeholder-shown:hover {
         color: var(--black8);
-        border: 1px solid var(--black1);
         background-image: none;
     }
     input::selection {
@@ -136,18 +135,15 @@
     }
     input::placeholder {
         color: var(--black3);
-        border: 1px solid transparent;
     }
     input:placeholder-shown {
         color: var(--black8);
-        border: 1px solid var(--black1);
         background-image: none;
     }
     input:focus:placeholder-shown {
         outline: 2px solid var(--blue);
     }
     input:disabled:hover {
-        border: 1px solid transparent;
     }
     input:active,
     input:focus {
