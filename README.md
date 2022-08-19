@@ -49,6 +49,10 @@ npm run build
 ### Build
 Package the plugin for download by selecting the files in /public and creating a .zip file with them.
 
+### Update figma-plugin-ds-svelte-improved
+
+``` npm update figma-plugin-ds-svelte ```
+
 Built using 
 
 The svelte Figma components from Thomas Lowry [Figma Plugin DS Svelte](https://github.com/thomas-lowry/figma-plugin-ds-svelte)
