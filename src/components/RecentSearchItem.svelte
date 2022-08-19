@@ -54,13 +54,10 @@
 <style>
     .recent-search-item {
         gap: var(--size-xsmall);
-        border: 1px solid transparent;
-        border-radius: 6px;
     }
 
     .recent-search-item:hover {
-        border: 1px solid #e3e3e3;
-        box-shadow: 0 1px 6px rgba(194, 194, 194, 0.51);
+        background-color: #f5f5f5;
     }
 
     .item-content {
