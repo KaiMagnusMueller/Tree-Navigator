@@ -59,7 +59,7 @@
     class:selected={result.selected}
     on:click|self={handleResClick}
 >
-    <div class="result-content flex row ">
+    <div class="result-content flex row">
         <IconFlexible iconName={returnIcon()} color="black" />
         <span class="text--results-title">{result.name}</span>
     </div>
