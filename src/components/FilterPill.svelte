@@ -153,7 +153,7 @@
         padding: 6px 10px 6px 8px;
         text-decoration: none;
         outline: none;
-        border: 1px solid rgba(0, 0, 0, 0.12);
+        border: 1px solid var(--border-white-on-light);
         background: #ffffff;
         user-select: none;
         transition-duration: 0.15s;
@@ -173,7 +173,6 @@
 
     .bt-dropdown.checked {
         background: #f0f0f0;
-        border: 1px solid rgba(0, 0, 0, 0.12);
         outline: 2px solid var(--blue);
         outline-offset: -2px;
         z-index: 50;

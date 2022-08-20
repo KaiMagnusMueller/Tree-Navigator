@@ -79,7 +79,6 @@
 <style>
     .recent-search-list {
         gap: 2px;
-        overflow: hidden scroll;
         height: 100%;
     }
 

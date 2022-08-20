@@ -53,9 +53,21 @@
 
 <style>
     .recent-search-item {
-        gap: var(--size-xsmall);
+        gap: var(--size-xxsmall);
+        position: relative;
     }
 
+    .recent-search-item:first-of-type {
+        margin-top: 12px;
+    }
+    .recent-search-item:last-of-type::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: -100%;
+        height: 100%;
+        width: 100%;
+    }
     .recent-search-item:hover {
         background-color: #f5f5f5;
     }

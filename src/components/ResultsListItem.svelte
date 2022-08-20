@@ -42,12 +42,16 @@
 
 <!-- The |self modifier prevents the selection from being updated before the handleFoClick() event is fired. -->
 <!-- This makes it possible to zoom to unselected elements, if that is neccessary -->
-<div class="result-list-elem flex row" class:selected={result.selected} on:click|self={handleResClick}>
-    <div class="result-content flex row">
+<div
+    class="result-list-elem flex row pl-xxsmall"
+    class:selected={result.selected}
+    on:click|self={handleResClick}
+>
+    <div class="result-content flex row ">
         <IconFlexible iconName={returnIcon()} color="black" />
         <span class="text--results-title">{result.name}</span>
     </div>
-    <div class="result-hover">
+    <div class="result-buttons">
         <IconButton iconName={IconResizeToFit} on:click={handleFoClick} />
     </div>
 </div>
@@ -58,41 +62,40 @@
     }
 
     .result-list-elem {
-        padding: 2px;
+        position: relative;
+        padding-top: 2px;
+        padding-bottom: 2px;
         align-items: center;
         justify-content: space-between;
     }
 
-    .result-list-elem:first-of-type {
-        border-top-left-radius: 4px;
-        border-top-right-radius: 4px;
-    }
-
-    .result-list-elem:last-of-type {
-        border-bottom-left-radius: 4px;
-        border-bottom-right-radius: 4px;
-    }
-
     .result-content {
         align-items: center;
-        gap: 12px;
+        gap: var(--size-xxsmall);
         pointer-events: none;
     }
 
-    .result-hover {
+    .result-buttons {
         display: none;
     }
 
-    .result-list-elem:hover .result-hover {
+    .result-list-elem:hover .result-buttons {
         display: block;
     }
 
-    .result-list-elem:hover {
-        background-color: var(--silver);
+    .result-list-elem:hover:not(.selected)::after {
+        content: '';
+        position: absolute;
+        top: 0px;
+        bottom: 0px;
+        left: 0;
+        right: 0;
+        border: 1px solid var(--color-bg-brand-hover, #0d99ff);
+        pointer-events: none;
     }
 
     .result-list-elem.selected {
-        background-color: #daebf7;
+        background-color: var(--color-bg-selected, #daebf7);
     }
 
     /* .result-list-elem.selected .text--results-title {

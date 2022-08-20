@@ -431,13 +431,12 @@
 	.header-group {
 		gap: 8px;
 		background-color: #f8f8f8;
-		border-bottom: 1px solid #e0e0e0;
+		border-bottom: 1px solid var(--border-white-on-light);
 	}
 
 	.main-section {
 		display: flex;
 		flex-direction: column;
-		gap: 12px;
 		height: 100vh;
 	}
 
@@ -476,5 +475,21 @@
 
 	.settings--input {
 		width: fit-content;
+	}
+
+	:global(:root) {
+		--border-white-on-light: #d2d2d2;
+		scrollbar-color: #999 #333;
+	}
+
+	:global(*::-webkit-scrollbar) {
+		background-color: transparent;
+		width: 8px;
+	}
+
+	:global(*::-webkit-scrollbar-thumb) {
+		background-color: #9f9f9f;
+		border-radius: 4px;
+		border: 2px solid white;
 	}
 </style>

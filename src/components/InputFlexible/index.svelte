@@ -118,7 +118,7 @@
         margin: 1px 0 1px 0;
         padding: var(--size-xxsmall) var(--size-xxxsmall) var(--size-xxsmall) var(--size-xxsmall);
         color: var(--black8);
-        border: 1px solid rgba(0, 0, 0, 0.12);
+        border: 1px solid var(--border-white-on-light);
         border-radius: var(--border-radius-large);
         outline: none;
         background-color: white;
