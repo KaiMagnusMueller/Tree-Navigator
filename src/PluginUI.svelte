@@ -429,7 +429,7 @@
 <style>
 	/* Add additional global or scoped styles here */
 	.header-group {
-		gap: 12px;
+		gap: 8px;
 		background-color: #f8f8f8;
 		border-bottom: 1px solid #e0e0e0;
 	}

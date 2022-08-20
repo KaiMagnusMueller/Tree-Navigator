@@ -83,12 +83,11 @@
 
         <slot>{value?.label}</slot>
 
-
-        <svg width="8" height="5" viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
                 fill-rule="evenodd"
                 clip-rule="evenodd"
-                d="M3.646 3.854L0.645996 0.853996L1.354 0.145996L4 2.793L6.646 0.145996L7.354 0.853996L4.354 3.854L4 4.207L3.646 3.854Z"
+                d="M3.646 5.854L0.645996 2.854L1.354 2.146L4 4.793L6.646 2.146L7.354 2.854L4.354 5.854L4 6.207L3.646 5.854Z"
                 fill="black"
             />
         </svg>
