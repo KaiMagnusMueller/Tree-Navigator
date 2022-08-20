@@ -7,6 +7,10 @@
     // Component Icons
     import AppIcon from '../assets/icons/AppIcon.svg';
     import Component from '../assets/icons/NodeTypes/Component.svg';
+    import ComponentSet from '../assets/icons/NodeTypes/Component.svg';
+    import BooleanOperation from '../assets/icons/NodeTypes/BooleanOperation.svg';
+    import Frame from '../assets/icons/NodeTypes/Frame.svg';
+    import Group from '../assets/icons/NodeTypes/Group.svg';
     import Instance from '../assets/icons/NodeTypes/Instance.svg';
     import Text from '../assets/icons/NodeTypes/Text.svg';
 
@@ -19,6 +23,14 @@
                 return Instance;
             case 'COMPONENT':
                 return Component;
+            case 'COMPONENT_SET':
+                return ComponentSet;
+            case 'BOOLEAN_OPERATION':
+                return BooleanOperation;
+            case 'FRAME':
+                return Frame;
+            case 'GROUP':
+                return Group;
             case 'TEXT':
                 return Text;
             default:
