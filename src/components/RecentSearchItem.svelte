@@ -58,7 +58,7 @@
     }
 
     .recent-search-item:first-of-type {
-        margin-top: 12px;
+        margin-top: var(--size-xxsmall);
     }
     .recent-search-item:last-of-type::after {
         content: '';

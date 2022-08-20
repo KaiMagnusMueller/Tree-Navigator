@@ -374,7 +374,7 @@
 	</div>
 	{#if $UIState.showSettingsMenu}
 		<div class="menu--settings flex column">
-			<div class="settings--header flex pt-xxsmall pr-xxsmall pl-xxsmall">
+			<div class="settings--header flex p-xxxsmall">
 				<IconButton
 					on:click={() => {
 						$UIState.showSettingsMenu = false;
@@ -383,7 +383,7 @@
 				/>
 				<Section class="">Settings</Section>
 			</div>
-			<div class="settings--content pr-xxsmall pl-xxsmall">
+			<div class="settings--content pt-xxsmall pr-xxsmall pl-xxsmall">
 				<div class="settings--section pb-xxsmall">
 					<Section class="">Recent Searches</Section>
 					<Button variant="secondary" destructive on:click={deleteRecentSearches}
@@ -405,7 +405,7 @@
 	{/if}
 	{#if $UIState.showAboutScreen}
 		<div class="menu--settings flex column">
-			<div class="settings--header flex pt-xxsmall pr-xxsmall pl-xxsmall">
+			<div class="settings--header flex p-xxxsmall">
 				<IconButton
 					on:click={() => {
 						$UIState.showAboutScreen = false;
@@ -414,7 +414,7 @@
 				/>
 				<Section class="">About</Section>
 			</div>
-			<div class="settings--content markdown pr-xxsmall pl-xxsmall">
+			<div class="settings--content markdown pt-xxsmall pr-xxsmall pl-xxsmall">
 				<div class="pb-medium">
 					<About />
 				</div>
@@ -457,6 +457,8 @@
 		background: radial-gradient(ellipse farthest-corner at bottom right, #fff, #fff0);
 	}
 
+	/* ------------------------- */
+	/* FULLSCREEN VIEWS */
 	.menu--settings {
 		position: absolute;
 		width: 100%;
@@ -465,9 +467,15 @@
 		left: 0;
 		z-index: 1;
 
-		gap: 12px;
-
 		background-color: var(--white);
+	}
+
+	.settings--header {
+		border-bottom: 1px solid var(--color-border, #e5e5e5);
+	}
+
+	.settings--content {
+		overflow: auto;
 	}
 
 	.license--section h1 {
@@ -477,12 +485,14 @@
 		width: fit-content;
 	}
 
+	/* ------------------------- */
+	/* GLOBALS */
 	:global(:root) {
 		--border-white-on-light: #d2d2d2;
 		scrollbar-color: #999 #333;
 	}
 
-	:global(*::-webkit-scrollbar) {
+	/* :global(*::-webkit-scrollbar) {
 		background-color: transparent;
 		width: 8px;
 	}
@@ -491,5 +501,5 @@
 		background-color: #9f9f9f;
 		border-radius: 4px;
 		border: 2px solid white;
-	}
+	} */
 </style>

@@ -5,15 +5,12 @@
 
 ## Find Nodes 
 
-Developed with ♥️ by. <a href="https://www.kaimagnus.de" target="_blank">Kai Magnus Müller</a>
+Developed with ♥️ by <a href="https://www.kaimagnus.de" target="_blank">Kai Magnus Müller</a>.
 
 I built this plugin mainly according to my own needs and workflow, but nonetheless I hope you will find it as useful as I do. 
 
-If you have any thoughts, suggestions or requests, feel free to message me <a href="https://www.twitter.com/_kaimagnus" target="_blank">@_kaimagnus</a>. For feature requests you can also use the template on GitHub <a href="https://github.com/KaiMagnusMueller/Find-Nodes/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=" target="_blank">here</a>.
+If you have any thoughts, suggestions or requests, feel free to message me on Twitter <a href="https://www.twitter.com/_kaimagnus" target="_blank">@_kaimagnus</a>. You can also use the templates on GitHub for  <a href="https://github.com/KaiMagnusMueller/Find-Nodes/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=" target="_blank">feature requests</a> or <a href="https://github.com/KaiMagnusMueller/Find-Nodes/issues/new?assignees=&labels=bug&template=bug_report.md&title=" target="_blank">bug reports</a>.
 
 
 The plugin source code is released under the MIT license on <a href="https://github.com/KaiMagnusMueller/Find-Nodes" target="_blank">GitHub</a>.
 
-### Bug Reports and Feature Requests
-
-To file bug reports, open a new issue <a href="https://github.com/KaiMagnusMueller/Find-Nodes/issues/new?assignees=&labels=bug&template=bug_report.md&title=" target="_blank">here</a>, for feature requests use this <a href="https://github.com/KaiMagnusMueller/Find-Nodes/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=" target="_blank">template</a> or write me on Twitter.
