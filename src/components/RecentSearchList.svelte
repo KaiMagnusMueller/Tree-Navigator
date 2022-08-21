@@ -71,7 +71,33 @@
             </RecentSearchItem>
         {/each}
         {#if recentSearches.length == 0}
-            <p>Nothing to see...</p>
+            <div class="empty-state-container">
+                <svg
+                    id="icon"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="32"
+                    height="32"
+                    viewBox="0 0 32 32"
+                    ><defs
+                        ><style>
+                            .cls-1 {
+                                fill: none;
+                            }
+                        </style></defs
+                    ><title>recently-viewed</title><polygon
+                        points="20.59 22 15 16.41 15 7 17 7 17 15.58 22 20.59 20.59 22"
+                    /><path
+                        d="M16,2A13.94,13.94,0,0,0,6,6.23V2H4v8h8V8H7.08A12,12,0,1,1,4,16H2A14,14,0,1,0,16,2Z"
+                    /><rect
+                        id="_Transparent_Rectangle_"
+                        data-name="&lt;Transparent Rectangle&gt;"
+                        class="cls-1"
+                        width="32"
+                        height="32"
+                    /></svg
+                >
+                <p class="text--results-info">Recent searches will appear here.</p>
+            </div>
         {/if}
     </div>
 </div>
@@ -102,5 +128,25 @@
     .recent-search-wrapper:hover:after {
         opacity: 0;
         visibility: hidden;
+    }
+
+    .empty-state-container {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-size: var(--font-size-xsmall);
+        font-weight: var(--font-weight-normal);
+        letter-spacing: var(--font-letter-spacing-neg-small);
+        line-height: var(--font-line-height);
+    }
+
+    svg {
+        fill: rgba(0, 0, 0, 0.5);
+    }
+    .text--results-info {
+        color: rgba(0, 0, 0, 0.5);
+        text-align: center;
     }
 </style>
