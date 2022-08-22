@@ -133,11 +133,7 @@
     <!-- Results exist (.length > 0) and the query was returned (duration != undefined) -->
     {#if searchResults.length > 0 && queryDuration != undefined}
         <!-- RESULTS LIST -->
-        <div
-            class="results-list flex column"
-            bind:this={resultsListElem}
-            transition:fade={{ duration: 60 }}
-        >
+        <div class="results-list flex column" bind:this={resultsListElem}>
             {#each searchResults as result (result.id)}
                 <ResultsListItem
                     {result}
