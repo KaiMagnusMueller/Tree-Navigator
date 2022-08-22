@@ -1,5 +1,7 @@
 <script>
     import { Section } from 'figma-plugin-ds-svelte';
+    import { fade } from 'svelte/transition';
+
     import { filterDefinitions } from '../stores.js';
     import RecentSearchItem from './RecentSearchItem.svelte';
     import { saveRecentSearches } from '../lib/helper-functions';
@@ -96,7 +98,7 @@
                         height="32"
                     /></svg
                 >
-                <p class="text--results-info">Recent searches will appear here.</p>
+                <p class="text--results-info">No recent searches</p>
             </div>
         {/if}
     </div>

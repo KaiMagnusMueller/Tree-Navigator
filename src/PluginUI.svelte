@@ -33,6 +33,7 @@
 	import IconInfo from './assets/icons/information.svg';
 	import ResultsList from './components/ResultsList.svelte';
 	import TestComponent from './components/TestComponent.svelte';
+	import LoadingSpinner from './components/LoadingSpinner.svelte';
 
 	// Markdown texts
 	import About from './assets/text/about.svx';
@@ -71,25 +72,23 @@
 			}
 
 			if (event.data.pluginMessage.type == 'loaded-plugin-recent-search-list') {
-				if (event.data.pluginMessage.data.length > 0) {
-					console.log('recent searches found... loading');
+				console.log('recent searches found... loading');
 
-					let recentsArray = [];
+				let recentsArray = [];
 
-					// Check if recent search object is empty (and would later cause errors in the recent search component)
-					event.data.pluginMessage.data.forEach((element) => {
-						if (Object.keys(element).length === 0) {
-							console.warn('Empty recent search object discarded');
-							return;
-						}
-						recentsArray.push(element);
-					});
+				// Check if recent search object is empty (and would later cause errors in the recent search component)
+				event.data.pluginMessage.data.forEach((element) => {
+					if (Object.keys(element).length === 0) {
+						console.warn('Empty recent search object discarded');
+						return;
+					}
+					recentsArray.push(element);
+				});
 
-					_recentSearches = recentsArray;
-				} else {
-					// console.log('no data... loading example searches');
-					// $recentSearches = recentSearchExamples;
-				}
+				loadedRecentSearches = true;
+				_recentSearches = recentsArray;
+
+				// console.log(_recentSearches);
 			}
 
 			if (event.data.pluginMessage.type == 'loaded-plugin-filter-counts') {
@@ -278,6 +277,7 @@
 	// RECENT SEARCHES
 	// -------------------------
 	let _recentSearches = [];
+	let loadedRecentSearches = false;
 
 	function deleteRecentSearches() {
 		_recentSearches = [];
@@ -347,31 +347,47 @@
 				/>
 			{/if}
 		</div>
-		{#if $UIState.showMainMenu}
-			<div class="section--recent flex column flex-grow">
-				{#if _recentSearches}
-					<RecentSearchList
-						class="flex-grow"
-						on:recentSearch={handleExternallyChangedFilters}
-						bind:recentSearches={_recentSearches}
+		<div class="section--bottom">
+			<!-- ------------------- -->
+			<!-- Display RECENT SEARCHES -->
+			{#if $UIState.showMainMenu}
+				<div class="section--recent flex column flex-grow">
+					{#if loadedRecentSearches}
+						<RecentSearchList
+							class="flex-grow"
+							on:recentSearch={handleExternallyChangedFilters}
+							bind:recentSearches={_recentSearches}
+						/>
+					{:else}
+						<div class="empty-state-container">
+							<LoadingSpinner />
+						</div>
+					{/if}
+				</div>
+				<div
+					class="section--footer flex row justify-content-end pr-xxsmall pl-xxsmall pb-xxsmall"
+				>
+					<!-- TODO: make IconButton accept flexible color -->
+					<IconButton iconName={IconInfo} color={'black3'} on:click={openAboutScreen} />
+					<IconButton iconName={IconAdjust} color={'black3'} on:click={openSettings} />
+				</div>
+
+				<!-- ------------------- -->
+				<!-- Display SEARCH RESULTS -->
+			{:else if $UIState.showSearchResults}
+				<div class="section--results">
+					<ResultsList
+						{querySendTime}
+						on:resetSearch={navBack}
+						on:resetSearch={resetSearchQuery}
 					/>
-				{/if}
-			</div>
-			<div
-				class="section--footer flex row justify-content-end pr-xxsmall pl-xxsmall pb-xxsmall"
-			>
-				<!-- TODO: make IconButton accept flexible color -->
-				<IconButton iconName={IconInfo} color={'black3'} on:click={openAboutScreen} />
-				<IconButton iconName={IconAdjust} color={'black3'} on:click={openSettings} />
-			</div>
-		{:else if $UIState.showSearchResults}
-			<ResultsList
-				{querySendTime}
-				on:resetSearch={navBack}
-				on:resetSearch={resetSearchQuery}
-			/>
-		{/if}
+				</div>
+			{/if}
+		</div>
 	</div>
+
+	<!-- ------------------- -->
+	<!-- Display SETTINGS SCREEN -->
 	{#if $UIState.showSettingsMenu}
 		<div class="menu--settings flex column">
 			<div class="settings--header flex p-xxxsmall">
@@ -403,6 +419,9 @@
 			</div>
 		</div>
 	{/if}
+
+	<!-- ------------------- -->
+	<!-- Display ABOUT SCREEN -->
 	{#if $UIState.showAboutScreen}
 		<div class="menu--settings flex column">
 			<div class="settings--header flex p-xxxsmall">
@@ -447,6 +466,7 @@
 
 	.section--recent {
 		overflow: hidden;
+		position: relative;
 	}
 
 	.section--footer {
@@ -455,6 +475,21 @@
 		bottom: 0;
 		right: 0;
 		background: radial-gradient(ellipse farthest-corner at bottom right, #fff, #fff0);
+	}
+
+	.section--bottom {
+		position: relative;
+		width: 100%;
+		height: 100%;
+	}
+
+	.section--results,
+	.section--recent {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		top: 0;
+		left: 0;
 	}
 
 	/* ------------------------- */
@@ -483,6 +518,16 @@
 
 	.settings--input {
 		width: fit-content;
+	}
+
+	.empty-state-container {
+		height: 100%;
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		position: absolute;
 	}
 
 	/* ------------------------- */

@@ -1,7 +1,7 @@
 <script>
     import { GlobalCSS, Icon } from 'figma-plugin-ds-svelte';
-
     import { createEventDispatcher } from 'svelte';
+
     import IconFlexible from './IconFlexible';
     import DropdownMenu from './DropdownMenu';
 

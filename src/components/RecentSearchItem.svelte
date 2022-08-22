@@ -1,6 +1,7 @@
 <script>
     import { Icon, IconClose, IconSearch, IconButton, IconForward } from 'figma-plugin-ds-svelte';
 
+    import { fade } from 'svelte/transition';
     import { createEventDispatcher } from 'svelte';
     let dispatch = createEventDispatcher();
 
@@ -33,7 +34,7 @@
     }
 </script>
 
-<div class="recent-search-item p-xxsmall flex">
+<div class="recent-search-item p-xxsmall flex" in:fade={{ delay: 25 * i, duration: 60 }}>
     <Icon iconName={IconSearch} />
     <div class="item-content flex column single-line">
         <h4><slot /></h4>
