@@ -117,16 +117,16 @@
         height: 30px;
         margin: 1px 0 1px 0;
         padding: var(--size-xxsmall) var(--size-xxxsmall) var(--size-xxsmall) var(--size-xxsmall);
-        color: var(--black8);
-        border: 1px solid var(--border-white-on-light);
+        color: var(--color-text);
+        border: 1px solid var(--color-border-on-light);
         border-radius: var(--border-radius-large);
         outline: none;
-        background-color: white;
+        background-color: var(--color-bg-secondary, #f0f0f0);
         outline-offset: -1px;
     }
     input:hover,
     input:placeholder-shown:hover {
-        color: var(--black8);
+        color: var(--color-text);
         background-image: none;
     }
     input::selection {
@@ -137,7 +137,7 @@
         color: var(--black3);
     }
     input:placeholder-shown {
-        color: var(--black8);
+        color: var(--color-text);
         background-image: none;
     }
     input:focus:placeholder-shown {

@@ -143,7 +143,7 @@
         gap: 4px;
         align-items: center;
         border-radius: 6px;
-        color: var(--black);
+        color: var(--color-text);
         font-family: var(--font-stack);
         font-size: var(--font-size-xsmall);
         font-weight: var(--font-weight-normal);
@@ -153,8 +153,8 @@
         padding: 6px 10px 6px 8px;
         text-decoration: none;
         outline: none;
-        border: 1px solid var(--border-white-on-light);
-        background: #ffffff;
+        border: 1px solid var(--color-border-on-light);
+        background-color: white;
         user-select: none;
         transition-duration: 0.15s;
         transition-property: box-shadow, background, color;

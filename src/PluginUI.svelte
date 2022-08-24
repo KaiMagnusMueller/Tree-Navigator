@@ -72,9 +72,16 @@
 			}
 
 			if (event.data.pluginMessage.type == 'loaded-plugin-recent-search-list') {
-				console.log('recent searches found... loading');
-
 				let recentsArray = [];
+				const messageData = event.data.pluginMessage.data;
+
+				if (!messageData) {
+					console.log('no recent searches');
+					_recentSearches = [];
+					return;
+				}
+
+				console.log('recent searches found... loading');
 
 				// Check if recent search object is empty (and would later cause errors in the recent search component)
 				event.data.pluginMessage.data.forEach((element) => {
@@ -85,7 +92,6 @@
 					recentsArray.push(element);
 				});
 
-				loadedRecentSearches = true;
 				_recentSearches = recentsArray;
 
 				// console.log(_recentSearches);
@@ -276,8 +282,10 @@
 	// -------------------------
 	// RECENT SEARCHES
 	// -------------------------
-	let _recentSearches = [];
-	let loadedRecentSearches = false;
+	// False while there is no data
+	// Empty array if there is a data key, but it is empty (in case the searches have been deleted)
+	// Filled array when data was found
+	let _recentSearches = false;
 
 	function deleteRecentSearches() {
 		_recentSearches = [];
@@ -352,17 +360,11 @@
 			<!-- Display RECENT SEARCHES -->
 			{#if $UIState.showMainMenu}
 				<div class="section--recent flex column flex-grow">
-					{#if loadedRecentSearches}
-						<RecentSearchList
-							class="flex-grow"
-							on:recentSearch={handleExternallyChangedFilters}
-							bind:recentSearches={_recentSearches}
-						/>
-					{:else}
-						<div class="empty-state-container">
-							<LoadingSpinner />
-						</div>
-					{/if}
+					<RecentSearchList
+						class="flex-grow"
+						on:recentSearch={handleExternallyChangedFilters}
+						bind:recentSearches={_recentSearches}
+					/>
 				</div>
 				<div
 					class="section--footer flex row justify-content-end pr-xxsmall pl-xxsmall pb-xxsmall"
@@ -449,8 +451,8 @@
 	/* Add additional global or scoped styles here */
 	.header-group {
 		gap: 8px;
-		background-color: #f8f8f8;
-		border-bottom: 1px solid var(--border-white-on-light);
+		background-color: #fff;
+		border-bottom: 1px solid var(--color-border-on-light);
 	}
 
 	.main-section {
@@ -506,7 +508,7 @@
 	}
 
 	.settings--header {
-		border-bottom: 1px solid var(--color-border, #e5e5e5);
+		border-bottom: 1px solid var(--color-border-on-light, #e5e5e5);
 	}
 
 	.settings--content {
@@ -533,7 +535,9 @@
 	/* ------------------------- */
 	/* GLOBALS */
 	:global(:root) {
-		--border-white-on-light: #d2d2d2;
+		--color-border-on-light: #e6e6e6;
+		--color-text: rgba(0, 0, 0, 0.9);
+		--color-bg-secondary: #f5f5f5;
 		scrollbar-color: #999 #333;
 	}
 

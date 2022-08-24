@@ -1,10 +1,8 @@
 <script>
-    import { Section } from 'figma-plugin-ds-svelte';
-    import { fade } from 'svelte/transition';
-
     import { filterDefinitions } from '../stores.js';
     import RecentSearchItem from './RecentSearchItem.svelte';
     import { saveRecentSearches } from '../lib/helper-functions';
+    import LoadingSpinner from './LoadingSpinner.svelte';
 
     export { classList as class };
 
@@ -100,6 +98,10 @@
                 >
                 <p class="text--results-info">No recent searches</p>
             </div>
+        {:else if !recentSearches}
+            <div class="empty-state-container">
+                <LoadingSpinner />
+            </div>
         {/if}
     </div>
 </div>
@@ -134,6 +136,10 @@
 
     .empty-state-container {
         height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
         display: flex;
         flex-direction: column;
         align-items: center;
