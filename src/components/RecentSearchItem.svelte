@@ -1,6 +1,7 @@
 <script>
     import { Icon, IconClose, IconSearch, IconButton, IconForward } from 'figma-plugin-ds-svelte';
 
+    import { fade } from 'svelte/transition';
     import { createEventDispatcher } from 'svelte';
     let dispatch = createEventDispatcher();
 
@@ -33,9 +34,9 @@
     }
 </script>
 
-<div class="recent-search-item p-xxsmall flex">
+<div class="recent-search-item p-xxsmall flex" in:fade={{ delay: 25 * i, duration: 60 }}>
     <Icon iconName={IconSearch} />
-    <div class="item-content flex column">
+    <div class="item-content flex column single-line">
         <h4><slot /></h4>
         <p>
             {#each node_types as type}
@@ -53,9 +54,21 @@
 
 <style>
     .recent-search-item {
-        gap: var(--size-xsmall);
+        gap: var(--size-xxsmall);
+        position: relative;
     }
 
+    .recent-search-item:first-of-type {
+        margin-top: var(--size-xxsmall);
+    }
+    .recent-search-item:last-of-type::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: -100%;
+        height: 100%;
+        width: 100%;
+    }
     .recent-search-item:hover {
         background-color: #f5f5f5;
     }
@@ -72,18 +85,11 @@
         font-weight: var(--font-weight-normal);
     }
     .item-content p {
-        display: -webkit-box;
-        -webkit-line-clamp: 1; /* number of lines to show */
-        line-clamp: 1;
-        -webkit-box-orient: vertical;
         margin: 0;
         font-size: var(--font-size-small);
         font-weight: var(--font-weight-normal);
         text-transform: capitalize;
         color: #9e9e9e;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        line-break: anywhere;
     }
 
     .search-button {
@@ -94,5 +100,15 @@
     .recent-search-item:hover .search-button {
         display: flex;
         gap: 4px;
+    }
+
+    .single-line * {
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        line-break: anywhere;
+        text-overflow: ellipsis;
     }
 </style>

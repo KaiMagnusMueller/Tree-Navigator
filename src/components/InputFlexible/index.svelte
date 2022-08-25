@@ -42,7 +42,9 @@
             on:input
             on:change
             on:keydown
-            on:focus
+            on:focus={(event) => {
+                event.target.select();
+            }}
             on:blur
             bind:value
             {id}
@@ -117,17 +119,16 @@
         height: 30px;
         margin: 1px 0 1px 0;
         padding: var(--size-xxsmall) var(--size-xxxsmall) var(--size-xxsmall) var(--size-xxsmall);
-        color: var(--black8);
-        border: 1px solid transparent;
+        color: var(--color-text);
+        border: 1px solid var(--color-border-on-light);
         border-radius: var(--border-radius-large);
         outline: none;
-        background-color: #ececec;
+        background-color: var(--color-bg-secondary, #f0f0f0);
         outline-offset: -1px;
     }
     input:hover,
     input:placeholder-shown:hover {
-        color: var(--black8);
-        border: 1px solid var(--black1);
+        color: var(--color-text);
         background-image: none;
     }
     input::selection {
@@ -136,18 +137,15 @@
     }
     input::placeholder {
         color: var(--black3);
-        border: 1px solid transparent;
     }
     input:placeholder-shown {
-        color: var(--black8);
-        border: 1px solid var(--black1);
+        color: var(--color-text);
         background-image: none;
     }
     input:focus:placeholder-shown {
         outline: 2px solid var(--blue);
     }
     input:disabled:hover {
-        border: 1px solid transparent;
     }
     input:active,
     input:focus {

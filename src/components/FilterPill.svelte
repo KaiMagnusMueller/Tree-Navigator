@@ -1,7 +1,7 @@
 <script>
     import { GlobalCSS, Icon } from 'figma-plugin-ds-svelte';
-
     import { createEventDispatcher } from 'svelte';
+
     import IconFlexible from './IconFlexible';
     import DropdownMenu from './DropdownMenu';
 
@@ -83,12 +83,11 @@
 
         <slot>{value?.label}</slot>
 
-
-        <svg width="8" height="5" viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
                 fill-rule="evenodd"
                 clip-rule="evenodd"
-                d="M3.646 3.854L0.645996 0.853996L1.354 0.145996L4 2.793L6.646 0.145996L7.354 0.853996L4.354 3.854L4 4.207L3.646 3.854Z"
+                d="M3.646 5.854L0.645996 2.854L1.354 2.146L4 4.793L6.646 2.146L7.354 2.854L4.354 5.854L4 6.207L3.646 5.854Z"
                 fill="black"
             />
         </svg>
@@ -144,7 +143,7 @@
         gap: 4px;
         align-items: center;
         border-radius: 6px;
-        color: var(--black);
+        color: var(--color-text);
         font-family: var(--font-stack);
         font-size: var(--font-size-xsmall);
         font-weight: var(--font-weight-normal);
@@ -154,8 +153,8 @@
         padding: 6px 10px 6px 8px;
         text-decoration: none;
         outline: none;
-        border: 1px solid rgba(0, 0, 0, 0.12);
-        background: #ffffff;
+        border: 1px solid var(--color-border-on-light);
+        background-color: white;
         user-select: none;
         transition-duration: 0.15s;
         transition-property: box-shadow, background, color;
@@ -174,7 +173,6 @@
 
     .bt-dropdown.checked {
         background: #f0f0f0;
-        border: 1px solid rgba(0, 0, 0, 0.12);
         outline: 2px solid var(--blue);
         outline-offset: -2px;
         z-index: 50;

@@ -33,6 +33,7 @@
 	import IconInfo from './assets/icons/information.svg';
 	import ResultsList from './components/ResultsList.svelte';
 	import TestComponent from './components/TestComponent.svelte';
+	import LoadingSpinner from './components/LoadingSpinner.svelte';
 
 	// Markdown texts
 	import About from './assets/text/about.svx';
@@ -71,25 +72,29 @@
 			}
 
 			if (event.data.pluginMessage.type == 'loaded-plugin-recent-search-list') {
-				if (event.data.pluginMessage.data.length > 0) {
-					console.log('recent searches found... loading');
+				let recentsArray = [];
+				const messageData = event.data.pluginMessage.data;
 
-					let recentsArray = [];
-
-					// Check if recent search object is empty (and would later cause errors in the recent search component)
-					event.data.pluginMessage.data.forEach((element) => {
-						if (Object.keys(element).length === 0) {
-							console.warn('Empty recent search object discarded');
-							return;
-						}
-						recentsArray.push(element);
-					});
-
-					_recentSearches = recentsArray;
-				} else {
-					// console.log('no data... loading example searches');
-					// $recentSearches = recentSearchExamples;
+				if (!messageData) {
+					console.log('no recent searches');
+					_recentSearches = [];
+					return;
 				}
+
+				console.log('recent searches found... loading');
+
+				// Check if recent search object is empty (and would later cause errors in the recent search component)
+				event.data.pluginMessage.data.forEach((element) => {
+					if (Object.keys(element).length === 0) {
+						console.warn('Empty recent search object discarded');
+						return;
+					}
+					recentsArray.push(element);
+				});
+
+				_recentSearches = recentsArray;
+
+				// console.log(_recentSearches);
 			}
 
 			if (event.data.pluginMessage.type == 'loaded-plugin-filter-counts') {
@@ -277,7 +282,10 @@
 	// -------------------------
 	// RECENT SEARCHES
 	// -------------------------
-	let _recentSearches = [];
+	// False while there is no data
+	// Empty array if there is a data key, but it is empty (in case the searches have been deleted)
+	// Filled array when data was found
+	let _recentSearches = false;
 
 	function deleteRecentSearches() {
 		_recentSearches = [];
@@ -311,12 +319,12 @@
 <div class="wrapper">
 	<div class="main-section">
 		<!-- <TestComponent /> -->
-		<div class="header-group flex pr-xxsmall pl-xxsmall pt-xxsmall">
+		<div class="header-group flex column pt-xxsmall pb-xxsmall">
 			<InputFlexible
 				iconName={IconSearch}
 				placeholder="Search"
 				bind:value={searchString}
-				class="flex-grow"
+				class="flex-grow mr-xxsmall ml-xxsmall"
 				autofocus
 				navBackPossible={$UIState.showSearchResults}
 			>
@@ -338,44 +346,53 @@
 					rounded={true}
 				/>
 			</InputFlexible>
+			{#if filterList.length > 0}
+				<FilterSection
+					class="flex-no-shrink"
+					on:filterChanged={(event) => (filterChanged = event.detail)}
+					{filterList}
+					bind:_externalSearchQuery
+				/>
+			{/if}
 		</div>
-		{#if filterList.length > 0}
-			<FilterSection
-				class="flex-no-shrink"
-				on:filterChanged={(event) => (filterChanged = event.detail)}
-				{filterList}
-				bind:_externalSearchQuery
-			/>
-		{/if}
-		{#if $UIState.showMainMenu}
-			<div class="section--recent flex column flex-grow">
-				<Section class="flex-no-shrink">Recent Searches</Section>
-				{#if _recentSearches}
+		<div class="section--bottom">
+			<!-- ------------------- -->
+			<!-- Display RECENT SEARCHES -->
+			{#if $UIState.showMainMenu}
+				<div class="section--recent flex column flex-grow">
 					<RecentSearchList
 						class="flex-grow"
 						on:recentSearch={handleExternallyChangedFilters}
 						bind:recentSearches={_recentSearches}
 					/>
-				{/if}
-			</div>
-			<div
-				class="section--footer flex row justify-content-end pr-xxsmall pl-xxsmall pb-xxsmall"
-			>
-				<!-- TODO: make IconButton accept flexible color -->
-				<IconButton iconName={IconInfo} color={'black3'} on:click={openAboutScreen} />
-				<IconButton iconName={IconAdjust} color={'black3'} on:click={openSettings} />
-			</div>
-		{:else if $UIState.showSearchResults}
-			<ResultsList
-				{querySendTime}
-				on:resetSearch={navBack}
-				on:resetSearch={resetSearchQuery}
-			/>
-		{/if}
+				</div>
+				<div
+					class="section--footer flex row justify-content-end pr-xxsmall pl-xxsmall pb-xxsmall"
+				>
+					<!-- TODO: make IconButton accept flexible color -->
+					<IconButton iconName={IconInfo} color={'black3'} on:click={openAboutScreen} />
+					<IconButton iconName={IconAdjust} color={'black3'} on:click={openSettings} />
+				</div>
+
+				<!-- ------------------- -->
+				<!-- Display SEARCH RESULTS -->
+			{:else if $UIState.showSearchResults}
+				<div class="section--results">
+					<ResultsList
+						{querySendTime}
+						on:resetSearch={navBack}
+						on:resetSearch={resetSearchQuery}
+					/>
+				</div>
+			{/if}
+		</div>
 	</div>
+
+	<!-- ------------------- -->
+	<!-- Display SETTINGS SCREEN -->
 	{#if $UIState.showSettingsMenu}
 		<div class="menu--settings flex column">
-			<div class="settings--header flex pt-xxsmall pr-xxsmall pl-xxsmall">
+			<div class="settings--header flex p-xxxsmall">
 				<IconButton
 					on:click={() => {
 						$UIState.showSettingsMenu = false;
@@ -384,7 +401,7 @@
 				/>
 				<Section class="">Settings</Section>
 			</div>
-			<div class="settings--content pr-xxsmall pl-xxsmall">
+			<div class="settings--content pt-xxsmall pr-xxsmall pl-xxsmall">
 				<div class="settings--section pb-xxsmall">
 					<Section class="">Recent Searches</Section>
 					<Button variant="secondary" destructive on:click={deleteRecentSearches}
@@ -404,9 +421,12 @@
 			</div>
 		</div>
 	{/if}
+
+	<!-- ------------------- -->
+	<!-- Display ABOUT SCREEN -->
 	{#if $UIState.showAboutScreen}
 		<div class="menu--settings flex column">
-			<div class="settings--header flex pt-xxsmall pr-xxsmall pl-xxsmall">
+			<div class="settings--header flex p-xxxsmall">
 				<IconButton
 					on:click={() => {
 						$UIState.showAboutScreen = false;
@@ -415,7 +435,7 @@
 				/>
 				<Section class="">About</Section>
 			</div>
-			<div class="settings--content markdown pr-xxsmall pl-xxsmall">
+			<div class="settings--content markdown pt-xxsmall pr-xxsmall pl-xxsmall">
 				<div class="pb-medium">
 					<About />
 				</div>
@@ -430,13 +450,14 @@
 <style>
 	/* Add additional global or scoped styles here */
 	.header-group {
-		gap: 12px;
+		gap: 8px;
+		background-color: #fff;
+		border-bottom: 1px solid var(--color-border-on-light);
 	}
 
 	.main-section {
 		display: flex;
 		flex-direction: column;
-		gap: 12px;
 		height: 100vh;
 	}
 
@@ -447,6 +468,7 @@
 
 	.section--recent {
 		overflow: hidden;
+		position: relative;
 	}
 
 	.section--footer {
@@ -457,6 +479,23 @@
 		background: radial-gradient(ellipse farthest-corner at bottom right, #fff, #fff0);
 	}
 
+	.section--bottom {
+		position: relative;
+		width: 100%;
+		height: 100%;
+	}
+
+	.section--results,
+	.section--recent {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		top: 0;
+		left: 0;
+	}
+
+	/* ------------------------- */
+	/* FULLSCREEN VIEWS */
 	.menu--settings {
 		position: absolute;
 		width: 100%;
@@ -465,9 +504,15 @@
 		left: 0;
 		z-index: 1;
 
-		gap: 12px;
-
 		background-color: var(--white);
+	}
+
+	.settings--header {
+		border-bottom: 1px solid var(--color-border-on-light, #e5e5e5);
+	}
+
+	.settings--content {
+		overflow: auto;
 	}
 
 	.license--section h1 {
@@ -476,4 +521,34 @@
 	.settings--input {
 		width: fit-content;
 	}
+
+	.empty-state-container {
+		height: 100%;
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		position: absolute;
+	}
+
+	/* ------------------------- */
+	/* GLOBALS */
+	:global(:root) {
+		--color-border-on-light: #e6e6e6;
+		--color-text: rgba(0, 0, 0, 0.9);
+		--color-bg-secondary: #f5f5f5;
+		scrollbar-color: #999 #333;
+	}
+
+	/* :global(*::-webkit-scrollbar) {
+		background-color: transparent;
+		width: 8px;
+	}
+
+	:global(*::-webkit-scrollbar-thumb) {
+		background-color: #9f9f9f;
+		border-radius: 4px;
+		border: 2px solid white;
+	} */
 </style>

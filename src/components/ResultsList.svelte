@@ -1,9 +1,12 @@
 <script>
-    import { Button, IconButton, IconSpinner } from 'figma-plugin-ds-svelte';
-    import ResultsListItem from './ResultsListItem.svelte';
-    import { createEventDispatcher } from 'svelte';
+    import { Button } from 'figma-plugin-ds-svelte';
 
+    import { fade } from 'svelte/transition';
+    import { createEventDispatcher } from 'svelte';
     let dispatch = createEventDispatcher();
+
+    import LoadingSpinner from './LoadingSpinner.svelte';
+    import ResultsListItem from './ResultsListItem.svelte';
 
     export let querySendTime;
     let queryDuration;
@@ -18,10 +21,10 @@
     onmessage = (event) => {
         if (event.data.pluginMessage.type == 'search-results') {
             searchResults = event.data.pluginMessage.data;
+            queryDuration = Date.now() - querySendTime;
 
             // console.log('got results');
             // console.log(searchResults);
-            queryDuration = Date.now() - querySendTime;
 
             //  result:
             // ---------
@@ -124,7 +127,7 @@
     }
 </script>
 
-<div class="results-container pr-xxsmall pl-xxsmall">
+<div class="results-container">
     <!-- --------------------------------- -->
     <!-- Display RESULTS LIST and METADATA -->
     <!-- Results exist (.length > 0) and the query was returned (duration != undefined) -->
@@ -132,7 +135,11 @@
         <!-- RESULTS LIST -->
         <div class="results-list flex column" bind:this={resultsListElem}>
             {#each searchResults as result (result.id)}
-                <ResultsListItem {result} on:result-clicked={handleClick} on:focus-selection={handleFocSelection} />
+                <ResultsListItem
+                    {result}
+                    on:result-clicked={handleClick}
+                    on:focus-selection={handleFocSelection}
+                />
             {/each}
         </div>
         <!-- METADATA -->
@@ -146,7 +153,13 @@
         <!-- No results (.length == 0) and the query was returned (duration != undefined) -->
     {:else if searchResults.length === 0 && queryDuration != undefined}
         <div class="empty-state-container">
-            <svg id="icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+            <svg
+                id="icon"
+                xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                viewBox="0 0 32 32"
+            >
                 <defs>
                     <style>
                         .cls-1 {
@@ -170,15 +183,13 @@
             </svg>
             <p class="text--results-info">No matching elements found.</p>
             <Button variant="primary" on:click={resetSearch}>Clear search</Button>
+            <!-- ----------------------- -->
+            <!-- Display LOADING SPINNER -->
+            <!-- No results (.length == 0) and the query not returned (duration = undefined) -->
         </div>
-        <!-- ----------------------- -->
-        <!-- Display LOADING SPINNER -->
-        <!-- No results (.length == 0) and the query not returned (duration = undefined) -->
     {:else if searchResults.length === 0}
-        <div class="empty-state-container color--fake-grey">
-            <div class="loading-spinner-wrapper">
-                <IconButton spin iconName={IconSpinner} />
-            </div>
+        <div class="empty-state-container">
+            <LoadingSpinner />
         </div>
     {/if}
 </div>
@@ -191,6 +202,7 @@
         font-weight: var(--font-weight-normal);
         letter-spacing: var(--font-letter-spacing-neg-small);
         line-height: var(--font-line-height);
+        position: relative;
     }
 
     .text--results-info {
@@ -205,20 +217,15 @@
 
     .empty-state-container {
         height: 100%;
+        width: 100%;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-    }
-
-    .color--fake-grey {
-        opacity: 0.7;
+        position: absolute;
     }
 
     svg {
         fill: rgba(0, 0, 0, 0.5);
-    }
-
-    .loading-spinner-wrapper {
     }
 </style>
