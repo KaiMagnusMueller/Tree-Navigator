@@ -42,7 +42,9 @@
             on:input
             on:change
             on:keydown
-            on:focus
+            on:focus={(event) => {
+                event.target.select();
+            }}
             on:blur
             bind:value
             {id}
