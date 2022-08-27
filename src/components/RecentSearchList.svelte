@@ -3,7 +3,6 @@
     import RecentSearchItem from './RecentSearchItem.svelte';
     import { saveRecentSearches } from '../lib/helper-functions';
     import LoadingSpinner from './LoadingSpinner.svelte';
-    import Fuse from 'fuse.js';
 
     export { classList as class };
 
@@ -13,31 +12,6 @@
 
     //node types are in the first array (might be necessary to make this dynamic in the future)
     let filterList = $filterDefinitions[0].filterOptions;
-
-    const list = [
-        {
-            title: "Old Man's War",
-            author: 'John Scalzi',
-            tags: ['fiction'],
-        },
-        {
-            title: 'The Lock Artist',
-            author: 'Steve',
-            tags: ['thriller'],
-        },
-    ];
-
-    const options = {
-        includeScore: true,
-        // Search in `author` and in `tags` array
-        keys: ['author', 'tags'],
-    };
-
-    const fuse = new Fuse(list, options);
-
-    const result = fuse.search('tion');
-
-    console.log(result);
 
     function getNodeName(types) {
         let nodes = [];

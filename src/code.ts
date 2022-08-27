@@ -145,28 +145,6 @@ figma.ui.onmessage = msg => {
 		nodes.reverse()
 
 
-		let filteredNodes
-		// TODO: Implement fuzzy search
-		if (query.query_text != undefined) {
-
-			filteredNodes = nodes.filter(elem => {
-
-				let elemName = elem.name
-				let queryText = query.query_text
-
-				// When case_sensitive is false, compare lowercase names. Only the characters, basically.
-				if (!query.case_sensitive) {
-					elemName = elemName.toLowerCase()
-					queryText = queryText.toLowerCase()
-				}
-
-				return elemName === queryText
-			})
-		} else {
-			filteredNodes = nodes
-		}
-
-
 		// console.log('Found ' + nodes.length + ' nodes');
 		// console.log(nodes);
 		// console.log('Found ' + filteredNodes.length + ' nodes after filtering names');
@@ -179,7 +157,7 @@ figma.ui.onmessage = msg => {
 		// }
 
 		let nodesToSend = []
-		filteredNodes.forEach(element => {
+		nodes.forEach(element => {
 			nodesToSend.push({
 				id: element.id,
 				name: element.name,
@@ -190,11 +168,11 @@ figma.ui.onmessage = msg => {
 			})
 		});
 
-		// If no nodes found (length === 0), don't change the selection
-		if (filteredNodes.length > 0) {
-			figma.currentPage.selection = filteredNodes
-			figma.viewport.scrollAndZoomIntoView(filteredNodes);
-		}
+		// // If no nodes found (length === 0), don't change the selection
+		// if (filteredNodes.length > 0) {
+		// 	figma.currentPage.selection = filteredNodes
+		// 	figma.viewport.scrollAndZoomIntoView(filteredNodes);
+		// }
 
 		sendResultsList(nodesToSend)
 	}

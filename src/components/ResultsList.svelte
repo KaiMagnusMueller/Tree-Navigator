@@ -1,12 +1,13 @@
 <script>
     import { Button } from 'figma-plugin-ds-svelte';
+    import Fuse from 'fuse.js';
 
-    import { fade } from 'svelte/transition';
     import { createEventDispatcher } from 'svelte';
     let dispatch = createEventDispatcher();
 
     import LoadingSpinner from './LoadingSpinner.svelte';
     import ResultsListItem from './ResultsListItem.svelte';
+    import { searchQuery } from '../stores';
 
     export let querySendTime;
     let queryDuration;
@@ -20,8 +21,10 @@
 
     onmessage = (event) => {
         if (event.data.pluginMessage.type == 'search-results') {
-            searchResults = event.data.pluginMessage.data;
+            const unfilteredSearchResults = event.data.pluginMessage.data;
             queryDuration = Date.now() - querySendTime;
+
+            searchResults = filterNodes(unfilteredSearchResults);
 
             // console.log('got results');
             // console.log(searchResults);
@@ -124,6 +127,103 @@
 
     function resetSearch() {
         dispatch('resetSearch', 'reset');
+    }
+
+    // ######################################
+
+    function filterNodes(results) {
+        console.table(results[0]);
+
+        let queryText = $searchQuery.query_text;
+
+        if ($searchQuery.query_text === undefined) {
+            return results;
+            // query_text is now always defined
+        } else if ($searchQuery.string_match === 'EXACT') {
+            // Match exact
+
+            console.log('Find exact string');
+
+            let filteredNodes = results.filter((elem) => {
+                let elemName = elem.name;
+
+                // When case_sensitive is false, compare lowercase names. Only the characters, basically.
+                if (!searchQuery.case_sensitive) {
+                    elemName = elemName.toLowerCase();
+                    queryText = queryText.toLowerCase();
+                }
+
+                return elemName === queryText;
+            });
+
+            return filteredNodes;
+        } else if ($searchQuery.string_match === 'FUZZY') {
+            // Match fuzzy
+
+            const options = {
+                ignoreLocation: true,
+                isCaseSensitive: $searchQuery.case_sensitive ? true : false,
+                findAllMatches: true,
+
+                keys: ['name'],
+            };
+
+            const fuse = new Fuse(results, options);
+
+            const result = fuse.search(queryText);
+
+            console.log(options);
+            console.log(result);
+
+            return result;
+        }
+
+        // let filteredNodes;
+        // // TODO: Implement fuzzy search
+
+        // if (query.query_text != undefined) {
+        //     filteredNodes = nodes.filter((elem) => {
+        //         let elemName = elem.name;
+        //         let queryText = query.query_text;
+
+        //         // When case_sensitive is false, compare lowercase names. Only the characters, basically.
+        //         if (!query.case_sensitive) {
+        //             elemName = elemName.toLowerCase();
+        //             queryText = queryText.toLowerCase();
+        //         }
+
+        //         return elemName === queryText;
+        //     });
+        // } else {
+        //     filteredNodes = nodes;
+        // }
+
+        // const list = [
+        //     {
+        //         title: "Old Man's War",
+        //         author: 'John Scalzi',
+        //         tags: ['fiction'],
+        //     },
+        //     {
+        //         title: 'The Lock Artist',
+        //         author: 'Steve',
+        //         tags: ['thriller'],
+        //     },
+        // ];
+
+        // const options = {
+        //     includeScore: true,
+        //     // Search in `author` and in `tags` array
+        //     keys: ['author', 'tags'],
+        // };
+
+        // const fuse = new Fuse(list, options);
+
+        // const result = fuse.search('tion');
+
+        // console.log(result);
+
+        // TODO: Add message back to figma to select the found nodes
     }
 </script>
 
