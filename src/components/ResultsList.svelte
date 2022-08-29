@@ -210,51 +210,6 @@
             return resultList;
         }
 
-        // let filteredNodes;
-        // // TODO: Implement fuzzy search
-
-        // if (query.query_text != undefined) {
-        //     filteredNodes = nodes.filter((elem) => {
-        //         let elemName = elem.name;
-        //         let queryText = query.query_text;
-
-        //         // When case_sensitive is false, compare lowercase names. Only the characters, basically.
-        //         if (!query.case_sensitive) {
-        //             elemName = elemName.toLowerCase();
-        //             queryText = queryText.toLowerCase();
-        //         }
-
-        //         return elemName === queryText;
-        //     });
-        // } else {
-        //     filteredNodes = nodes;
-        // }
-
-        // const list = [
-        //     {
-        //         title: "Old Man's War",
-        //         author: 'John Scalzi',
-        //         tags: ['fiction'],
-        //     },
-        //     {
-        //         title: 'The Lock Artist',
-        //         author: 'Steve',
-        //         tags: ['thriller'],
-        //     },
-        // ];
-
-        // const options = {
-        //     includeScore: true,
-        //     // Search in `author` and in `tags` array
-        //     keys: ['author', 'tags'],
-        // };
-
-        // const fuse = new Fuse(list, options);
-
-        // const result = fuse.search('tion');
-
-        // console.log(result);
-
         // TODO: Add message back to figma to select the found nodes
     }
 
