@@ -86,7 +86,7 @@
         if (fromFigma) {
             return;
         }
-        sendSelection(selectedNodes);
+        sendSelection(selectedNodes, false);
     }
 
     function handleFocSelection(e) {
@@ -109,12 +109,12 @@
     // #####################################
     // #####################################
 
-    function sendSelection(params) {
+    function sendSelection(nodes, zoomIntoView) {
         parent.postMessage(
             {
                 pluginMessage: {
                     type: 'select-layers',
-                    parameters: params,
+                    parameters: { nodes: nodes, zoomIntoView: zoomIntoView },
                 },
             },
             '*'
@@ -132,25 +132,30 @@
     // ######################################
 
     function filterNodes(results) {
-        console.table(results[0]);
+        let resultList = [];
+
+        // console.table(results[0]);
 
         let queryText = $searchQuery.query_text;
 
         const isInQuotes = checkQuotes(queryText);
 
-        if ($searchQuery.query_text === undefined) {
+        // ####################################
+        // Return all if there is no query text
+        if (queryText === undefined) {
             return results;
             // query_text is now always defined
+
+            // ####################################
+            // Match exact query text when the EXACT option is selected, or th etext is in quotes
         } else if ($searchQuery.string_match === 'EXACT' || isInQuotes) {
             // Match exact
 
             queryText = queryText.removeCharacter(true, true);
 
-            console.log(queryText);
-
             console.log('Find exact string');
 
-            let filteredNodes = results.filter((elem) => {
+            resultList = results.filter((elem) => {
                 let elemName = elem.name;
 
                 // When case_sensitive is false, compare lowercase names. Only the characters, basically.
@@ -162,59 +167,60 @@
                 return elemName === queryText;
             });
 
-            return filteredNodes;
-        } else if ($searchQuery.string_match === 'PART') {
-            if (!$searchQuery.case_sensitive) {
-                queryText = queryText.toLowerCase();
-            }
+            //     // ####################################
+            //     // Match space-separated query text parts
+            // } else if ($searchQuery.string_match === 'PART') {
+            //     if (!$searchQuery.case_sensitive) {
+            //         queryText = queryText.toLowerCase();
+            //     }
 
-            let stringsToSearch = queryText.split(' ');
+            //     let stringsToSearch = queryText.split(' ');
 
-            console.log(stringsToSearch);
+            //     results.forEach((result) => {
+            //         let elemName = result.name;
 
-            let resultList = [];
-            results.forEach((result) => {
-                let elemName = result.name;
+            //         if (!$searchQuery.case_sensitive) {
+            //             elemName = elemName.toLowerCase();
+            //         }
 
-                if (!$searchQuery.case_sensitive) {
-                    elemName = elemName.toLowerCase();
-                }
+            //         if (stringsToSearch.some((v) => elemName.includes(v))) {
+            //             // There's at least one
+            //             resultList.push(result);
+            //         }
+            //     });
 
-                if (stringsToSearch.some((v) => elemName.includes(v))) {
-                    // There's at least one
-                    resultList.push(result);
-                }
-            });
-
-            return resultList;
-        } else if ($searchQuery.string_match === 'FUZZY') {
+            // ####################################
             // Match fuzzy
-
+        } else if ($searchQuery.string_match === 'FUZZY') {
             const options = {
                 threshold: -Infinity, // Don't return matches worse than this (higher is faster)
                 limit: Infinity, // Don't return more results than this (lower is faster)
                 all: false, // If true, returns all results for an empty search
 
-                key: null, // For when targets are objects (see its example usage)
-                keys: null, // For when targets are objects (see its example usage)
+                key: 'name', // For when targets are objects (see its example usage)
                 scoreFn: null, // For use with `keys` (see its example usage)
             };
 
-            const fuse = new Fuse(results, options);
+            const _resultList = fuzzysort.go(queryText, results, options);
 
-            const resultList = fuse.search(queryText);
-
-            console.log(options);
-            console.log(resultList);
-
-            return resultList;
+            _resultList.forEach((elem) => {
+                resultList.push(elem.obj);
+            });
         }
 
         // TODO: Add message back to figma to select the found nodes
+
+        sendSelection(resultList, true);
+        return resultList;
     }
 
     function checkQuotes(string) {
         const quoteCharacters = ['"', "'", '´', '`'];
+
+        if (!string) {
+            console.warn('String undefined');
+            return undefined;
+        }
 
         return quoteCharacters.some((elem) => {
             return string.startsWith(elem) && string.endsWith(elem);
@@ -224,7 +230,11 @@
     String.prototype.removeCharacter = function (first, last) {
         let string = this;
 
-        console.log(this);
+        if (!string) {
+            console.warn('String undefined');
+            return undefined;
+        }
+
         if (first) {
             string = string.slice(1);
         }

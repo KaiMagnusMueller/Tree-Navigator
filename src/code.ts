@@ -183,10 +183,26 @@ figma.ui.onmessage = msg => {
 
 	if (msg.type === 'select-layers') {
 		let nodesToSelect = []
-		msg.parameters.forEach(element => {
-			nodesToSelect.push(figma.getNodeById(element.id))
+		msg.parameters.nodes.forEach(element => {
+
+			const node = figma.getNodeById(element.id)
+
+			if (!node) {
+				console.warn("Node doesn't exist")
+				postMessageToast("Element doesn't exist")
+				return
+			}
+
+			nodesToSelect.push(node)
+
 		});
 		figma.currentPage.selection = nodesToSelect
+
+		if (msg.parameters.zoomIntoView) {
+
+			figma.viewport.scrollAndZoomIntoView(figma.currentPage.selection);
+		}
+
 	}
 
 	if (msg.type === 'update-recent-searches') {
@@ -271,4 +287,9 @@ function handleSelectionChange() {
 	});
 
 	figma.ui.postMessage({ type: "selection-changed", data: nodesToSend })
+}
+
+
+function postMessageToast(text: string) {
+	figma.notify(text)
 }
