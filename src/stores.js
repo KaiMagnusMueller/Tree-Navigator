@@ -148,6 +148,14 @@ export let filterDefinitions = writable([
             {
                 value: "EXACT",
                 name: "Match exact name",
+            },
+            // {
+            //     value: "PART",
+            //     name: "Match partial",
+            // },
+            {
+                value: "FUZZY",
+                name: "Match fuzzy",
                 default: true
             },
         ]

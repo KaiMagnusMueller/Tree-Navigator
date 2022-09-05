@@ -1,12 +1,13 @@
 <script>
     import { Button } from 'figma-plugin-ds-svelte';
+    import fuzzysort from 'fuzzysort';
 
-    import { fade } from 'svelte/transition';
     import { createEventDispatcher } from 'svelte';
     let dispatch = createEventDispatcher();
 
     import LoadingSpinner from './LoadingSpinner.svelte';
     import ResultsListItem from './ResultsListItem.svelte';
+    import { searchQuery } from '../stores';
 
     export let querySendTime;
     let queryDuration;
@@ -20,8 +21,10 @@
 
     onmessage = (event) => {
         if (event.data.pluginMessage.type == 'search-results') {
-            searchResults = event.data.pluginMessage.data;
+            const unfilteredSearchResults = event.data.pluginMessage.data;
             queryDuration = Date.now() - querySendTime;
+
+            searchResults = filterNodes(unfilteredSearchResults);
 
             // console.log('got results');
             // console.log(searchResults);
@@ -83,7 +86,7 @@
         if (fromFigma) {
             return;
         }
-        sendSelection(selectedNodes);
+        sendSelection(selectedNodes, false);
     }
 
     function handleFocSelection(e) {
@@ -106,12 +109,12 @@
     // #####################################
     // #####################################
 
-    function sendSelection(params) {
+    function sendSelection(nodes, zoomIntoView) {
         parent.postMessage(
             {
                 pluginMessage: {
                     type: 'select-layers',
-                    parameters: params,
+                    parameters: { nodes: nodes, zoomIntoView: zoomIntoView },
                 },
             },
             '*'
@@ -125,6 +128,123 @@
     function resetSearch() {
         dispatch('resetSearch', 'reset');
     }
+
+    // ######################################
+
+    function filterNodes(results) {
+        let resultList = [];
+
+        // console.table(results[0]);
+
+        let queryText = $searchQuery.query_text;
+
+        const isInQuotes = checkQuotes(queryText);
+
+        // ####################################
+        // Return all if there is no query text
+        if (queryText === undefined) {
+            return results;
+            // query_text is now always defined
+
+            // ####################################
+            // Match exact query text when the EXACT option is selected, or th etext is in quotes
+        } else if ($searchQuery.string_match === 'EXACT' || isInQuotes) {
+            // Match exact
+
+            queryText = queryText.removeCharacter(true, true);
+
+            console.log('Find exact string');
+
+            resultList = results.filter((elem) => {
+                let elemName = elem.name;
+
+                // When case_sensitive is false, compare lowercase names. Only the characters, basically.
+                if (!$searchQuery.case_sensitive) {
+                    elemName = elemName.toLowerCase();
+                    queryText = queryText.toLowerCase();
+                }
+
+                return elemName === queryText;
+            });
+
+            //     // ####################################
+            //     // Match space-separated query text parts
+            // } else if ($searchQuery.string_match === 'PART') {
+            //     if (!$searchQuery.case_sensitive) {
+            //         queryText = queryText.toLowerCase();
+            //     }
+
+            //     let stringsToSearch = queryText.split(' ');
+
+            //     results.forEach((result) => {
+            //         let elemName = result.name;
+
+            //         if (!$searchQuery.case_sensitive) {
+            //             elemName = elemName.toLowerCase();
+            //         }
+
+            //         if (stringsToSearch.some((v) => elemName.includes(v))) {
+            //             // There's at least one
+            //             resultList.push(result);
+            //         }
+            //     });
+
+            // ####################################
+            // Match fuzzy
+        } else if ($searchQuery.string_match === 'FUZZY') {
+            const options = {
+                threshold: -Infinity, // Don't return matches worse than this (higher is faster)
+                limit: Infinity, // Don't return more results than this (lower is faster)
+                all: false, // If true, returns all results for an empty search
+
+                key: 'name', // For when targets are objects (see its example usage)
+                scoreFn: null, // For use with `keys` (see its example usage)
+            };
+
+            const _resultList = fuzzysort.go(queryText, results, options);
+
+            _resultList.forEach((elem) => {
+                resultList.push(elem.obj);
+            });
+        }
+
+        // TODO: Add message back to figma to select the found nodes
+
+        sendSelection(resultList, true);
+        return resultList;
+    }
+
+    function checkQuotes(string) {
+        const quoteCharacters = ['"', "'", '´', '`'];
+
+        if (!string) {
+            console.warn('String undefined');
+            return undefined;
+        }
+
+        return quoteCharacters.some((elem) => {
+            return string.startsWith(elem) && string.endsWith(elem);
+        });
+    }
+
+    String.prototype.removeCharacter = function (first, last) {
+        let string = this;
+
+        if (!string) {
+            console.warn('String undefined');
+            return undefined;
+        }
+
+        if (first) {
+            string = string.slice(1);
+        }
+
+        if (last) {
+            string = string.slice(0, -1);
+        }
+
+        return string;
+    };
 </script>
 
 <div class="results-container">
