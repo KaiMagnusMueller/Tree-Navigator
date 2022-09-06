@@ -70,7 +70,7 @@
         width: 100%;
     }
     .recent-search-item:hover {
-        background-color: #f5f5f5;
+        background-color: var(--figma-color-bg-hover);
     }
 
     .item-content {
@@ -80,6 +80,8 @@
     }
 
     .item-content h4 {
+        color: var(--figma-color-text);
+
         margin: 0;
         font-size: var(--font-size-small);
         font-weight: var(--font-weight-normal);
@@ -89,7 +91,7 @@
         font-size: var(--font-size-small);
         font-weight: var(--font-weight-normal);
         text-transform: capitalize;
-        color: #9e9e9e;
+        color: var(--figma-color-text);
     }
 
     .search-button {

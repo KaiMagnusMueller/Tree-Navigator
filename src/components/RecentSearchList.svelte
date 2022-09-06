@@ -29,9 +29,7 @@
                 console.warn('Invalid recent search item');
                 return undefined;
             }
-            nodes.push(
-                filterList.find((element) => element.value.toLowerCase() == type.toLowerCase()).name
-            );
+            nodes.push(filterList.find((element) => element.value.toLowerCase() == type.toLowerCase()).name);
         });
         return nodes;
     }
@@ -72,12 +70,7 @@
         {/each}
         {#if recentSearches.length == 0}
             <div class="empty-state-container">
-                <svg
-                    id="icon"
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="32"
-                    height="32"
-                    viewBox="0 0 32 32"
+                <svg id="icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"
                     ><defs
                         ><style>
                             .cls-1 {
@@ -151,10 +144,11 @@
     }
 
     svg {
-        fill: rgba(0, 0, 0, 0.5);
+        fill: var(--figma-color-text-disabled);
     }
+
     .text--results-info {
-        color: rgba(0, 0, 0, 0.5);
+        color: var(--figma-color-text-disabled);
         text-align: center;
     }
 </style>

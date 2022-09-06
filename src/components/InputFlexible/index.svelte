@@ -33,7 +33,7 @@
             </div>
         {:else}
             <div transition:fly={{ x: -10, duration: 300 }} class="icon">
-                <Icon {iconName} {iconText} {spin} color="black3" />
+                <Icon {iconName} {iconText} {spin} />
             </div>
         {/if}
         <!-- svelte-ignore a11y-autofocus -->
@@ -86,11 +86,7 @@
             class:invalid
         />
         <div class="submit-button">
-            <IconButton
-                on:click={dispatch('handleSubmit')}
-                iconName={IconForward}
-                bind:disabled={disabledSubmit}
-            />
+            <IconButton on:click={dispatch('handleSubmit')} iconName={IconForward} bind:disabled={disabledSubmit} />
         </div>
         {#if invalid}
             <div class="error">
@@ -119,42 +115,42 @@
         height: 30px;
         margin: 1px 0 1px 0;
         padding: var(--size-xxsmall) var(--size-xxxsmall) var(--size-xxsmall) var(--size-xxsmall);
-        color: var(--color-text);
-        border: 1px solid var(--color-border-on-light);
+        color: var(--figma-color-text);
+        border: 1px solid var(--figma-color-border);
         border-radius: var(--border-radius-large);
         outline: none;
-        background-color: var(--color-bg-secondary, #f0f0f0);
+        background-color: var(--figma-color-bg-secondary, #f0f0f0);
         outline-offset: -1px;
     }
     input:hover,
     input:placeholder-shown:hover {
-        color: var(--color-text);
+        color: var(--figma-color-text);
         background-image: none;
     }
     input::selection {
-        color: var(--black);
-        background-color: var(--blue3);
+        color: var(--figma-color-text);
+        background-color: var(--figma-color-bg-brand);
     }
     input::placeholder {
-        color: var(--black3);
+        color: var(--figma-color-text);
     }
     input:placeholder-shown {
-        color: var(--color-text);
+        color: var(--figma-color-text);
         background-image: none;
     }
     input:focus:placeholder-shown {
-        outline: 2px solid var(--blue);
+        outline: 2px solid var(--figma-color-bg-brand);
     }
     input:disabled:hover {
     }
     input:active,
     input:focus {
-        color: var(--black);
-        outline: 2px solid var(--blue);
+        color: var(--figma-color-text);
+        outline: 2px solid var(--figma-color-bg-brand);
     }
     input:disabled {
         position: relative;
-        color: var(--black3);
+        color: var(--figma-color-text-disabled);
         background-image: none;
     }
     input:disabled:active {
@@ -162,7 +158,7 @@
     }
 
     .borders {
-        border: 1px solid var(--black1);
+        border: 1px solid var(--figma-color-border);
         background-image: none;
     }
     .borders:disabled {
@@ -178,7 +174,7 @@
         outline: none;
     }
     .borders:placeholder-shown {
-        border: 1px solid var(--black1);
+        border: 1px solid var(--figma-color-border);
         background-image: none;
     }
 
