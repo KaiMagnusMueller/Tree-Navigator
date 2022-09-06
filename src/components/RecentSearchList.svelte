@@ -127,6 +127,10 @@
         visibility: hidden;
     }
 
+    :global(html.figma-dark) .recent-search-wrapper:after {
+        background: linear-gradient(0deg, rgb(44, 44, 44) 0%, rgb(44, 44, 44, 0) 40%);
+    }
+
     .empty-state-container {
         height: 100%;
         position: absolute;

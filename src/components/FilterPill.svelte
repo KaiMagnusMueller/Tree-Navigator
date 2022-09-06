@@ -158,11 +158,9 @@
         box-shadow: 0 1px 6px rgba(194, 194, 194, 0.51);
     }
 
-    @media (prefers-color-scheme: dark) {
-        .bt-dropdown:focus,
-        .bt-dropdown:hover {
-            box-shadow: 0 1px 6px rgba(75, 75, 75, 0.51);
-        }
+    :global(html.figma-dark) .bt-dropdown:focus,
+    :global(html.figma-dark) .bt-dropdown:hover {
+        box-shadow: 0 1px 6px rgba(75, 75, 75, 0.51);
     }
 
     .bt-dropdown:active {

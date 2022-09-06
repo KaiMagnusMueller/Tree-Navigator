@@ -464,9 +464,12 @@
 		right: 0;
 		background: radial-gradient(
 			ellipse farthest-corner at bottom right,
-			var(--figma-color-bg),
-			var(--figma-color-text)
+			rgb(255, 255, 255) rgba(255, 255, 255, 00)
 		);
+	}
+
+	:global(html.figma-dark) .section--footer {
+		background: radial-gradient(ellipse farthest-corner at bottom right, rgba(44, 44, 44, 1), rgb(44, 44, 44, 0));
 	}
 
 	.section--bottom {
