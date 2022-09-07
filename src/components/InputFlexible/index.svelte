@@ -23,10 +23,12 @@
     export let navBackPossible = false;
 
     const dispatch = createEventDispatcher;
+
+    let focus = autofocus;
 </script>
 
 {#if iconName || iconText}
-    <div class="input {className}">
+    <div class="input {className}" class:focus>
         {#if navBackPossible}
             <div transition:fly={{ x: 10, duration: 300 }} class="back-button">
                 <slot name="back-button" />
@@ -44,8 +46,11 @@
             on:keydown
             on:focus={(event) => {
                 event.target.select();
+                focus = true;
             }}
-            on:blur
+            on:blur={(event) => {
+                focus = false;
+            }}
             bind:value
             {id}
             {name}
@@ -99,7 +104,16 @@
 <style>
     .input {
         position: relative;
+        overflow: hidden;
         transition: flex 0s 0.2s;
+        border: 1px solid var(--figma-color-border);
+        border-radius: var(--border-radius-large);
+        background-color: var(--figma-color-bg-secondary);
+    }
+
+    .input.focus {
+        outline: 2px solid var(--figma-color-bg-brand);
+        outline-offset: -1px;
     }
 
     input {
@@ -112,15 +126,14 @@
         overflow: visible;
         align-items: center;
         width: 100%;
-        height: 30px;
+        height: 28px;
         margin: 1px 0 1px 0;
         padding: var(--size-xxsmall) var(--size-xxxsmall) var(--size-xxsmall) var(--size-xxsmall);
         color: var(--figma-color-text);
-        border: 1px solid var(--figma-color-border);
+        border: none;
         border-radius: var(--border-radius-large);
         outline: none;
-        background-color: var(--figma-color-bg-secondary, #f0f0f0);
-        outline-offset: -1px;
+        background-color: unset;
     }
     input:hover,
     input:placeholder-shown:hover {
@@ -138,15 +151,13 @@
         color: var(--figma-color-text);
         background-image: none;
     }
-    input:focus:placeholder-shown {
-        outline: 2px solid var(--figma-color-bg-brand);
-    }
+
     input:disabled:hover {
     }
     input:active,
     input:focus {
         color: var(--figma-color-text);
-        outline: 2px solid var(--figma-color-bg-brand);
+        outline: none;
     }
     input:disabled {
         position: relative;
