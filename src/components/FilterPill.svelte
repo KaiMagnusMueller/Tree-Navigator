@@ -88,24 +88,15 @@
                 fill-rule="evenodd"
                 clip-rule="evenodd"
                 d="M3.646 5.854L0.645996 2.854L1.354 2.146L4 4.793L6.646 2.146L7.354 2.854L4.354 5.854L4 6.207L3.646 5.854Z"
-                fill="black"
+                fill="var(--figma-color-text)"
             />
         </svg>
     </div>
     {#if active}
         <div class="arrow">
-            <svg
-                width="22"
-                height="9"
-                viewBox="0 0 22 9"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-            >
+            <svg width="22" height="9" viewBox="0 0 22 9" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g clip-path="url(#clip0_356_2938)">
-                    <path
-                        d="M0 8C4 8 8 4 11 1L11 1.00001C14 4.00001 18 8 22 8V10H0V8Z"
-                        fill="#1E1E1E"
-                    />
+                    <path d="M0 8C4 8 8 4 11 1L11 1.00001C14 4.00001 18 8 22 8V10H0V8Z" fill="#1E1E1E" />
                     <path
                         d="M11 1.70689C12.4185 3.12274 14.0667 4.73564 15.8293 6.02821C17.5861 7.3165 19.5155 8.33176 21.5 8.48106V9.5H0.5V8.48106C2.48454 8.33176 4.41391 7.3165 6.17068 6.0282C7.93327 4.73564 9.5815 3.12274 11 1.70689Z"
                         stroke="#393939"
@@ -143,7 +134,8 @@
         gap: 4px;
         align-items: center;
         border-radius: 6px;
-        color: var(--color-text);
+        color: var(--figma-color-text);
+        background-color: var(--figma-color-bg);
         font-family: var(--font-stack);
         font-size: var(--font-size-xsmall);
         font-weight: var(--font-weight-normal);
@@ -153,8 +145,7 @@
         padding: 6px 10px 6px 8px;
         text-decoration: none;
         outline: none;
-        border: 1px solid var(--color-border-on-light);
-        background-color: white;
+        border: 1px solid var(--figma-color-border);
         user-select: none;
         transition-duration: 0.15s;
         transition-property: box-shadow, background, color;
@@ -167,13 +158,18 @@
         box-shadow: 0 1px 6px rgba(194, 194, 194, 0.51);
     }
 
+    :global(html.figma-dark) .bt-dropdown:focus,
+    :global(html.figma-dark) .bt-dropdown:hover {
+        box-shadow: 0 1px 6px rgba(75, 75, 75, 0.51);
+    }
+
     .bt-dropdown:active {
-        background: #d4d4d4;
+        background: var(--figma-color-bg-hover);
     }
 
     .bt-dropdown.checked {
-        background: #f0f0f0;
-        outline: 2px solid var(--blue);
+        background: var(--figma-color-bg-hover);
+        outline: 2px solid var(--figma-color-bg-brand);
         outline-offset: -2px;
         z-index: 50;
     }

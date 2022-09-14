@@ -2,14 +2,7 @@
 	//import Global CSS from the svelte boilerplate
 	//contains Figma color vars, spacing vars, utility classes and more
 	import { GlobalCSS } from 'figma-plugin-ds-svelte';
-	import {
-		searchQuery,
-		UIState,
-		activeFilters,
-		filterDefinitions,
-		settings,
-		defaultSettings,
-	} from './stores';
+	import { searchQuery, UIState, activeFilters, filterDefinitions, settings, defaultSettings } from './stores';
 	import { recentSearchExamples } from './assets/example-data';
 	import { saveRecentSearches, saveFilterRanking, saveSettings } from './lib/helper-functions';
 
@@ -366,9 +359,7 @@
 						bind:recentSearches={_recentSearches}
 					/>
 				</div>
-				<div
-					class="section--footer flex row justify-content-end pr-xxsmall pl-xxsmall pb-xxsmall"
-				>
+				<div class="section--footer flex row justify-content-end pr-xxsmall pl-xxsmall pb-xxsmall">
 					<!-- TODO: make IconButton accept flexible color -->
 					<IconButton iconName={IconInfo} color={'black3'} on:click={openAboutScreen} />
 					<IconButton iconName={IconAdjust} color={'black3'} on:click={openSettings} />
@@ -378,11 +369,7 @@
 				<!-- Display SEARCH RESULTS -->
 			{:else if $UIState.showSearchResults}
 				<div class="section--results">
-					<ResultsList
-						{querySendTime}
-						on:resetSearch={navBack}
-						on:resetSearch={resetSearchQuery}
-					/>
+					<ResultsList {querySendTime} on:resetSearch={navBack} on:resetSearch={resetSearchQuery} />
 				</div>
 			{/if}
 		</div>
@@ -410,9 +397,8 @@
 				</div>
 				<div class="settings--section pb-xxsmall">
 					<Section class="settings--input">Filters</Section>
-					<Switch
-						bind:checked={$settings.rememberNodeFilterCounts}
-						on:change={toggleFilterReordering}>Sort Filters by Usage</Switch
+					<Switch bind:checked={$settings.rememberNodeFilterCounts} on:change={toggleFilterReordering}
+						>Sort Filters by Usage</Switch
 					>
 					<Button variant="secondary" destructive on:click={resetNodeTypeFilterCounts}
 						>Reset Filter Order</Button
@@ -451,8 +437,8 @@
 	/* Add additional global or scoped styles here */
 	.header-group {
 		gap: 8px;
-		background-color: #fff;
-		border-bottom: 1px solid var(--color-border-on-light);
+		background-color: var(--figma-color-bg);
+		border-bottom: 1px solid var(--figma-color-border);
 	}
 
 	.main-section {
@@ -476,7 +462,14 @@
 		position: absolute;
 		bottom: 0;
 		right: 0;
-		background: radial-gradient(ellipse farthest-corner at bottom right, #fff, #fff0);
+		background: radial-gradient(
+			ellipse farthest-corner at bottom right,
+			rgb(255, 255, 255) rgba(255, 255, 255, 00)
+		);
+	}
+
+	:global(html.figma-dark) .section--footer {
+		background: radial-gradient(ellipse farthest-corner at bottom right, rgba(44, 44, 44, 1), rgb(44, 44, 44, 0));
 	}
 
 	.section--bottom {
@@ -503,12 +496,11 @@
 		top: 0;
 		left: 0;
 		z-index: 1;
-
-		background-color: var(--white);
+		background-color: var(--figma-color-bg);
 	}
 
 	.settings--header {
-		border-bottom: 1px solid var(--color-border-on-light, #e5e5e5);
+		border-bottom: 1px solid var(--figma-color-border);
 	}
 
 	.settings--content {
@@ -535,9 +527,6 @@
 	/* ------------------------- */
 	/* GLOBALS */
 	:global(:root) {
-		--color-border-on-light: #e6e6e6;
-		--color-text: rgba(0, 0, 0, 0.9);
-		--color-bg-secondary: #f5f5f5;
 		scrollbar-color: #999 #333;
 	}
 

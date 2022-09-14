@@ -110,11 +110,14 @@
     .recent-search-list {
         gap: 2px;
         height: 100%;
+        width: 100%;
+        overflow: hidden scroll;
     }
 
     .recent-search-wrapper {
-        position: relative;
-        overflow: auto;
+        position: absolute;
+        width: 100%;
+        height: 100%;
     }
 
     .recent-search-wrapper:after {
@@ -134,6 +137,10 @@
         visibility: hidden;
     }
 
+    :global(html.figma-dark) .recent-search-wrapper:after {
+        background: linear-gradient(0deg, rgb(44, 44, 44) 0%, rgb(44, 44, 44, 0) 40%);
+    }
+
     .empty-state-container {
         height: 100%;
         position: absolute;
@@ -151,10 +158,11 @@
     }
 
     svg {
-        fill: rgba(0, 0, 0, 0.5);
+        fill: var(--figma-color-text-disabled);
     }
+
     .text--results-info {
-        color: rgba(0, 0, 0, 0.5);
+        color: var(--figma-color-text-disabled);
         text-align: center;
     }
 </style>

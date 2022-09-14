@@ -23,17 +23,19 @@
     export let navBackPossible = false;
 
     const dispatch = createEventDispatcher;
+
+    let focus = autofocus;
 </script>
 
 {#if iconName || iconText}
-    <div class="input {className}">
+    <div class="input {className}" class:focus>
         {#if navBackPossible}
             <div transition:fly={{ x: 10, duration: 300 }} class="back-button">
                 <slot name="back-button" />
             </div>
         {:else}
             <div transition:fly={{ x: -10, duration: 300 }} class="icon">
-                <Icon {iconName} {iconText} {spin} color="black3" />
+                <Icon {iconName} {iconText} {spin} />
             </div>
         {/if}
         <!-- svelte-ignore a11y-autofocus -->
@@ -44,8 +46,11 @@
             on:keydown
             on:focus={(event) => {
                 event.target.select();
+                focus = true;
             }}
-            on:blur
+            on:blur={(event) => {
+                focus = false;
+            }}
             bind:value
             {id}
             {name}
@@ -103,7 +108,16 @@
 <style>
     .input {
         position: relative;
+        overflow: hidden;
         transition: flex 0s 0.2s;
+        border: 1px solid var(--figma-color-border);
+        border-radius: var(--border-radius-large);
+        background-color: var(--figma-color-bg-secondary);
+    }
+
+    .input.focus {
+        outline: 2px solid var(--figma-color-bg-brand);
+        outline-offset: -1px;
     }
 
     input {
@@ -116,45 +130,43 @@
         overflow: visible;
         align-items: center;
         width: 100%;
-        height: 30px;
+        height: 28px;
         margin: 1px 0 1px 0;
         padding: var(--size-xxsmall) var(--size-xxxsmall) var(--size-xxsmall) var(--size-xxsmall);
-        color: var(--color-text);
-        border: 1px solid var(--color-border-on-light);
+        color: var(--figma-color-text);
+        border: none;
         border-radius: var(--border-radius-large);
         outline: none;
-        background-color: var(--color-bg-secondary, #f0f0f0);
-        outline-offset: -1px;
+        background-color: unset;
     }
-    input:hover,
+    /* input:hover,
     input:placeholder-shown:hover {
-        color: var(--color-text);
+        color: var(--figma-color-text);
         background-image: none;
-    }
-    input::selection {
-        color: var(--black);
-        background-color: var(--blue3);
-    }
+    } */
+    /* input::selection {
+        color: var(--figma-color-text);
+        background-color: var(--figma-color-bg-brand);
+    } */
     input::placeholder {
-        color: var(--black3);
+        color: var(--figma-color-text);
     }
-    input:placeholder-shown {
-        color: var(--color-text);
+    input:placeholder-shown,
+    input::placeholder {
+        color: var(--figma-color-text-tertiary);
         background-image: none;
     }
-    input:focus:placeholder-shown {
-        outline: 2px solid var(--blue);
-    }
+
     input:disabled:hover {
     }
     input:active,
     input:focus {
-        color: var(--black);
-        outline: 2px solid var(--blue);
+        color: var(--figma-color-text);
+        outline: none;
     }
     input:disabled {
         position: relative;
-        color: var(--black3);
+        color: var(--figma-color-text-disabled);
         background-image: none;
     }
     input:disabled:active {
@@ -162,7 +174,7 @@
     }
 
     .borders {
-        border: 1px solid var(--black1);
+        border: 1px solid var(--figma-color-border);
         background-image: none;
     }
     .borders:disabled {
@@ -178,7 +190,7 @@
         outline: none;
     }
     .borders:placeholder-shown {
-        border: 1px solid var(--black1);
+        border: 1px solid var(--figma-color-border);
         background-image: none;
     }
 
@@ -203,15 +215,15 @@
 
     .back-button {
         position: absolute;
-        top: 0;
+        top: -1px;
         left: 0;
         z-index: 2;
     }
 
     .submit-button {
-        right: 0;
-        top: 0;
         position: absolute;
+        top: -1px;
+        right: 0;
     }
 
     .error {

@@ -54,13 +54,9 @@
 
 <!-- The |self modifier prevents the selection from being updated before the handleFoClick() event is fired. -->
 <!-- This makes it possible to zoom to unselected elements, if that is neccessary -->
-<div
-    class="result-list-elem flex row pl-xxsmall"
-    class:selected={result.selected}
-    on:click|self={handleResClick}
->
+<div class="result-list-elem flex row pl-xxsmall" class:selected={result.selected} on:click|self={handleResClick}>
     <div class="result-content flex row">
-        <IconFlexible iconName={returnIcon()} color="black" />
+        <IconFlexible iconName={returnIcon()} />
         <span class="text--results-title">{result.name}</span>
     </div>
     <div class="result-buttons">
@@ -79,6 +75,7 @@
         padding-bottom: 2px;
         align-items: center;
         justify-content: space-between;
+        color: var(--figma-color-text);
     }
 
     .result-content {
@@ -102,12 +99,12 @@
         bottom: 0px;
         left: 0;
         right: 0;
-        border: 1px solid var(--color-bg-brand-hover, #0d99ff);
+        border: 1px solid var(--figma-color-bg-brand-hover, #0d99ff);
         pointer-events: none;
     }
 
     .result-list-elem.selected {
-        background-color: var(--color-bg-selected, #daebf7);
+        background-color: var(--figma-color-bg-selected, #daebf7);
     }
 
     /* .result-list-elem.selected .text--results-title {
