@@ -7,10 +7,11 @@
 
 Developed with ♥️ by <a href="https://www.kaimagnus.de" target="_blank">Kai Magnus Müller</a>.
 
-I built this plugin mainly according to my own needs and workflow, but nonetheless I hope you will find it as useful as I do. 
+I built this plugin mainly for myself and according to my own needs and workflow, but nonetheless I hope you will find it as useful as I do. 
 
 If you have any thoughts, suggestions or requests, feel free to message me on Twitter <a href="https://www.twitter.com/_kaimagnus" target="_blank">@_kaimagnus</a>. You can also use the templates on GitHub for  <a href="https://github.com/KaiMagnusMueller/Find-Nodes/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=" target="_blank">feature requests</a> or <a href="https://github.com/KaiMagnusMueller/Find-Nodes/issues/new?assignees=&labels=bug&template=bug_report.md&title=" target="_blank">bug reports</a>.
 
 
 The plugin source code is released under the MIT license on <a href="https://github.com/KaiMagnusMueller/Find-Nodes" target="_blank">GitHub</a>.
 
+Thanks to Thomas Lowry for creating <a href="https://github.com/thomas-lowry/figsvelte" target="_blank">figsvelte</a>. Without it, this plugin would probably not exist. 

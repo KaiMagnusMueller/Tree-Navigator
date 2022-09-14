@@ -2,7 +2,14 @@
 	//import Global CSS from the svelte boilerplate
 	//contains Figma color vars, spacing vars, utility classes and more
 	import { GlobalCSS } from 'figma-plugin-ds-svelte';
-	import { searchQuery, UIState, activeFilters, filterDefinitions, settings, defaultSettings } from './stores';
+	import {
+		searchQuery,
+		UIState,
+		activeFilters,
+		filterDefinitions,
+		settings,
+		defaultSettings,
+	} from './stores';
 	import { recentSearchExamples } from './assets/example-data';
 	import { saveRecentSearches, saveFilterRanking, saveSettings } from './lib/helper-functions';
 
@@ -30,7 +37,7 @@
 
 	// Markdown texts
 	import About from './assets/text/about.svx';
-	import Acknowledgements from './assets/text/licenses.svx';
+	// import Acknowledgements from './assets/text/licenses.svx';
 
 	//current input of search field
 	let searchString = '';
@@ -359,7 +366,9 @@
 						bind:recentSearches={_recentSearches}
 					/>
 				</div>
-				<div class="section--footer flex row justify-content-end pr-xxsmall pl-xxsmall pb-xxsmall">
+				<div
+					class="section--footer flex row justify-content-end pr-xxsmall pl-xxsmall pb-xxsmall"
+				>
 					<!-- TODO: make IconButton accept flexible color -->
 					<IconButton iconName={IconInfo} color={'black3'} on:click={openAboutScreen} />
 					<IconButton iconName={IconAdjust} color={'black3'} on:click={openSettings} />
@@ -369,7 +378,11 @@
 				<!-- Display SEARCH RESULTS -->
 			{:else if $UIState.showSearchResults}
 				<div class="section--results">
-					<ResultsList {querySendTime} on:resetSearch={navBack} on:resetSearch={resetSearchQuery} />
+					<ResultsList
+						{querySendTime}
+						on:resetSearch={navBack}
+						on:resetSearch={resetSearchQuery}
+					/>
 				</div>
 			{/if}
 		</div>
@@ -397,8 +410,9 @@
 				</div>
 				<div class="settings--section pb-xxsmall">
 					<Section class="settings--input">Filters</Section>
-					<Switch bind:checked={$settings.rememberNodeFilterCounts} on:change={toggleFilterReordering}
-						>Sort Filters by Usage</Switch
+					<Switch
+						bind:checked={$settings.rememberNodeFilterCounts}
+						on:change={toggleFilterReordering}>Sort Filters by Usage</Switch
 					>
 					<Button variant="secondary" destructive on:click={resetNodeTypeFilterCounts}
 						>Reset Filter Order</Button
@@ -424,9 +438,6 @@
 			<div class="settings--content markdown pt-xxsmall pr-xxsmall pl-xxsmall">
 				<div class="pb-medium">
 					<About />
-				</div>
-				<div>
-					<Acknowledgements />
 				</div>
 			</div>
 		</div>
@@ -469,7 +480,11 @@
 	}
 
 	:global(html.figma-dark) .section--footer {
-		background: radial-gradient(ellipse farthest-corner at bottom right, rgba(44, 44, 44, 1), rgb(44, 44, 44, 0));
+		background: radial-gradient(
+			ellipse farthest-corner at bottom right,
+			rgba(44, 44, 44, 1),
+			rgb(44, 44, 44, 0)
+		);
 	}
 
 	.section--bottom {
