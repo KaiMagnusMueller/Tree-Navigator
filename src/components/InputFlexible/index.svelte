@@ -91,7 +91,11 @@
             class:invalid
         />
         <div class="submit-button">
-            <IconButton on:click={dispatch('handleSubmit')} iconName={IconForward} bind:disabled={disabledSubmit} />
+            <IconButton
+                on:click={dispatch('handleSubmit')}
+                iconName={IconForward}
+                bind:disabled={disabledSubmit}
+            />
         </div>
         {#if invalid}
             <div class="error">
@@ -135,20 +139,21 @@
         outline: none;
         background-color: unset;
     }
-    input:hover,
+    /* input:hover,
     input:placeholder-shown:hover {
         color: var(--figma-color-text);
         background-image: none;
-    }
-    input::selection {
+    } */
+    /* input::selection {
         color: var(--figma-color-text);
         background-color: var(--figma-color-bg-brand);
-    }
+    } */
     input::placeholder {
         color: var(--figma-color-text);
     }
-    input:placeholder-shown {
-        color: var(--figma-color-text);
+    input:placeholder-shown,
+    input::placeholder {
+        color: var(--figma-color-text-tertiary);
         background-image: none;
     }
 
@@ -210,15 +215,15 @@
 
     .back-button {
         position: absolute;
-        top: 0;
+        top: -1px;
         left: 0;
         z-index: 2;
     }
 
     .submit-button {
-        right: 0;
-        top: 0;
         position: absolute;
+        top: -1px;
+        right: 0;
     }
 
     .error {

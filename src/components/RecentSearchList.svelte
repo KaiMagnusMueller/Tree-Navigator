@@ -29,7 +29,9 @@
                 console.warn('Invalid recent search item');
                 return undefined;
             }
-            nodes.push(filterList.find((element) => element.value.toLowerCase() == type.toLowerCase()).name);
+            nodes.push(
+                filterList.find((element) => element.value.toLowerCase() == type.toLowerCase()).name
+            );
         });
         return nodes;
     }
@@ -70,7 +72,12 @@
         {/each}
         {#if recentSearches.length == 0}
             <div class="empty-state-container">
-                <svg id="icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"
+                <svg
+                    id="icon"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="32"
+                    height="32"
+                    viewBox="0 0 32 32"
                     ><defs
                         ><style>
                             .cls-1 {
@@ -104,7 +111,7 @@
         gap: 2px;
         height: 100%;
         width: 100%;
-        overflow: scroll;
+        overflow: hidden scroll;
     }
 
     .recent-search-wrapper {
