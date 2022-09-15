@@ -143,7 +143,7 @@
         // ####################################
         // Return all if there is no query text
         if (queryText === undefined) {
-            return results;
+            resultList = results;
             // query_text is now always defined
 
             // ####################################
@@ -255,7 +255,11 @@
         <!-- RESULTS LIST -->
         <div class="results-list flex column" bind:this={resultsListElem}>
             {#each searchResults as result (result.id)}
-                <ResultsListItem {result} on:result-clicked={handleClick} on:focus-selection={handleFocSelection} />
+                <ResultsListItem
+                    {result}
+                    on:result-clicked={handleClick}
+                    on:focus-selection={handleFocSelection}
+                />
             {/each}
         </div>
         <!-- METADATA -->
@@ -269,7 +273,13 @@
         <!-- No results (.length == 0) and the query was returned (duration != undefined) -->
     {:else if searchResults.length === 0 && queryDuration != undefined}
         <div class="empty-state-container">
-            <svg id="icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+            <svg
+                id="icon"
+                xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                viewBox="0 0 32 32"
+            >
                 <defs>
                     <style>
                         .cls-1 {

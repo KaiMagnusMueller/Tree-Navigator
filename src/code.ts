@@ -106,12 +106,14 @@ figma.ui.onmessage = msg => {
 				// !typeFilterExists - we add all non-searchable nodes to nodes[], so they get searched 
 				//                     by name later, if no type filter exists
 				// Searchable - add, because it won't be part of the found nodes later at findAllWithCriteria()
-				//              an instance will be part of the nodeSearchSet, because it is searchable
+				//               an instance will be part of the nodeSearchSet, because it is searchable
 				//              however, it would otherwise not be returned and get added to the nodes array
 
 
+				// console.log(searchable, typeIsInQuery, typeFilterIsAll, typeFilterExists);
+				// console.log((typeIsInQuery || typeFilterIsAll) && searchable, typeIsInQuery && !searchable);
 
-				if ((typeIsInQuery || typeFilterIsAll) && searchable) {
+				if (typeIsInQuery || typeFilterIsAll) {
 					// console.log("add node to list");
 					// console.log(node);
 
