@@ -37,7 +37,7 @@
 <div class="recent-search-item p-xxsmall flex" in:fade={{ delay: 25 * i, duration: 60 }}>
     <Icon iconName={IconSearch} />
     <div class="item-content flex column single-line">
-        <h4><slot /></h4>
+        <h4>'<slot />'</h4>
         <p>
             {#each node_types as type}
                 {type}
