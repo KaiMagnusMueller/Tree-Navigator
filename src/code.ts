@@ -264,8 +264,10 @@ function handleSelectionChange() {
     return;
   }
 
+  let ancestorNode = getAncestorNode(currentSelection[0]);
+
   let interestingNodes = {
-    ancestorNode: getAncestorNode(currentSelection[0]),
+    ancestorNode: copyNode(ancestorNode),
   };
 
   console.log(interestingNodes);
@@ -289,4 +291,14 @@ function getAncestorNode(currentNode: BaseNode) {
     currentNode = currentNode.parent;
   }
   return currentNode;
+}
+
+function copyNode(node: BaseNode) {
+  return {
+    id: node.id,
+    name: node.name,
+    parent: node.parent,
+    // children: node.children,
+    type: node.type,
+  };
 }
