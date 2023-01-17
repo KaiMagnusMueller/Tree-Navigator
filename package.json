@@ -1,35 +1,35 @@
 {
-  "name": "svelte-app",
-  "version": "1.0.3",
-  "scripts": {
-    "build": "rollup -c",
-    "dev": "rollup -c -w",
-    "start": "sirv public"
-  },
-  "devDependencies": {
-    "@figma/plugin-typings": "^1.49.0",
-    "@rollup/plugin-commonjs": "^22.0.0",
-    "@rollup/plugin-image": "^2.1.1",
-    "@rollup/plugin-node-resolve": "^13.3.0",
-    "caniuse-lite": "^1.0.30001355",
-    "cssnano": "^5.1.11",
-    "figma-plugin-ds-svelte": "github:KaiMagnusMueller/figma-plugin-ds-svelte-improved",
-    "mdsvex": "^0.10.6",
-    "postcss": "^8.4.14",
-    "rollup": "^2.76.0",
-    "rollup-plugin-html-bundle": "*",
-    "rollup-plugin-livereload": "^2.0.5",
-    "rollup-plugin-postcss": "^4.0.2",
-    "rollup-plugin-svelte": "^7.1.0",
-    "rollup-plugin-svg": "*",
-    "rollup-plugin-terser": "^7.0.2",
-    "rollup-plugin-typescript": "*",
-    "svelte": "^3.49.0",
-    "tslib": "^2.4.0",
-    "typescript": "^4.7.4"
-  },
-  "dependencies": {
-    "fuzzysort": "^2.0.1",
-    "sirv-cli": "^2.0.2"
-  }
+	"name": "svelte-app",
+	"version": "1.0.3",
+	"scripts": {
+		"build": "rollup -c",
+		"dev": "rollup -c -w",
+		"start": "sirv public"
+	},
+	"devDependencies": {
+		"@figma/plugin-typings": "^1.49.0",
+		"@rollup/plugin-commonjs": "^22.0.0",
+		"@rollup/plugin-image": "^2.1.1",
+		"@rollup/plugin-node-resolve": "^13.3.0",
+		"caniuse-lite": "^1.0.30001355",
+		"cssnano": "^5.1.11",
+		"figma-plugin-ds-svelte": "github:KaiMagnusMueller/figma-plugin-ds-svelte-improved",
+		"mdsvex": "^0.10.6",
+		"postcss": "^8.4.14",
+		"rollup": "^2.76.0",
+		"rollup-plugin-html-bundle": "*",
+		"rollup-plugin-livereload": "^2.0.5",
+		"rollup-plugin-postcss": "^4.0.2",
+		"rollup-plugin-svelte": "^7.1.0",
+		"rollup-plugin-svg": "*",
+		"rollup-plugin-terser": "^7.0.2",
+		"rollup-plugin-typescript": "*",
+		"svelte": "^3.49.0",
+		"tslib": "^2.4.0",
+		"typescript": "^4.7.4"
+	},
+	"dependencies": {
+		"fuzzysort": "^2.0.1",
+		"sirv-cli": "^2.0.2"
+	}
 }

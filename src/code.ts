@@ -36,8 +36,14 @@ if (settings) {
 }
 
 figma.ui.postMessage({ type: 'loaded-plugin-settings', data: settings });
-figma.ui.postMessage({ type: 'loaded-plugin-recent-search-list', data: recentSearchList });
-figma.ui.postMessage({ type: 'loaded-plugin-filter-counts', data: filterDefinitions });
+figma.ui.postMessage({
+	type: 'loaded-plugin-recent-search-list',
+	data: recentSearchList,
+});
+figma.ui.postMessage({
+	type: 'loaded-plugin-filter-counts',
+	data: filterDefinitions,
+});
 
 function sendPluginmessage(params) {
 	figma.ui.postMessage({ type: 'plugin', data: params });
