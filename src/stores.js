@@ -124,6 +124,10 @@ export let filterDefinitions = writable([
         value: 'SELECTION',
         name: 'Current selection',
       },
+      {
+        value: 'ROOT_FRAME',
+        name: 'Top level frame',
+      },
     ],
     // TODO: Add "Current Frame" as area
   },

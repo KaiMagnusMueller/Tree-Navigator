@@ -173,6 +173,8 @@
       //prevent the postMessage function from locking up the main plugin by delaying it a few milliseconds
     }, 50);
 
+    console.log(queryToSend);
+
     // updateNodeTypeFilterCounts($searchQuery.node_types);
 
     //only add to recentlist if the item is not already on the list
