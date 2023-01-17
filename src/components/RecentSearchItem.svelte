@@ -1,116 +1,116 @@
 <script>
-  import { Icon, IconClose, IconSearch, IconButton, IconForward } from 'figma-plugin-ds-svelte';
+	import { Icon, IconClose, IconSearch, IconButton, IconForward } from 'figma-plugin-ds-svelte';
 
-  import { fade } from 'svelte/transition';
-  import { createEventDispatcher } from 'svelte';
-  let dispatch = createEventDispatcher();
+	import { fade } from 'svelte/transition';
+	import { createEventDispatcher } from 'svelte';
+	let dispatch = createEventDispatcher();
 
-  export let node_types;
-  export let i;
+	export let node_types;
+	export let i;
 
-  export let search = {};
-  //   console.log(search);
+	export let search = {};
+	//   console.log(search);
 
-  // node_types: [],
-  // query_text: "",
-  // area_type: false,
-  // selected_node_ids: [],
-  // query_submit_time: "",
+	// node_types: [],
+	// query_text: "",
+	// area_type: false,
+	// selected_node_ids: [],
+	// query_submit_time: "",
 
-  function handleClick() {
-    console.log('start recent search');
+	function handleClick() {
+		console.log('start recent search');
 
-    //isNew = false
-    dispatch('recentSearch', {
-      isNew: false,
-      search: search,
-    });
-    dispatch('moveToTop', i);
-  }
+		//isNew = false
+		dispatch('recentSearch', {
+			isNew: false,
+			search: search,
+		});
+		dispatch('moveToTop', i);
+	}
 
-  function handleRemove() {
-    console.log('remove this search');
-    dispatch('removeSearch', i);
-  }
+	function handleRemove() {
+		console.log('remove this search');
+		dispatch('removeSearch', i);
+	}
 </script>
 
 <div class="recent-search-item p-xxsmall flex" in:fade={{ delay: 25 * i, duration: 60 }}>
-  <Icon iconName={IconSearch} />
-  <div class="item-content flex column single-line">
-    <h4>'<slot />'</h4>
-    <p>
-      {#each node_types as type}
-        {type}
-      {:else}
-        All Types
-      {/each}
-    </p>
-  </div>
-  <div class="search-button">
-    <IconButton iconName={IconClose} on:click={handleRemove} />
-    <IconButton iconName={IconForward} on:click={handleClick} />
-  </div>
+	<Icon iconName={IconSearch} />
+	<div class="item-content flex column single-line">
+		<h4>'<slot />'</h4>
+		<p>
+			{#each node_types as type}
+				{type}
+			{:else}
+				All Types
+			{/each}
+		</p>
+	</div>
+	<div class="search-button">
+		<IconButton iconName={IconClose} on:click={handleRemove} />
+		<IconButton iconName={IconForward} on:click={handleClick} />
+	</div>
 </div>
 
 <style>
-  .recent-search-item {
-    gap: var(--size-xxsmall);
-    position: relative;
-  }
+	.recent-search-item {
+		gap: var(--size-xxsmall);
+		position: relative;
+	}
 
-  .recent-search-item:first-of-type {
-    margin-top: var(--size-xxsmall);
-  }
-  .recent-search-item:last-of-type::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: -100%;
-    height: 100%;
-    width: 100%;
-  }
-  .recent-search-item:hover {
-    background-color: var(--figma-color-bg-hover);
-  }
+	.recent-search-item:first-of-type {
+		margin-top: var(--size-xxsmall);
+	}
+	.recent-search-item:last-of-type::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		bottom: -100%;
+		height: 100%;
+		width: 100%;
+	}
+	.recent-search-item:hover {
+		background-color: var(--figma-color-bg-hover);
+	}
 
-  .item-content {
-    gap: 4px;
-    pointer-events: none;
-    min-width: 0;
-  }
+	.item-content {
+		gap: 4px;
+		pointer-events: none;
+		min-width: 0;
+	}
 
-  .item-content h4 {
-    color: var(--figma-color-text);
+	.item-content h4 {
+		color: var(--figma-color-text);
 
-    margin: 0;
-    font-size: var(--font-size-small);
-    font-weight: var(--font-weight-normal);
-  }
-  .item-content p {
-    margin: 0;
-    font-size: var(--font-size-small);
-    font-weight: var(--font-weight-normal);
-    text-transform: capitalize;
-    color: var(--figma-color-text);
-  }
+		margin: 0;
+		font-size: var(--font-size-small);
+		font-weight: var(--font-weight-normal);
+	}
+	.item-content p {
+		margin: 0;
+		font-size: var(--font-size-small);
+		font-weight: var(--font-weight-normal);
+		text-transform: capitalize;
+		color: var(--figma-color-text);
+	}
 
-  .search-button {
-    margin-left: auto;
-    display: none;
-  }
+	.search-button {
+		margin-left: auto;
+		display: none;
+	}
 
-  .recent-search-item:hover .search-button {
-    display: flex;
-    gap: 4px;
-  }
+	.recent-search-item:hover .search-button {
+		display: flex;
+		gap: 4px;
+	}
 
-  .single-line * {
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    line-clamp: 1;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    line-break: anywhere;
-    text-overflow: ellipsis;
-  }
+	.single-line * {
+		display: -webkit-box;
+		-webkit-line-clamp: 1;
+		line-clamp: 1;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+		line-break: anywhere;
+		text-overflow: ellipsis;
+	}
 </style>

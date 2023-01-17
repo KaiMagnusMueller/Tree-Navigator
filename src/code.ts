@@ -121,7 +121,7 @@ figma.ui.onmessage = (msg) => {
 				// Return true if the node has the findAllWithCriteria() and findAll() functions (only both occur)
 				return searchable;
 			}
-		} else if (query.area_type === 'ROOT_FRAME' && figma.currentPage.selection.length > 0) {
+		} else if (query.area_type === 'ROOT_FRAME') {
 			let ancestorNodes = [];
 			figma.currentPage.selection.forEach((elem) => {
 				ancestorNodes.push(getAncestorNode(elem));
@@ -131,10 +131,10 @@ figma.ui.onmessage = (msg) => {
 			nodeSearchSet.push(figma.currentPage);
 		}
 
-		// console.log("---------------");
+		// console.log('---------------');
 		// console.log(nodeSearchSet);
 		// console.log(figma.currentPage.selection);
-		// console.log("---------------");
+		// console.log('---------------');
 
 		nodeSearchSet.forEach((node) => {
 			if (query.node_types.length > 0 && query.node_types[0] != 'ALL') {
@@ -152,8 +152,8 @@ figma.ui.onmessage = (msg) => {
 
 		// console.log('Found ' + nodes.length + ' nodes');
 		// console.log(nodes);
-		// console.log('Found ' + filteredNodes.length + ' nodes after filtering names');
-		// console.log(filteredNodes);
+		// // console.log('Found ' + filteredNodes.length + ' nodes after filtering names');
+		// // console.log(filteredNodes);
 		// for (let index = 0; index < nodes.length; index++) {
 		// 	const element = nodes[index];
 
@@ -271,15 +271,18 @@ function handleSelectionChange() {
 		});
 	});
 
-	if (currentSelection.length === 0 || currentSelection.length > 1) {
+	if (currentSelection.length === 0) {
 		figma.ui.postMessage({ type: 'selection-changed', data: nodesToSend });
 		return;
 	}
 
-	let ancestorNode = getAncestorNode(currentSelection[0]);
+	let ancestorNodes = [];
+	currentSelection.forEach((elem) => {
+		ancestorNodes.push(copyNode(getAncestorNode(elem)));
+	});
 
 	let interestingNodes = {
-		ancestorNode: copyNode(ancestorNode),
+		ancestorNodes: ancestorNodes,
 	};
 
 	console.log(interestingNodes);

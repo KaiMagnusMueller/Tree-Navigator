@@ -10,40 +10,52 @@
 					interestingNodes = null;
 					return;
 				}
-				selectedNode = event.data.pluginMessage.data[0];
+				selectedNodes = event.data.pluginMessage.data;
 				interestingNodes = event.data.pluginMessage.interestingNodes;
-				console.log(interestingNodes.ancestorNode);
-				console.log(selectedNode);
+				console.log(interestingNodes.ancestorNodes);
+				console.log(selectedNodes);
 			}
+
+			selectedSameName = selectedNodes.every((elem) => elem.name === selectedNodes[0].name);
+			selectedSameType = selectedNodes.every((elem) => elem.type === selectedNodes[0].type);
 		};
 	}, 50);
 	// For some reason the message event is not registered without a slight delay
 
-	let selectedNode;
+	let selectedNodes;
 	let interestingNodes;
 
-	let search = {
-		area_type: 'PAGE',
-		case_sensitive: false,
-		node_types: ['FRAME'],
-		query_submit_time: 1661892929692,
-		string_match: 'PART',
-	};
-
 	function handleClick() {
+		let search = {
+			area_type: 'ROOT_FRAME',
+			case_sensitive: true,
+			node_types: [selectedNodes[0].type],
+			string_match: 'FUZZY',
+			// TODO: debug node filtering in results list, somehow all nodes get removed from results, even though there are matching nodes
+			query_text: selectedNodes[0].name,
+		};
+
+		console.log(search);
+
 		dispatch('searchSuggestion', {
+			isNew: true,
 			search: search,
 		});
 	}
+
+	let selectedSameName = true;
+	let selectedSameType = true;
 </script>
 
 {#if interestingNodes}
 	<div class="search-suggestions">
 		<h4>Suggested Searches</h4>
-		{#if interestingNodes.ancestorNode}
+		{#if selectedSameName && selectedSameType}
 			<div on:click={handleClick}>
-				Search for all {$filterDefinitions[0].getTypeName(selectedNode.type)} nodes called “{selectedNode.name}”
-				in the current frame.
+				Search for all {$filterDefinitions[0].getTypeName(selectedNodes[0].type)} nodes called
+				“{selectedNodes[0].name}” in the current top level {selectedNodes.length > 1
+					? 'frames'
+					: 'frame'}.
 			</div>
 		{/if}
 	</div>
