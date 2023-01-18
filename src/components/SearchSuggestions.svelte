@@ -1,7 +1,10 @@
-<script lang="ts">
+<script>
 	import { createEventDispatcher } from 'svelte';
 	let dispatch = createEventDispatcher();
 	import { filterDefinitions } from '../stores';
+
+	import { Icon } from 'figma-plugin-ds-svelte';
+	import ArrowUpLeftCurved from '../assets/icons/ArrowUpLeftCurved.svg';
 
 	setTimeout(() => {
 		onmessage = (event) => {
@@ -48,42 +51,57 @@
 </script>
 
 {#if interestingNodes}
-	<div class="search-suggestions">
-		<h4>Suggested Searches</h4>
-		{#if selectedSameName && selectedSameType}
-			<div on:click={handleClick}>
-				Search for all {$filterDefinitions[0].getTypeName(selectedNodes[0].type)} nodes called
-				“{selectedNodes[0].name}” in the current top level {selectedNodes.length > 1
-					? 'frames'
-					: 'frame'}.
-			</div>
-		{/if}
+	<div class="search-suggestions flex column">
+		<h4 class="heading">Suggested Searches</h4>
+		<div class="suggestion-list">
+			{#if selectedSameName && selectedSameType}
+				<div class="suggestion-item flex align-items-center pr-xxsmall">
+					<Icon iconName={ArrowUpLeftCurved} />
+					<div on:click={handleClick}>
+						Search for all {$filterDefinitions[0].getTypeName(selectedNodes[0].type)} nodes
+						called '{selectedNodes[0].name}' in top level {selectedNodes.length > 1
+							? 'frames'
+							: 'frame'}.
+					</div>
+				</div>
+			{/if}
+		</div>
 	</div>
 {/if}
 
 <style>
 	.search-suggestions {
-		padding: 8px;
+		padding-top: 8px;
 		margin: 8px;
 		background: var(--figma-color-bg-secondary);
 		border: 1px solid var(--figma-color-border);
 		border-radius: 6px;
 		color: var(--figma-color-text);
 		font-size: var(--font-size-small);
-		font-weight: var(--font-weight-normal);
+		gap: 8px;
 	}
 
 	.search-suggestions h4 {
 		color: var(--figma-color-text);
-
+		padding: 0 8px;
 		margin: 0;
 		font-size: var(--font-size-small);
-		font-weight: var(--font-weight-normal);
+		font-weight: var(--font-weight-medium);
 	}
 	.search-suggestions p {
 		margin: 0;
 		font-size: var(--font-size-small);
 		font-weight: var(--font-weight-normal);
 		color: var(--figma-color-text);
+	}
+
+	.suggestion-item {
+		gap: 8px;
+		padding-top: 6px;
+		padding-bottom: 6px;
+	}
+
+	.suggestion-item:hover {
+		background-color: #424242;
 	}
 </style>
