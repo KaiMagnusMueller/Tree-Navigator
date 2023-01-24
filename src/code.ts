@@ -125,6 +125,7 @@ figma.ui.onmessage = (msg) => {
 			let ancestorNodes = [];
 			figma.currentPage.selection.forEach((elem) => {
 				ancestorNodes.push(getAncestorNode(elem));
+				// TODO: if multiple elements with the same ancestor are selected, are they all added to the search set?
 			});
 			nodeSearchSet = ancestorNodes;
 		} else {
@@ -284,8 +285,6 @@ function handleSelectionChange() {
 	let interestingNodes = {
 		ancestorNodes: ancestorNodes,
 	};
-
-	console.log(interestingNodes);
 
 	figma.ui.postMessage({
 		type: 'selection-changed',

@@ -110,6 +110,12 @@ export let filterDefinitions = writable([
 		],
 	},
 	{
+		getTypeName(value) {
+			let filterOption = this.filterOptions.find(
+				(element) => element.value.toLowerCase() == value.toLowerCase()
+			);
+			return filterOption.name;
+		},
 		filterData: {
 			filterType: 'area_type',
 			multiSelect: false,
@@ -129,7 +135,6 @@ export let filterDefinitions = writable([
 				name: 'Top level frame',
 			},
 		],
-		// TODO: Add "Current Frame" as area
 	},
 	{
 		filterData: {

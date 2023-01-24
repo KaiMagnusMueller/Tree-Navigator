@@ -173,7 +173,7 @@
 			//prevent the postMessage function from locking up the main plugin by delaying it a few milliseconds
 		}, 50);
 
-		console.log(queryToSend);
+		// console.log(queryToSend);
 
 		// updateNodeTypeFilterCounts($searchQuery.node_types);
 

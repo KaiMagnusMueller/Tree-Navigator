@@ -1,4 +1,5 @@
 <script>
+	import uniqBy from 'lodash/uniqBy';
 	import { createEventDispatcher } from 'svelte';
 	let dispatch = createEventDispatcher();
 	import { filterDefinitions } from '../stores';
@@ -15,7 +16,9 @@
 				}
 				selectedNodes = event.data.pluginMessage.data;
 				interestingNodes = event.data.pluginMessage.interestingNodes;
-				console.log(interestingNodes.ancestorNodes);
+
+				ancestorNodes = uniqBy(interestingNodes.ancestorNodes, 'id');
+				console.log(ancestorNodes);
 				console.log(selectedNodes);
 			}
 
@@ -27,6 +30,7 @@
 
 	let selectedNodes;
 	let interestingNodes;
+	let ancestorNodes;
 
 	function handleClick() {
 		let search = {
@@ -34,11 +38,8 @@
 			case_sensitive: true,
 			node_types: [selectedNodes[0].type],
 			string_match: 'FUZZY',
-			// TODO: debug node filtering in results list, somehow all nodes get removed from results, even though there are matching nodes
 			query_text: selectedNodes[0].name,
 		};
-
-		console.log(search);
 
 		dispatch('searchSuggestion', {
 			isNew: true,
@@ -52,14 +53,14 @@
 
 {#if interestingNodes}
 	<div class="search-suggestions flex column">
-		<h4 class="heading">Suggested Searches</h4>
+		<h4 class="heading">Suggested Search</h4>
 		<div class="suggestion-list">
 			{#if selectedSameName && selectedSameType}
 				<div class="suggestion-item flex align-items-center pr-xxsmall">
 					<Icon iconName={ArrowUpLeftCurved} />
 					<div on:click={handleClick}>
 						Search for all {$filterDefinitions[0].getTypeName(selectedNodes[0].type)} nodes
-						called '{selectedNodes[0].name}' in top level {selectedNodes.length > 1
+						called '{selectedNodes[0].name}' in top level {ancestorNodes.length > 1
 							? 'frames'
 							: 'frame'}.
 					</div>
@@ -79,6 +80,7 @@
 		color: var(--figma-color-text);
 		font-size: var(--font-size-small);
 		gap: 8px;
+		user-select: none;
 	}
 
 	.search-suggestions h4 {

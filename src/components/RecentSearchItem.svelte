@@ -1,4 +1,5 @@
 <script>
+	import { filterDefinitions } from '../stores.js';
 	import { Icon, IconClose, IconSearch, IconButton, IconForward } from 'figma-plugin-ds-svelte';
 
 	import { fade } from 'svelte/transition';
@@ -43,8 +44,9 @@
 				{type}
 			{:else}
 				All Types
-			{/each}
+			{/each} · {$filterDefinitions[1].getTypeName(search.area_type)}
 		</p>
+		<!-- TODO: Remove all types else, not needed since it is now part of the filters -->
 	</div>
 	<div class="search-button">
 		<IconButton iconName={IconClose} on:click={handleRemove} />
@@ -90,8 +92,7 @@
 		margin: 0;
 		font-size: var(--font-size-small);
 		font-weight: var(--font-weight-normal);
-		text-transform: capitalize;
-		color: var(--figma-color-text);
+		color: var(--figma-color-text-secondary);
 	}
 
 	.search-button {

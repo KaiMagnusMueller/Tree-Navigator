@@ -30,6 +30,7 @@
 	},
 	"dependencies": {
 		"fuzzysort": "^2.0.1",
+		"lodash": "^4.17.21",
 		"sirv-cli": "^2.0.2"
 	}
 }
