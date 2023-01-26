@@ -6,6 +6,43 @@
 
 	import { Icon } from 'figma-plugin-ds-svelte';
 	import ArrowUpLeftCurved from '../assets/icons/ArrowUpLeftCurved.svg';
+	import SuggestionItem from './SuggestionItem.svelte';
+
+	// const searchSuggestions = [
+	// 	{
+	// 		type: 'ROOT_FRAME',
+	// 		search: {
+	// 			area_type: 'ROOT_FRAME',
+	// 			case_sensitive: true,
+	// 			node_types: [selectedNodes[0].type],
+	// 			string_match: 'FUZZY',
+	// 			query_text: selectedNodes[0].name,
+	// 		},
+	// 		suggestionLabel: `Search for all ${$filterDefinitions[0].getTypeName(
+	// 			selectedNodes[0].type
+	// 		)} nodes called ${selectedNodes[0].name} in top level ${
+	// 			ancestorNodes.length > 1 ? 'frames' : 'frame'
+	// 		}.`,
+	// 	},
+	// 	{
+	// 		type: 'ROOT_SECTION',
+	// 		search: {
+	// 			area_type: 'ROOT_SECTION',
+	// 			case_sensitive: true,
+	// 			node_types: [selectedNodes[0].type],
+	// 			string_match: 'FUZZY',
+	// 			query_text: selectedNodes[0].name,
+	// 		},
+	// 		suggestionLabel: `Search for all ${$filterDefinitions[0].getTypeName(
+	// 			selectedNodes[0].type
+	// 		)} nodes called ${selectedNodes[0].name} in top level ${
+	// 			ancestorNodes.length > 1 ? 'sections' : 'section'
+	// 		}.`,
+	// 	},
+	// ];
+
+	let selectedSameName = true;
+	let selectedSameType = true;
 
 	setTimeout(() => {
 		onmessage = (event) => {
@@ -18,8 +55,8 @@
 				interestingNodes = event.data.pluginMessage.interestingNodes;
 
 				ancestorNodes = uniqBy(interestingNodes.ancestorNodes, 'id');
-				console.log(ancestorNodes);
-				console.log(selectedNodes);
+
+				ancestorTree = interestingNodes.ancestorTree;
 			}
 
 			selectedSameName = selectedNodes.every((elem) => elem.name === selectedNodes[0].name);
@@ -31,6 +68,8 @@
 	let selectedNodes;
 	let interestingNodes;
 	let ancestorNodes;
+
+	let ancestorTree;
 
 	function handleClick() {
 		let search = {
@@ -46,15 +85,14 @@
 			search: search,
 		});
 	}
-
-	let selectedSameName = true;
-	let selectedSameType = true;
 </script>
 
 {#if interestingNodes}
 	<div class="search-suggestions flex column">
 		<h4 class="heading">Suggested Search</h4>
 		<div class="suggestion-list">
+			<SuggestionItem nodes={ancestorTree} />
+
 			{#if selectedSameName && selectedSameType}
 				<div class="suggestion-item flex align-items-center pr-xxsmall">
 					<Icon iconName={ArrowUpLeftCurved} />

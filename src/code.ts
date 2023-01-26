@@ -258,7 +258,8 @@ function sendResultsList(results) {
 figma.on('selectionchange', handleSelectionChange);
 
 function handleSelectionChange() {
-	const currentSelection: Array<SceneNode | BaseNode> = figma.currentPage.selection;
+	// @ts-ignore
+	const currentSelection: Array<SceneNode> = figma.currentPage.selection;
 
 	let nodesToSend = [];
 	currentSelection.forEach((element) => {
@@ -277,13 +278,46 @@ function handleSelectionChange() {
 		return;
 	}
 
+	let ancestorNodeArray = [];
+
+	let sameAncestor: boolean;
 	let ancestorNodes = [];
 	currentSelection.forEach((elem) => {
 		ancestorNodes.push(copyNode(getAncestorNode(elem)));
+		ancestorNodeArray = ancestorNodeArray.concat(getAncestorNodeArray(elem));
 	});
+
+	const createDataTree = (dataset) => {
+		const hashTable = Object.create(null);
+		dataset.forEach((aData) => (hashTable[aData.id] = { ...aData, childNodes: [] }));
+		const dataTree = [];
+
+		dataset.forEach((aData) => {
+			if (aData.parent?.id) {
+				hashTable[aData.parent.id].childNodes.push(hashTable[aData.id]);
+			} else {
+				dataTree.push(hashTable[aData.id]);
+			}
+		});
+		return dataTree;
+	};
+
+	ancestorNodeArray.forEach((elem) => {
+		if (elem.type === 'PAGE') {
+			delete elem.parent;
+		}
+	});
+	ancestorNodeArray = uniqObjInArr(ancestorNodeArray, 'id');
+
+	let ancestorTree = createDataTree(ancestorNodeArray);
+	console.log(ancestorTree);
+
+	ancestorNodes = uniqObjInArr(ancestorNodes, 'id');
 
 	let interestingNodes = {
 		ancestorNodes: ancestorNodes,
+		sameAncestor: sameAncestor,
+		ancestorTree: ancestorTree,
 	};
 
 	figma.ui.postMessage({
@@ -307,6 +341,15 @@ function getAncestorNode(currentNode: BaseNode) {
 	return currentNode;
 }
 
+function getAncestorNodeArray(currentNode: BaseNode) {
+	let lineage = [];
+	while (currentNode.type !== 'PAGE') {
+		currentNode = currentNode.parent;
+		lineage.push(copyNode(currentNode));
+	}
+	return lineage;
+}
+
 function copyNode(node: BaseNode) {
 	return {
 		id: node.id,
@@ -315,4 +358,23 @@ function copyNode(node: BaseNode) {
 		// children: node.children,
 		type: node.type,
 	};
+}
+
+/**
+ * Returns an array with duplicate objects removed according to a given property.
+ *
+ * @param array - The array where duplicates should be removed from
+ * @param prop - The object property that should be checked
+ */
+function uniqObjInArr(array: Array<{}>, prop: string) {
+	let distinct = [];
+	let uniq = [];
+	for (let i = 0; i < array.length; i++) {
+		if (!distinct.includes(array[i][prop])) {
+			distinct.push(array[i][prop]);
+			uniq.push(array[i]);
+		}
+	}
+
+	return uniq;
 }
