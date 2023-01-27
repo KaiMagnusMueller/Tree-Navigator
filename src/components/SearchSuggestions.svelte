@@ -104,6 +104,7 @@
 	<div class="search-suggestions flex column">
 		<h4 class="heading">Suggested Search</h4>
 		<div class="suggestion-list">
+			<!-- TODO: loop through all root nodes here, then the component will be simpler -->
 			<SuggestionItem nodes={ancestorTree} />
 
 			{#if selectedSameName && selectedSameType}

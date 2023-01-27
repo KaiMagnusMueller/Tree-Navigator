@@ -1,28 +1,42 @@
 <script>
-	export let nodes;
+	export let nodes = [];
+	export let node = null;
 	export let iteration = 0;
+
+	console.log(nodes);
 </script>
 
-{#each nodes as node}
-	<div class="suggestion-wrapper">
+<div class="suggestion-wrapper">
+	{#if node}
 		<p class="suggestion-item">{node.id} - {node.name} - {iteration}</p>
-		<!-- <div class="select-all" /> -->
-		<svelte:self nodes={node.childNodes} iteration={iteration + 1} />
+	{/if}
+	<!-- <div class="select-all" /> -->
+	<div class="select-all-helper">
+		{#if node}
+			{#if node.childNodes.length > 1}
+				<div class="select-all" />
+			{/if}
+		{/if}
+		<div class="flex-grow">
+			{#each nodes as node}
+				<svelte:self {node} nodes={node.childNodes} iteration={iteration + 1} />
+			{/each}
+		</div>
 	</div>
-{/each}
+</div>
 
 <style>
 	.suggestion-wrapper {
 		color: var(--figma-color-text);
 		font-size: var(--font-size-small);
 		background-color: rgb(39, 95, 34);
-		padding: 2px;
-		margin: 2px;
+		padding: 2px 0px 2px 2px;
+		margin: 2px 0px 2px 2px;
 	}
 
 	.suggestion-item {
-		padding: 2px;
-		margin: 2px;
+		padding: 2px 0px 2px 2px;
+		margin: 2px 0px 2px 2px;
 		background-color: rgb(41, 133, 85);
 	}
 
@@ -32,5 +46,12 @@
 
 	.select-all {
 		background-color: palevioletred;
+		margin-left: 16px;
+		width: 16px;
+	}
+
+	.select-all-helper {
+		display: flex;
+		flex-direction: row;
 	}
 </style>
