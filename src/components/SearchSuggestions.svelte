@@ -1,6 +1,6 @@
 <script>
 	import uniqBy from 'lodash/uniqBy';
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 	let dispatch = createEventDispatcher();
 	import { filterDefinitions } from '../stores';
 
@@ -40,6 +40,19 @@
 	// 		}.`,
 	// 	},
 	// ];
+
+	onMount(() => {
+		setTimeout(() => {
+			parent.postMessage(
+				{
+					pluginMessage: {
+						type: 'ui-loaded',
+					},
+				},
+				'*'
+			);
+		}, 50);
+	});
 
 	let selectedSameName = true;
 	let selectedSameType = true;

@@ -8,6 +8,12 @@ export let filterDefinitions = writable([
 			let filterOption = this.filterOptions.find(
 				(element) => element.value.toLowerCase() == value.toLowerCase()
 			);
+
+			if (!filterOption) {
+				console.warn('unknown node type ' + value);
+				return;
+			}
+
 			return filterOption.name;
 		},
 		filterData: {
@@ -84,6 +90,12 @@ export let filterDefinitions = writable([
 				sticky: false,
 			},
 			{
+				value: 'SECTION',
+				name: 'Section',
+				count: 0,
+				sticky: false,
+			},
+			{
 				value: 'SLICE',
 				name: 'Slice',
 				count: 0,
@@ -114,6 +126,12 @@ export let filterDefinitions = writable([
 			let filterOption = this.filterOptions.find(
 				(element) => element.value.toLowerCase() == value.toLowerCase()
 			);
+
+			if (!filterOption) {
+				console.warn('unknown area type ' + value);
+				return;
+			}
+
 			return filterOption.name;
 		},
 		filterData: {

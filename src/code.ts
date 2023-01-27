@@ -51,6 +51,10 @@ function sendPluginmessage(params) {
 }
 
 figma.ui.onmessage = (msg) => {
+	if (msg.type === 'ui-loaded') {
+		console.log(figma.currentPage.selection);
+		handleSelectionChange();
+	}
 	// One way of distinguishing between different types of messages sent from
 	// your HTML page is to use an object with a "type" property like this.
 	if (msg.type === 'create-shapes') {
