@@ -124,6 +124,7 @@ figma.ui.onmessage = (msg) => {
 				// Return true if the node has the findAllWithCriteria() and findAll() functions (only both occur)
 				return searchable;
 			}
+			// TODO: add "SPECIFIC_FRAMES" search
 		} else if (query.area_type === 'ROOT_FRAME') {
 			let ancestorNodes = [];
 			figma.currentPage.selection.forEach((elem) => {
