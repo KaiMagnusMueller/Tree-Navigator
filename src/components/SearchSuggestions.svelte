@@ -70,6 +70,7 @@
 				ancestorNodes = uniqBy(interestingNodes.ancestorNodes, 'id');
 
 				ancestorTree = interestingNodes.ancestorTree;
+				ancestorTree = ancestorTree;
 			}
 
 			selectedSameName = selectedNodes.every((elem) => elem.name === selectedNodes[0].name);
@@ -82,7 +83,7 @@
 	let interestingNodes;
 	let ancestorNodes;
 
-	let ancestorTree;
+	$: ancestorTree = [];
 
 	function handleClick() {
 		let search = {
@@ -105,7 +106,10 @@
 		<h4 class="heading">Suggested Search</h4>
 		<div class="suggestion-list">
 			<!-- TODO: loop through all root nodes here, then the component will be simpler -->
-			<SuggestionItem nodes={ancestorTree} />
+
+			{#each ancestorTree as node (node.id)}
+				<SuggestionItem {node} />
+			{/each}
 
 			{#if selectedSameName && selectedSameType}
 				<div class="suggestion-item flex align-items-center pr-xxsmall">

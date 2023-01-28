@@ -1,37 +1,50 @@
 <script>
-	export let nodes = [];
 	export let node = null;
 	export let iteration = 0;
 
-	let hasChildNodes = false;
+	let children = [];
 
-	if (node) {
-		hasChildNodes = node.childNodes.length > 1 ? true : false;
+	$: {
+		children = node.childNodes;
+
+		// let log = [];
+		// children.forEach((element) => {
+		// 	log.push(element.name);
+		// });
+
+		// if (log.length > 0) {
+		// 	console.log(log.join(', '));
+		// } else {
+		// 	console.log('no children');
+		// }
 	}
+
+	let hasChildNodes;
+
+	$: hasChildNodes = children?.length > 0 ? true : false;
 
 	let childNodes = 'Search in:';
 
 	if (hasChildNodes) {
-		node.childNodes.forEach((element) => {
+		children.forEach((element) => {
 			childNodes = childNodes + ' ' + element.id;
 		});
 	}
-
-	console.log(nodes);
 </script>
 
 <!-- <div class="suggestion-wrapper"> -->
-{#if node}
-	<p class="suggestion-item">{node.id} - {node.name} - {iteration}</p>
-{/if}
+<p class="suggestion-item">{node.id} - {node.name} - {iteration} - {hasChildNodes}</p>
+
 <!-- <div class="select-all" /> -->
-<div class="select-siblings-helper" class:indent={!hasChildNodes && iteration != 0}>
-	{#if hasChildNodes}
+<div
+	class="select-siblings-helper"
+	class:indent={(!hasChildNodes && iteration != 0) || children.length == 1}>
+	{#if children.length > 1}
 		<div class="select-siblings" title={childNodes} />
 	{/if}
 	<div class="flex-grow">
-		{#each nodes as node}
-			<svelte:self {node} nodes={node.childNodes} iteration={iteration + 1} />
+		{#each children as child (child.id)}
+			<svelte:self node={child} iteration={iteration + 1} />
 		{/each}
 	</div>
 </div>
