@@ -1,50 +1,66 @@
 <script>
-	export let node = null;
-	export let iteration = 0;
+	import { createEventDispatcher } from 'svelte';
+	let dispatch = createEventDispatcher();
 
-	let children = [];
+	export let parent = null;
+	export let iteration = 0;
+	export let selectedNode = [];
+
+	let nodes = [];
+	let childNodeIDs = [];
 
 	$: {
-		children = node.childNodes;
+		nodes = parent.childNodes;
 
-		// let log = [];
-		// children.forEach((element) => {
-		// 	log.push(element.name);
-		// });
-
-		// if (log.length > 0) {
-		// 	console.log(log.join(', '));
-		// } else {
-		// 	console.log('no children');
-		// }
+		childNodeIDs = [];
+		nodes.forEach((element) => {
+			childNodeIDs.push(element.id);
+		});
 	}
 
 	let hasChildNodes;
 
-	$: hasChildNodes = children?.length > 0 ? true : false;
+	$: hasChildNodes = nodes?.length > 0 ? true : false;
 
-	let childNodes = 'Search in:';
+	function handleClick(nodes) {
+		console.log(nodes);
+		let search = {
+			area_type: 'SELECTION_PRESET',
+			case_sensitive: true,
+			node_types: [selectedNode.type],
+			string_match: 'FUZZY',
+			query_text: selectedNode.name,
+			selected_nodes: nodes,
+		};
 
-	if (hasChildNodes) {
-		children.forEach((element) => {
-			childNodes = childNodes + ' ' + element.id;
+		dispatch('clickTree', {
+			isNew: true,
+			search: search,
 		});
 	}
 </script>
 
 <!-- <div class="suggestion-wrapper"> -->
-<p class="suggestion-item">{node.id} - {node.name} - {iteration} - {hasChildNodes}</p>
+<p
+	class="suggestion-item"
+	on:click={() => handleClick([parent.id])}
+	title={'Search in: ' + parent.id}>
+	{parent.id} - {parent.name} - {iteration} - {hasChildNodes}
+</p>
 
 <!-- <div class="select-all" /> -->
 <div
 	class="select-siblings-helper"
-	class:indent={(!hasChildNodes && iteration != 0) || children.length == 1}>
-	{#if children.length > 1}
-		<div class="select-siblings" title={childNodes} />
+	class:indent={(!hasChildNodes && iteration != 0) || nodes.length == 1}>
+	{#if nodes.length > 1}
+		<div
+			class="select-siblings"
+			title={'Search in: ' + childNodeIDs.join(', ')}
+			on:click={() => handleClick(childNodeIDs)} />
 	{/if}
 	<div class="flex-grow">
-		{#each children as child (child.id)}
-			<svelte:self node={child} iteration={iteration + 1} />
+		{#each nodes as node (node.id)}
+			<svelte:self on:clickTree parent={node} iteration={iteration + 1} {selectedNode} />
 		{/each}
 	</div>
 </div>

@@ -1,5 +1,4 @@
 <script>
-	import uniqBy from 'lodash/uniqBy';
 	import { createEventDispatcher, onMount } from 'svelte';
 	let dispatch = createEventDispatcher();
 	import { filterDefinitions } from '../stores';
@@ -56,7 +55,8 @@
 
 	let selectedSameName = true;
 	let selectedSameType = true;
-
+	// The first node of the selection, type and name are guarranteed to be the same across the selection when we do a search, since the suggestions are hidden if there are different types and names in the selection
+	let selectedNode = {};
 	setTimeout(() => {
 		onmessage = (event) => {
 			if (event.data.pluginMessage.type == 'selection-changed') {
@@ -67,14 +67,17 @@
 				selectedNodes = event.data.pluginMessage.data;
 				interestingNodes = event.data.pluginMessage.interestingNodes;
 
-				ancestorNodes = uniqBy(interestingNodes.ancestorNodes, 'id');
-
 				ancestorTree = interestingNodes.ancestorTree;
 				ancestorTree = ancestorTree;
 			}
 
 			selectedSameName = selectedNodes.every((elem) => elem.name === selectedNodes[0].name);
 			selectedSameType = selectedNodes.every((elem) => elem.type === selectedNodes[0].type);
+
+			selectedNode = {
+				name: selectedNodes[0].name,
+				type: selectedNodes[0].type,
+			};
 		};
 	}, 50);
 	// For some reason the message event is not registered without a slight delay
@@ -84,35 +87,18 @@
 	let ancestorNodes;
 
 	$: ancestorTree = [];
-
-	function handleClick() {
-		let search = {
-			area_type: 'ROOT_FRAME',
-			case_sensitive: true,
-			node_types: [selectedNodes[0].type],
-			string_match: 'FUZZY',
-			query_text: selectedNodes[0].name,
-		};
-
-		dispatch('searchSuggestion', {
-			isNew: true,
-			search: search,
-		});
-	}
 </script>
 
 {#if interestingNodes}
 	<div class="search-suggestions flex column">
 		<h4 class="heading">Suggested Search</h4>
 		<div class="suggestion-list">
-			<!-- TODO: loop through all root nodes here, then the component will be simpler -->
-
-			{#each ancestorTree as node (node.id)}
-				<SuggestionItem {node} />
-			{/each}
-
 			{#if selectedSameName && selectedSameType}
-				<div class="suggestion-item flex align-items-center pr-xxsmall">
+				{#each ancestorTree as parent (parent.id)}
+					<SuggestionItem {parent} on:clickTree {selectedNode} />
+				{/each}
+
+				<!-- <div class="suggestion-item flex align-items-center pr-xxsmall">
 					<Icon iconName={ArrowUpLeftCurved} />
 					<div on:click={handleClick}>
 						Search for all {$filterDefinitions[0].getTypeName(selectedNodes[0].type)} nodes
@@ -120,7 +106,7 @@
 							? 'frames'
 							: 'frame'}.
 					</div>
-				</div>
+				</div> -->
 			{/if}
 		</div>
 	</div>

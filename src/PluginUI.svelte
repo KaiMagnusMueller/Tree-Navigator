@@ -209,6 +209,7 @@
 		// Update search field value when a recent search is selected
 
 		const search = event.detail.search;
+		console.log(search);
 
 		$searchQuery = search;
 
@@ -358,7 +359,7 @@
 			<!-- Display RECENT SEARCHES -->
 			{#if $UIState.showMainMenu}
 				<div class="section--recent flex column flex-grow">
-					<SearchSuggestions on:searchSuggestion={handleExternallyChangedFilters} />
+					<SearchSuggestions on:clickTree={handleExternallyChangedFilters} />
 					<RecentSearchList
 						class="flex-grow"
 						on:recentSearch={handleExternallyChangedFilters}

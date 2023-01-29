@@ -124,7 +124,7 @@ figma.ui.onmessage = (msg) => {
 				// Return true if the node has the findAllWithCriteria() and findAll() functions (only both occur)
 				return searchable;
 			}
-			// TODO: add "SPECIFIC_FRAMES" search
+			// TODO: add "SELECTION_PRESET" search
 		} else if (query.area_type === 'ROOT_FRAME') {
 			let ancestorNodes = [];
 			figma.currentPage.selection.forEach((elem) => {
@@ -132,6 +132,13 @@ figma.ui.onmessage = (msg) => {
 				// TODO: if multiple elements with the same ancestor are selected, are they all added to the search set?
 			});
 			nodeSearchSet = ancestorNodes;
+		} else if (query.area_type === 'SELECTION_PRESET') {
+			query.selected_nodes.forEach((elem) => {
+				let node = figma.getNodeById(elem);
+				if (node) {
+					nodeSearchSet.push(node);
+				}
+			});
 		} else {
 			nodeSearchSet.push(figma.currentPage);
 		}

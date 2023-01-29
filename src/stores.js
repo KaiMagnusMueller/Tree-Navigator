@@ -152,6 +152,11 @@ export let filterDefinitions = writable([
 				value: 'ROOT_FRAME',
 				name: 'Top level frame',
 			},
+			{
+				value: 'SELECTION_PRESET',
+				name: 'Subtree',
+				hidden: true,
+			},
 		],
 	},
 	{
