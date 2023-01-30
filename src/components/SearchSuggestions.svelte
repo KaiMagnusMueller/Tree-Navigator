@@ -91,9 +91,19 @@
 
 {#if interestingNodes}
 	<div class="search-suggestions flex column">
-		<h4 class="heading">Suggested Search</h4>
-		<div class="suggestion-list">
+		<div>
+			<h4 class="heading">Suggested Search</h4>
 			{#if selectedSameName && selectedSameType}
+				<p>
+					Search for all {$filterDefinitions[0].getTypeName(selectedNode.type)} nodes called
+					'{selectedNode.name}' in:
+				</p>
+			{:else}
+				<p>Select nodes of the same type and name to display the node tree.</p>
+			{/if}
+		</div>
+		{#if selectedSameName && selectedSameType}
+			<div class="suggestion-list">
 				{#each ancestorTree as parent (parent.id)}
 					<SuggestionItem {parent} on:clickTree {selectedNode} />
 				{/each}
@@ -107,18 +117,18 @@
 							: 'frame'}.
 					</div>
 				</div> -->
-			{/if}
-		</div>
+			</div>
+		{/if}
 	</div>
 {/if}
 
 <style>
 	.search-suggestions {
-		padding-top: 8px;
-		margin: 8px;
-		background: var(--figma-color-bg-secondary);
-		border: 1px solid var(--figma-color-border);
-		border-radius: 6px;
+		padding: 8px;
+		/* margin: 8px; */
+		/* background: var(--figma-color-bg-secondary); */
+		border-bottom: 1px solid var(--figma-color-border);
+		/* border-radius: 6px; */
 		color: var(--figma-color-text);
 		font-size: var(--font-size-small);
 		gap: 8px;
@@ -127,16 +137,15 @@
 
 	.search-suggestions h4 {
 		color: var(--figma-color-text);
-		padding: 0 8px;
-		margin: 0;
-		font-size: var(--font-size-small);
-		font-weight: var(--font-weight-medium);
-	}
-	.search-suggestions p {
 		margin: 0;
 		font-size: var(--font-size-small);
 		font-weight: var(--font-weight-normal);
-		color: var(--figma-color-text);
+	}
+	.search-suggestions p {
+		margin: 6px 0 0 0;
+		font-size: var(--font-size-small);
+		font-weight: var(--font-weight-normal);
+		color: var(--figma-color-text-secondary);
 	}
 
 	.suggestion-item {

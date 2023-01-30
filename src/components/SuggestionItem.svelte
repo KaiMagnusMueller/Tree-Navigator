@@ -8,13 +8,16 @@
 
 	let nodes = [];
 	let childNodeIDs = [];
+	let childNodeNames = [];
 
 	$: {
 		nodes = parent.childNodes;
 
 		childNodeIDs = [];
+		childNodeNames = [];
 		nodes.forEach((element) => {
 			childNodeIDs.push(element.id);
+			childNodeNames.push(element.name);
 		});
 	}
 
@@ -42,10 +45,10 @@
 
 <!-- <div class="suggestion-wrapper"> -->
 <p
-	class="suggestion-item"
+	class="suggestion-item item-horizontal"
 	on:click={() => handleClick([parent.id])}
-	title={'Search in: ' + parent.id}>
-	{parent.id} - {parent.name} - {iteration} - {hasChildNodes}
+	title={'Search in: ' + parent.name}>
+	{parent.name}
 </p>
 
 <!-- <div class="select-all" /> -->
@@ -54,8 +57,8 @@
 	class:indent={(!hasChildNodes && iteration != 0) || nodes.length == 1}>
 	{#if nodes.length > 1}
 		<div
-			class="select-siblings"
-			title={'Search in: ' + childNodeIDs.join(', ')}
+			class="suggestion-item select-siblings"
+			title={'Search in: ' + childNodeNames.join(', ')}
 			on:click={() => handleClick(childNodeIDs)} />
 	{/if}
 	<div class="flex-grow">
@@ -76,9 +79,15 @@
 	}
 
 	.suggestion-item {
-		padding: 2px 0px 2px 2px;
-		margin: 2px 0px 2px 2px;
-		background-color: rgb(41, 133, 85);
+		padding: 4px;
+		margin: 2px;
+		background: var(--figma-color-bg-secondary);
+		border: 1px solid var(--figma-color-border);
+		border-radius: 2px;
+	}
+
+	.item-horizontal {
+		padding-left: 8px;
 	}
 
 	.suggestion-item:hover {
@@ -86,9 +95,11 @@
 	}
 
 	.select-siblings {
-		background-color: palevioletred;
+		background: var(--figma-color-bg-secondary);
+		border: 1px solid var(--figma-color-border);
+
 		margin: 2px;
-		width: 16px;
+		width: 24px;
 	}
 
 	.select-siblings:hover {
@@ -100,6 +111,6 @@
 	}
 
 	.indent {
-		margin-left: 16px;
+		margin-left: 24px;
 	}
 </style>
