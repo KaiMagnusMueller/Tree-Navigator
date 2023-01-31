@@ -43,69 +43,69 @@
 	}
 </script>
 
-<!-- <div class="suggestion-wrapper"> -->
-<p
-	class="suggestion-item item-horizontal"
-	on:click={() => handleClick([parent.id])}
-	title={'Search in: ' + parent.name}>
-	{parent.name}
-</p>
+<div class="suggestion-item horizontal">
+	<p class="" on:click={() => handleClick([parent.id])} title={'Search in: ' + parent.name}>
+		{parent.name}
+	</p>
+</div>
 
-<!-- <div class="select-all" /> -->
 <div
-	class="select-siblings-helper"
+	class="child-node-wrapper"
 	class:indent={(!hasChildNodes && iteration != 0) || nodes.length == 1}>
 	{#if nodes.length > 1}
 		<div
-			class="suggestion-item select-siblings"
+			class="suggestion-item vertical"
 			title={'Search in: ' + childNodeNames.join(', ')}
 			on:click={() => handleClick(childNodeIDs)} />
 	{/if}
-	<div class="flex-grow">
+	<div class="child-container flex-grow">
 		{#each nodes as node (node.id)}
 			<svelte:self on:clickTree parent={node} iteration={iteration + 1} {selectedNode} />
 		{/each}
 	</div>
 </div>
 
-<!-- </div> -->
 <style>
-	.suggestion-wrapper {
-		color: var(--figma-color-text);
-		font-size: var(--font-size-small);
-		background-color: rgba(39, 95, 34, 0.279);
-		padding: 2px 0px 2px 2px;
-		margin: 2px 0px 2px 2px;
-	}
-
+	/* nice */
 	.suggestion-item {
-		padding: 4px;
 		margin: 2px;
-		background: var(--figma-color-bg-secondary);
+		display: flex;
+		align-items: center;
 		border: 1px solid var(--figma-color-border);
 		border-radius: 2px;
+		background: var(--figma-color-bg-secondary);
 	}
-
-	.item-horizontal {
-		padding-left: 8px;
-	}
-
 	.suggestion-item:hover {
 		background-color: var(--figma-color-bg-selected-hover);
 	}
 
-	.select-siblings {
-		background: var(--figma-color-bg-secondary);
-		border: 1px solid var(--figma-color-border);
-
-		margin: 2px;
-		width: 24px;
+	.suggestion-item p {
+		margin: 0;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
 	}
 
-	.select-siblings:hover {
+	.horizontal {
+		padding: 0 4px;
+		height: 24px;
+	}
+
+	.child-container {
+		min-width: 0;
+	}
+
+	.vertical {
+		width: 24px;
+		flex-shrink: 0;
+		border: 1px solid var(--figma-color-border);
+		background: var(--figma-color-bg-secondary);
+	}
+
+	.vertical:hover {
 		background-color: var(--figma-color-bg-selected-hover);
 	}
-	.select-siblings-helper {
+	.child-node-wrapper {
 		display: flex;
 		flex-direction: row;
 	}
