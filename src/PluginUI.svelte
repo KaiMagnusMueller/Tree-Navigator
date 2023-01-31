@@ -303,10 +303,12 @@
 		$UIState.showSearchResults = true;
 	}
 
+	let sectionBottomElem;
 	function navBack(params) {
 		$UIState.showMainMenu = true;
 		$UIState.showSearchResults = false;
 		filterChanged = false;
+		sectionBottomElem.scrollTop = 0;
 	}
 
 	function openSettings() {
@@ -354,7 +356,7 @@
 					bind:_externalSearchQuery />
 			{/if}
 		</div>
-		<div class="section--bottom">
+		<div class="section--bottom" bind:this={sectionBottomElem}>
 			<!-- ------------------- -->
 			<!-- Display RECENT SEARCHES -->
 			{#if $UIState.showMainMenu}
@@ -448,6 +450,7 @@
 		display: flex;
 		flex-direction: column;
 		height: 100vh;
+		overflow-y: hidden;
 	}
 
 	/* Variable for svg fill in flexible icon */
@@ -455,16 +458,8 @@
 		--transparent: transparent;
 	}
 
-	.section--recent {
-		overflow: hidden;
-		position: relative;
-	}
-
 	.section--footer {
 		gap: 8px;
-		position: absolute;
-		bottom: 0;
-		right: 0;
 		background: radial-gradient(
 			ellipse farthest-corner at bottom right,
 			rgb(255, 255, 255) rgba(255, 255, 255, 00)
@@ -480,19 +475,10 @@
 	}
 
 	.section--bottom {
-		position: relative;
-		width: 100%;
-		height: 100%;
-	}
-
-	.section--results,
-	.section--recent {
-		overflow-y: scroll;
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		top: 0;
-		left: 0;
+		overflow-y: auto;
+		flex-grow: 1;
+		display: flex;
+		flex-direction: column;
 	}
 
 	/* ------------------------- */
@@ -513,23 +499,6 @@
 
 	.settings--content {
 		overflow: auto;
-	}
-
-	.license--section h1 {
-	}
-
-	.settings--input {
-		width: fit-content;
-	}
-
-	.empty-state-container {
-		height: 100%;
-		width: 100%;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		position: absolute;
 	}
 
 	/* ------------------------- */

@@ -43,8 +43,8 @@
 	}
 </script>
 
-<div class="suggestion-item horizontal">
-	<p class="" on:click={() => handleClick([parent.id])} title={'Search in: ' + parent.name}>
+<div class="suggestion-item horizontal" on:click={() => handleClick([parent.id])}>
+	<p class="" title={'Search in: ' + parent.name}>
 		{parent.name}
 	</p>
 </div>
