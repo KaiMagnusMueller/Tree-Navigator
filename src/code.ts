@@ -5,7 +5,7 @@
 // You can access browser APIs in the <script> tag inside "ui.html" which has a
 // full browser enviroment (see documentation).
 
-console.clear()
+console.clear();
 // This shows the HTML page in "ui.html".
 figma.showUI(__html__, { width: 300, height: 500, themeColors: true });
 
@@ -14,46 +14,52 @@ figma.showUI(__html__, { width: 300, height: 500, themeColors: true });
 // posted message.
 
 // Possibly offer this as option
-figma.skipInvisibleInstanceChildren = true
-let documentNode = figma.root
+figma.skipInvisibleInstanceChildren = true;
+let documentNode = figma.root;
 
 //reset plugindata
 // documentNode.setPluginData("recentSearchList", "[]")
-let filterDefinitions = documentNode.getPluginData("filterDefinitions")
-let recentSearchList = documentNode.getPluginData("recentSearchList")
-let settings = documentNode.getPluginData("settings")
+let filterDefinitions = documentNode.getPluginData('filterDefinitions');
+let recentSearchList = documentNode.getPluginData('recentSearchList');
+let settings = documentNode.getPluginData('settings');
 
 if (recentSearchList) {
-	recentSearchList = JSON.parse(recentSearchList)
+	recentSearchList = JSON.parse(recentSearchList);
 }
 
 if (filterDefinitions) {
-	filterDefinitions = JSON.parse(filterDefinitions)
+	filterDefinitions = JSON.parse(filterDefinitions);
 }
 
 if (settings) {
-	settings = JSON.parse(settings)
+	settings = JSON.parse(settings);
 }
 
-figma.ui.postMessage({ type: "loaded-plugin-settings", data: settings })
-figma.ui.postMessage({ type: "loaded-plugin-recent-search-list", data: recentSearchList })
-figma.ui.postMessage({ type: "loaded-plugin-filter-counts", data: filterDefinitions })
+figma.ui.postMessage({ type: 'loaded-plugin-settings', data: settings });
+figma.ui.postMessage({
+	type: 'loaded-plugin-recent-search-list',
+	data: recentSearchList,
+});
+figma.ui.postMessage({
+	type: 'loaded-plugin-filter-counts',
+	data: filterDefinitions,
+});
 
 function sendPluginmessage(params) {
-	figma.ui.postMessage({ type: "plugin", data: params })
-	console.log("message sent to plugin");
+	figma.ui.postMessage({ type: 'plugin', data: params });
+	console.log('message sent to plugin');
 }
 
-figma.ui.onmessage = msg => {
-
+figma.ui.onmessage = (msg) => {
+	if (msg.type === 'ui-loaded') {
+		handleSelectionChange();
+	}
 	// One way of distinguishing between different types of messages sent from
 	// your HTML page is to use an object with a "type" property like this.
 	if (msg.type === 'create-shapes') {
-
 		const nodes: SceneNode[] = [];
 
 		for (let i = 0; i < msg.count; i++) {
-
 			var shape;
 
 			if (msg.shape === 'rectangle') {
@@ -75,40 +81,36 @@ figma.ui.onmessage = msg => {
 	}
 
 	if (msg.type === 'search-layers') {
-		console.log("got message, searching");
+		console.log('got message, searching');
 		console.log(msg.parameters);
 
-		const query = msg.parameters
+		const query = msg.parameters;
 
 		//nodes to search
-		let nodeSearchSet = []
+		let nodeSearchSet = [];
 		//
-		let nodes = []
+		let nodes = [];
 
-		if (query.area_type === "SELECTION" && figma.currentPage.selection.length > 0) {
-
-			let _nodeSelectionSet = [...figma.currentPage.selection]
+		if (query.area_type === 'SELECTION' && figma.currentPage.selection.length > 0) {
+			let _nodeSelectionSet = [...figma.currentPage.selection];
 
 			//Filter and remove non iterable nodes from search set
-			nodeSearchSet = _nodeSelectionSet.filter(checkTypes)
-
+			nodeSearchSet = _nodeSelectionSet.filter(checkTypes);
 
 			function checkTypes(node) {
+				const searchable = node.findAllWithCriteria ? true : false;
+				const typeIsInQuery = query.node_types.indexOf(node.type) !== -1 ? true : false;
+				const typeFilterIsAll = query.node_types.indexOf('ALL') !== -1 ? true : false;
+				const typeFilterExists = query.node_types.length > 0 ? true : false;
 
-				const searchable = node.findAllWithCriteria ? true : false
-				const typeIsInQuery = query.node_types.indexOf(node.type) !== -1 ? true : false
-				const typeFilterIsAll = query.node_types.indexOf("ALL") !== -1 ? true : false
-				const typeFilterExists = query.node_types.length > 0 ? true : false
-
-				// typeIsInQuery -  we add all non-searchable nodes to nodes[], so they get searched 
-				//                  by name later, if they belong to one of the current node types we want to 
+				// typeIsInQuery -  we add all non-searchable nodes to nodes[], so they get searched
+				//                  by name later, if they belong to one of the current node types we want to
 				//                  find
-				// !typeFilterExists - we add all non-searchable nodes to nodes[], so they get searched 
+				// !typeFilterExists - we add all non-searchable nodes to nodes[], so they get searched
 				//                     by name later, if no type filter exists
 				// Searchable - add, because it won't be part of the found nodes later at findAllWithCriteria()
 				//               an instance will be part of the nodeSearchSet, because it is searchable
 				//              however, it would otherwise not be returned and get added to the nodes array
-
 
 				// console.log(searchable, typeIsInQuery, typeFilterIsAll, typeFilterExists);
 				// console.log((typeIsInQuery || typeFilterIsAll) && searchable, typeIsInQuery && !searchable);
@@ -117,40 +119,53 @@ figma.ui.onmessage = msg => {
 					// console.log("add node to list");
 					// console.log(node);
 
-					nodes.push(node)
+					nodes.push(node);
 				}
 				// Return true if the node has the findAllWithCriteria() and findAll() functions (only both occur)
-				return searchable
+				return searchable;
 			}
-
+			// TODO: add "SELECTION_PRESET" search
+		} else if (query.area_type === 'ROOT_FRAME') {
+			let ancestorNodes = [];
+			figma.currentPage.selection.forEach((elem) => {
+				ancestorNodes.push(getAncestorNode(elem));
+				// TODO: if multiple elements with the same ancestor are selected, are they all added to the search set?
+			});
+			nodeSearchSet = ancestorNodes;
+		} else if (query.area_type === 'SELECTION_PRESET') {
+			query.selected_nodes.forEach((elem) => {
+				let node = figma.getNodeById(elem);
+				if (node) {
+					nodeSearchSet.push(node);
+				}
+			});
 		} else {
-			nodeSearchSet.push(figma.currentPage)
+			nodeSearchSet.push(figma.currentPage);
 		}
 
-		// console.log("---------------");
+		// console.log('---------------');
 		// console.log(nodeSearchSet);
 		// console.log(figma.currentPage.selection);
-		// console.log("---------------");
+		// console.log('---------------');
 
-
-		nodeSearchSet.forEach(node => {
-			if (query.node_types.length > 0 && query.node_types[0] != "ALL") {
-				nodes = nodes.concat(node.findAllWithCriteria({
-					types: query.node_types
-				}))
-
+		nodeSearchSet.forEach((node) => {
+			if (query.node_types.length > 0 && query.node_types[0] != 'ALL') {
+				nodes = nodes.concat(
+					node.findAllWithCriteria({
+						types: query.node_types,
+					})
+				);
 			} else {
-				nodes = nodes.concat(node.findAll())
+				nodes = nodes.concat(node.findAll());
 			}
-		})
+		});
 
-		nodes.reverse()
-
+		nodes.reverse();
 
 		// console.log('Found ' + nodes.length + ' nodes');
 		// console.log(nodes);
-		// console.log('Found ' + filteredNodes.length + ' nodes after filtering names');
-		// console.log(filteredNodes);
+		// // console.log('Found ' + filteredNodes.length + ' nodes after filtering names');
+		// // console.log(filteredNodes);
 		// for (let index = 0; index < nodes.length; index++) {
 		// 	const element = nodes[index];
 
@@ -158,16 +173,16 @@ figma.ui.onmessage = msg => {
 		// 	console.log(nodes[index]);
 		// }
 
-		let nodesToSend = []
-		nodes.forEach(element => {
+		let nodesToSend = [];
+		nodes.forEach((element) => {
 			nodesToSend.push({
 				id: element.id,
 				name: element.name,
 				parent: element.parent,
 				children: element.children,
 				type: element.type,
-				selected: true
-			})
+				selected: true,
+			});
 		});
 
 		// // If no nodes found (length === 0), don't change the selection
@@ -176,7 +191,7 @@ figma.ui.onmessage = msg => {
 		// 	figma.viewport.scrollAndZoomIntoView(filteredNodes);
 		// }
 
-		sendResultsList(nodesToSend)
+		sendResultsList(nodesToSend);
 	}
 
 	// Make sure to close the plugin when you're done. Otherwise the plugin will
@@ -184,114 +199,192 @@ figma.ui.onmessage = msg => {
 	// figma.closePlugin();
 
 	if (msg.type === 'select-layers') {
-		let nodesToSelect = []
-		msg.parameters.nodes.forEach(element => {
-
-			const node = figma.getNodeById(element.id)
+		let nodesToSelect = [];
+		msg.parameters.nodes.forEach((element) => {
+			const node = figma.getNodeById(element.id);
 
 			if (!node) {
-				console.warn("Node doesn't exist")
-				postMessageToast("Element doesn't exist")
-				return
+				console.warn("Node doesn't exist");
+				postMessageToast("Element doesn't exist");
+				return;
 			}
 
-			nodesToSelect.push(node)
-
+			nodesToSelect.push(node);
 		});
-		figma.currentPage.selection = nodesToSelect
+		figma.currentPage.selection = nodesToSelect;
 
 		if (msg.parameters.zoomIntoView) {
-
 			figma.viewport.scrollAndZoomIntoView(figma.currentPage.selection);
 		}
-
 	}
 
 	if (msg.type === 'update-recent-searches') {
 		if (msg.parameters.constructor !== Array) {
-			console.error("Wrong data type" + msg.parameters.constructor)
+			console.error('Wrong data type' + msg.parameters.constructor);
 			console.log(msg.parameters);
-			return
+			return;
 		}
 
-		const string = JSON.stringify(msg.parameters)
-		documentNode.setPluginData("recentSearchList", string)
+		const string = JSON.stringify(msg.parameters);
+		documentNode.setPluginData('recentSearchList', string);
 	}
 
 	if (msg.type === 'update-filter-ranking') {
 		if (msg.parameters.constructor !== Array) {
-			console.error("Wrong data type" + msg.parameters.constructor)
+			console.error('Wrong data type' + msg.parameters.constructor);
 			console.log(msg.parameters);
-			return
+			return;
 		}
 
-		const string = JSON.stringify(msg.parameters)
-		documentNode.setPluginData("filterDefinitions", string)
+		const string = JSON.stringify(msg.parameters);
+		documentNode.setPluginData('filterDefinitions', string);
 	}
 
-
 	if (msg.type === 'focus-selection') {
-
 		// figma.notify("<- Return")
 
 		figma.viewport.scrollAndZoomIntoView(figma.currentPage.selection);
 	}
 
-
 	// ############################################################
 	if (msg.type === 'figma') {
-		console.log("got message");
+		console.log('got message');
 
 		console.log(msg.parameters);
-		let message = ["sent from figma"]
-		sendPluginmessage(message)
+		let message = ['sent from figma'];
+		sendPluginmessage(message);
 	}
 
 	if (msg.type === 'update-settings') {
-		const string = JSON.stringify(msg.parameters)
-		documentNode.setPluginData("settings", string)
+		const string = JSON.stringify(msg.parameters);
+		documentNode.setPluginData('settings', string);
 	}
 };
 
 function sendResultsList(results) {
-	figma.ui.postMessage({ type: "search-results", data: results })
+	figma.ui.postMessage({ type: 'search-results', data: results });
 }
 
-
-figma.on("selectionchange", handleSelectionChange)
+// ############################################################
+figma.on('selectionchange', handleSelectionChange);
 
 function handleSelectionChange() {
-	const currentSelection = figma.currentPage.selection
+	// @ts-ignore
+	const currentSelection: Array<SceneNode> = figma.currentPage.selection;
 
-	// currentSelection:
-	// [
-	// 	{
-	// 		"id": "104:2508"
-	// 	},
-	// 	{
-	// 		"id": "113:3692"
-	// 	}
-	// ]
-
-	// console.log(currentSelection);
-
-
-	let nodesToSend = []
-	currentSelection.forEach(element => {
+	let nodesToSend = [];
+	currentSelection.forEach((element) => {
 		nodesToSend.push({
 			id: element.id,
 			name: element.name,
 			parent: element.parent,
 			// children: element.children,
 			type: element.type,
-			selected: true
-		})
+			selected: true,
+		});
 	});
 
-	figma.ui.postMessage({ type: "selection-changed", data: nodesToSend })
+	if (currentSelection.length === 0) {
+		figma.ui.postMessage({ type: 'selection-changed', data: nodesToSend });
+		return;
+	}
+
+	let ancestorNodeArray = [];
+
+	let sameAncestor: boolean;
+	let ancestorNodes = [];
+	currentSelection.forEach((elem) => {
+		ancestorNodes.push(copyNode(getAncestorNode(elem)));
+		ancestorNodeArray = ancestorNodeArray.concat(getAncestorNodeArray(elem));
+	});
+
+	const createDataTree = (dataset) => {
+		const hashTable = Object.create(null);
+		dataset.forEach((aData) => (hashTable[aData.id] = { ...aData, childNodes: [] }));
+		const dataTree = [];
+
+		dataset.forEach((aData) => {
+			if (aData.parent?.id) {
+				hashTable[aData.parent.id].childNodes.push(hashTable[aData.id]);
+			} else {
+				dataTree.push(hashTable[aData.id]);
+			}
+		});
+		return dataTree;
+	};
+
+	ancestorNodeArray.forEach((elem) => {
+		if (elem.type === 'PAGE') {
+			delete elem.parent;
+		}
+	});
+	ancestorNodeArray = uniqObjInArr(ancestorNodeArray, 'id');
+
+	let ancestorTree = createDataTree(ancestorNodeArray);
+
+	ancestorNodes = uniqObjInArr(ancestorNodes, 'id');
+
+	let interestingNodes = {
+		ancestorNodes: ancestorNodes,
+		sameAncestor: sameAncestor,
+		ancestorTree: ancestorTree,
+	};
+
+	figma.ui.postMessage({
+		type: 'selection-changed',
+		data: nodesToSend,
+		interestingNodes: interestingNodes,
+	});
 }
 
+// HELPERS
+// ############################################################
 
 function postMessageToast(text: string) {
-	figma.notify(text)
+	figma.notify(text);
+}
+
+function getAncestorNode(currentNode: BaseNode) {
+	while (currentNode.parent.type !== 'PAGE') {
+		currentNode = currentNode.parent;
+	}
+	return currentNode;
+}
+
+function getAncestorNodeArray(currentNode: BaseNode) {
+	let lineage = [];
+	while (currentNode.type !== 'PAGE') {
+		currentNode = currentNode.parent;
+		lineage.push(copyNode(currentNode));
+	}
+	return lineage;
+}
+
+function copyNode(node: BaseNode) {
+	return {
+		id: node.id,
+		name: node.name,
+		parent: node.parent,
+		// children: node.children,
+		type: node.type,
+	};
+}
+
+/**
+ * Returns an array with duplicate objects removed according to a given property.
+ *
+ * @param array - The array where duplicates should be removed from
+ * @param prop - The object property that should be checked
+ */
+function uniqObjInArr(array: Array<{}>, prop: string) {
+	let distinct = [];
+	let uniq = [];
+	for (let i = 0; i < array.length; i++) {
+		if (!distinct.includes(array[i][prop])) {
+			distinct.push(array[i][prop]);
+			uniq.push(array[i]);
+		}
+	}
+
+	return uniq;
 }

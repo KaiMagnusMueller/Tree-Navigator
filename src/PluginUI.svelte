@@ -37,6 +37,7 @@
 
 	// Markdown texts
 	import About from './assets/text/about.svx';
+	import SearchSuggestions from './components/SearchSuggestions.svelte';
 	// import Acknowledgements from './assets/text/licenses.svx';
 
 	//current input of search field
@@ -140,8 +141,6 @@
 		};
 	});
 
-	onmessage = (event) => {};
-
 	function handleSubmitButton(event) {
 		$searchQuery = $activeFilters;
 		handleQuerySubmit(event);
@@ -173,6 +172,8 @@
 			);
 			//prevent the postMessage function from locking up the main plugin by delaying it a few milliseconds
 		}, 50);
+
+		// console.log(queryToSend);
 
 		// updateNodeTypeFilterCounts($searchQuery.node_types);
 
@@ -208,6 +209,7 @@
 		// Update search field value when a recent search is selected
 
 		const search = event.detail.search;
+		console.log(search);
 
 		$searchQuery = search;
 
@@ -301,10 +303,12 @@
 		$UIState.showSearchResults = true;
 	}
 
+	let sectionBottomElem;
 	function navBack(params) {
 		$UIState.showMainMenu = true;
 		$UIState.showSearchResults = false;
 		filterChanged = false;
+		sectionBottomElem.scrollTop = 0;
 	}
 
 	function openSettings() {
@@ -326,8 +330,7 @@
 				bind:value={searchString}
 				class="flex-grow mr-xxsmall ml-xxsmall"
 				autofocus
-				navBackPossible={$UIState.showSearchResults}
-			>
+				navBackPossible={$UIState.showSearchResults}>
 				<!-- Slots for buttons to prevent "Error: Function called outside component initialization"  -->
 				<IconButton
 					slot="back-button"
@@ -336,39 +339,36 @@
 						resetSearchQuery();
 					}}
 					iconName={IconBack}
-					rounded={true}
-				/>
+					rounded={true} />
 				<IconButton
 					slot="submit-button"
 					on:click={handleSubmitButton}
 					iconName={IconForward}
 					bind:disabled={disabledSubmit}
-					rounded={true}
-				/>
+					rounded={true} />
 			</InputFlexible>
+
 			{#if filterList.length > 0}
 				<FilterSection
 					class="flex-no-shrink"
 					on:filterChanged={(event) => (filterChanged = event.detail)}
 					{filterList}
-					bind:_externalSearchQuery
-				/>
+					bind:_externalSearchQuery />
 			{/if}
 		</div>
-		<div class="section--bottom">
+		<div class="section--bottom" bind:this={sectionBottomElem}>
 			<!-- ------------------- -->
 			<!-- Display RECENT SEARCHES -->
 			{#if $UIState.showMainMenu}
 				<div class="section--recent flex column flex-grow">
+					<SearchSuggestions on:clickTree={handleExternallyChangedFilters} />
 					<RecentSearchList
 						class="flex-grow"
 						on:recentSearch={handleExternallyChangedFilters}
-						bind:recentSearches={_recentSearches}
-					/>
+						bind:recentSearches={_recentSearches} />
 				</div>
 				<div
-					class="section--footer flex row justify-content-end pr-xxsmall pl-xxsmall pb-xxsmall"
-				>
+					class="section--footer flex row justify-content-end pr-xxsmall pl-xxsmall pb-xxsmall">
 					<!-- TODO: make IconButton accept flexible color -->
 					<IconButton iconName={IconInfo} color={'black3'} on:click={openAboutScreen} />
 					<IconButton iconName={IconAdjust} color={'black3'} on:click={openSettings} />
@@ -381,8 +381,7 @@
 					<ResultsList
 						{querySendTime}
 						on:resetSearch={navBack}
-						on:resetSearch={resetSearchQuery}
-					/>
+						on:resetSearch={resetSearchQuery} />
 				</div>
 			{/if}
 		</div>
@@ -397,26 +396,22 @@
 					on:click={() => {
 						$UIState.showSettingsMenu = false;
 					}}
-					iconName={IconBack}
-				/>
+					iconName={IconBack} />
 				<Section class="">Settings</Section>
 			</div>
 			<div class="settings--content pt-xxsmall pr-xxsmall pl-xxsmall">
 				<div class="settings--section pb-xxsmall">
 					<Section class="">Recent Searches</Section>
 					<Button variant="secondary" destructive on:click={deleteRecentSearches}
-						>Delete Recent Searches</Button
-					>
+						>Delete Recent Searches</Button>
 				</div>
 				<div class="settings--section pb-xxsmall">
 					<Section class="settings--input">Filters</Section>
 					<Switch
 						bind:checked={$settings.rememberNodeFilterCounts}
-						on:change={toggleFilterReordering}>Sort Filters by Usage</Switch
-					>
+						on:change={toggleFilterReordering}>Sort Filters by Usage</Switch>
 					<Button variant="secondary" destructive on:click={resetNodeTypeFilterCounts}
-						>Reset Filter Order</Button
-					>
+						>Reset Filter Order</Button>
 				</div>
 			</div>
 		</div>
@@ -431,8 +426,7 @@
 					on:click={() => {
 						$UIState.showAboutScreen = false;
 					}}
-					iconName={IconBack}
-				/>
+					iconName={IconBack} />
 				<Section class="">About</Section>
 			</div>
 			<div class="settings--content markdown pt-xxsmall pr-xxsmall pl-xxsmall">
@@ -456,6 +450,7 @@
 		display: flex;
 		flex-direction: column;
 		height: 100vh;
+		overflow-y: hidden;
 	}
 
 	/* Variable for svg fill in flexible icon */
@@ -463,16 +458,8 @@
 		--transparent: transparent;
 	}
 
-	.section--recent {
-		overflow: hidden;
-		position: relative;
-	}
-
 	.section--footer {
 		gap: 8px;
-		position: absolute;
-		bottom: 0;
-		right: 0;
 		background: radial-gradient(
 			ellipse farthest-corner at bottom right,
 			rgb(255, 255, 255) rgba(255, 255, 255, 00)
@@ -488,18 +475,10 @@
 	}
 
 	.section--bottom {
-		position: relative;
-		width: 100%;
-		height: 100%;
-	}
-
-	.section--results,
-	.section--recent {
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		top: 0;
-		left: 0;
+		overflow-y: auto;
+		flex-grow: 1;
+		display: flex;
+		flex-direction: column;
 	}
 
 	/* ------------------------- */
@@ -520,23 +499,6 @@
 
 	.settings--content {
 		overflow: auto;
-	}
-
-	.license--section h1 {
-	}
-
-	.settings--input {
-		width: fit-content;
-	}
-
-	.empty-state-container {
-		height: 100%;
-		width: 100%;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		position: absolute;
 	}
 
 	/* ------------------------- */
