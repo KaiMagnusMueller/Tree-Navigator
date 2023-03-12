@@ -10,3 +10,5 @@ updates:
       schedule:
           interval: 'weekly'
           day: 'sunday'
+      ignore:
+          update-types: ['version-update:semver-patch']

@@ -270,7 +270,15 @@ figma.on('selectionchange', handleSelectionChange);
 
 function handleSelectionChange() {
 	// @ts-ignore
-	const currentSelection: Array<SceneNode> = figma.currentPage.selection;
+	let currentSelection: Array<SceneNode>;
+
+	try {
+		// @ts-ignore
+		currentSelection = figma.currentPage.selection;
+	} catch (error) {
+		postMessageToast('Node is hidden and inacessible to the plugin');
+		return;
+	}
 
 	let nodesToSend = [];
 	currentSelection.forEach((element) => {
@@ -318,6 +326,7 @@ function handleSelectionChange() {
 			delete elem.parent;
 		}
 	});
+
 	ancestorNodeArray = uniqObjInArr(ancestorNodeArray, 'id');
 
 	let ancestorTree = createDataTree(ancestorNodeArray);

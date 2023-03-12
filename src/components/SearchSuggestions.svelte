@@ -94,7 +94,7 @@
 {#if interestingNodes}
 	<div class="search-suggestions flex column">
 		<div>
-			<h4 class="heading">Suggested Search</h4>
+			<!-- <h4 class="heading">Suggested Search</h4> -->
 			{#if selectedSameName && selectedSameType}
 				<p>
 					Search for all {$filterDefinitions[0].getTypeName(selectedNode.type)} nodes called
@@ -130,7 +130,7 @@
 	<div class="search-suggestions flex column">
 		<div>
 			<!-- <h4 class="heading">Layer Tree</h4> -->
-			<p>Select layers of the same type and name to display the layer tree.</p>
+			<p>Select a layer, or multiple of the same type and name, to display the layer tree.</p>
 		</div>
 	</div>
 {/if}
@@ -148,12 +148,12 @@
 		user-select: none;
 	}
 
-	.search-suggestions h4 {
+	/* .search-suggestions h4 {
 		color: var(--figma-color-text);
 		margin: 0;
 		font-size: var(--font-size-small);
 		font-weight: var(--font-weight-normal);
-	}
+	} */
 	.search-suggestions p {
 		margin: 6px 0 0 0;
 		font-size: var(--font-size-small);
