@@ -21,9 +21,9 @@
 	function handleClick() {
 		console.log('start recent search');
 
-		//isNew = false
+		//addToRecents = false
 		dispatch('recentSearch', {
-			isNew: false,
+			addToRecents: false,
 			search: search,
 		});
 		dispatch('moveToTop', i);

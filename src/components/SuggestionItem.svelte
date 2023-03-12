@@ -37,7 +37,7 @@
 		};
 
 		dispatch('clickTree', {
-			isNew: true,
+			addToRecents: true,
 			search: search,
 		});
 	}

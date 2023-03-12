@@ -1,4 +1,6 @@
 <script>
+	import { onMount } from 'svelte/internal';
+
 	//import Global CSS from the svelte boilerplate
 	//contains Figma color vars, spacing vars, utility classes and more
 	import { GlobalCSS } from 'figma-plugin-ds-svelte';
@@ -10,8 +12,7 @@
 		settings,
 		defaultSettings,
 	} from './stores';
-	import { recentSearchExamples } from './assets/example-data';
-	import { saveRecentSearches, saveFilterRanking, saveSettings } from './lib/helper-functions';
+	import { saveRecentSearches, saveSettings } from './lib/helper-functions';
 
 	//import some Svelte Figma UI components
 	import {
@@ -28,12 +29,8 @@
 	import InputFlexible from './components/InputFlexible';
 	import FilterSection from './components/FilterSection.svelte';
 	import RecentSearchList from './components/RecentSearchList.svelte';
-	import { onMount } from 'svelte/internal';
-	import { slide } from 'svelte/transition';
 	import IconInfo from './assets/icons/information.svg';
 	import ResultsList from './components/ResultsList.svelte';
-	import TestComponent from './components/TestComponent.svelte';
-	import LoadingSpinner from './components/LoadingSpinner.svelte';
 
 	// Markdown texts
 	import About from './assets/text/about.svx';
@@ -149,7 +146,7 @@
 	function handleQuerySubmit(event) {
 		//true if event comes from recent list item
 		// console.log(event.detail);
-		const isNew = event.detail;
+		const addToRecents = event.detail;
 
 		querySendTime = Date.now();
 		$searchQuery.query_submit_time = querySendTime;
@@ -178,7 +175,7 @@
 		// updateNodeTypeFilterCounts($searchQuery.node_types);
 
 		//only add to recentlist if the item is not already on the list
-		if (isNew == true) {
+		if (addToRecents == true) {
 			// for some reason we have to clone the $searchQuery object, otherwise if we would do this:
 			// $recentSearches = [$searchQuery, ...$recentSearches];
 			// all recent queries during the plugin runtime would get reset to the new recent search
@@ -216,7 +213,7 @@
 		searchString = search.query_text;
 
 		_externalSearchQuery = search;
-		handleQuerySubmit(event.detail.isNew);
+		handleQuerySubmit(event.detail.addToRecents);
 	}
 
 	function buildSearchQuery() {
@@ -323,7 +320,7 @@
 <div class="wrapper">
 	<div class="main-section">
 		<!-- <TestComponent /> -->
-		<div class="header-group flex column pt-xxsmall pb-xxsmall">
+		<div class="section--header flex column pt-xxsmall pb-xxsmall">
 			<InputFlexible
 				iconName={IconSearch}
 				placeholder="Search"
@@ -440,7 +437,7 @@
 
 <style>
 	/* Add additional global or scoped styles here */
-	.header-group {
+	.section--header {
 		gap: 8px;
 		background-color: var(--figma-color-bg);
 		border-bottom: 1px solid var(--figma-color-border);
