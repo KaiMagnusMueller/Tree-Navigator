@@ -1,10 +1,6 @@
 <script>
 	import { createEventDispatcher, onMount } from 'svelte';
-	let dispatch = createEventDispatcher();
 	import { filterDefinitions } from '../stores';
-
-	import { Icon } from 'figma-plugin-ds-svelte';
-	import ArrowUpLeftCurved from '../assets/icons/ArrowUpLeftCurved.svg';
 	import SuggestionItem from './SuggestionItem.svelte';
 
 	// const searchSuggestions = [
@@ -78,15 +74,21 @@
 				name: selectedNodes[0].name,
 				type: selectedNodes[0].type,
 			};
+
+			treeDepth = getDepth(ancestorTree);
 		};
 	}, 50);
 	// For some reason the message event is not registered without a slight delay
 
 	let selectedNodes;
 	let interestingNodes;
-	let ancestorNodes;
-
+	// let ancestorNodes;
+	let treeDepth;
 	$: ancestorTree = [];
+
+	function getDepth(array) {
+		return 1 + Math.max(0, ...array.map(({ childNodes = [] }) => getDepth(childNodes)));
+	}
 </script>
 
 {#if interestingNodes}
@@ -96,16 +98,20 @@
 			{#if selectedSameName && selectedSameType}
 				<p>
 					Search for all {$filterDefinitions[0].getTypeName(selectedNode.type)} nodes called
-					'{selectedNode.name}' in:
+					<i>'{selectedNode.name}'</i> in:
 				</p>
 			{:else}
-				<p>Select nodes of the same type and name to display the node tree.</p>
+				<p>Select nodes of the same type and name to display the layer tree.</p>
 			{/if}
 		</div>
 		{#if selectedSameName && selectedSameType}
-			<div class="suggestion-list">
+			<div class="suggestion-list" class:small-tree={treeDepth >= 8}>
 				{#each ancestorTree as parent (parent.id)}
-					<SuggestionItem {parent} on:clickTree {selectedNode} />
+					<SuggestionItem
+						{parent}
+						on:clickTree
+						{selectedNode}
+						smallTree={treeDepth >= 8} />
 				{/each}
 
 				<!-- <div class="suggestion-item flex align-items-center pr-xxsmall">
@@ -119,6 +125,13 @@
 				</div> -->
 			</div>
 		{/if}
+	</div>
+{:else}
+	<div class="search-suggestions flex column">
+		<div>
+			<!-- <h4 class="heading">Layer Tree</h4> -->
+			<p>Select layers of the same type and name to display the layer tree.</p>
+		</div>
 	</div>
 {/if}
 
@@ -148,13 +161,11 @@
 		color: var(--figma-color-text-secondary);
 	}
 
-	.suggestion-item {
-		gap: 8px;
-		padding-top: 6px;
-		padding-bottom: 6px;
+	p:first-child {
+		margin: 0;
 	}
 
-	.suggestion-item:hover {
-		background-color: #424242;
+	.search-suggestions p i {
+		color: var(--figma-color-text);
 	}
 </style>

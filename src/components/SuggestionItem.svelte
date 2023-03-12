@@ -5,6 +5,7 @@
 	export let parent = null;
 	export let iteration = 0;
 	export let selectedNode = [];
+	export let smallTree = false;
 
 	let nodes = [];
 	let childNodeIDs = [];
@@ -43,7 +44,10 @@
 	}
 </script>
 
-<div class="suggestion-item horizontal" on:click={() => handleClick([parent.id])}>
+<div
+	class="suggestion-item horizontal"
+	class:small={smallTree}
+	on:click={() => handleClick([parent.id])}>
 	<p class="" title={'Search in: ' + parent.name}>
 		{parent.name}
 	</p>
@@ -51,7 +55,8 @@
 
 <div
 	class="child-node-wrapper"
-	class:indent={(!hasChildNodes && iteration != 0) || nodes.length == 1}>
+	class:indent={(!hasChildNodes && iteration != 0) || nodes.length == 1}
+	class:small={smallTree}>
 	{#if nodes.length > 1}
 		<div
 			class="suggestion-item vertical"
@@ -60,13 +65,17 @@
 	{/if}
 	<div class="child-container flex-grow">
 		{#each nodes as node (node.id)}
-			<svelte:self on:clickTree parent={node} iteration={iteration + 1} {selectedNode} />
+			<svelte:self
+				on:clickTree
+				parent={node}
+				iteration={iteration + 1}
+				{selectedNode}
+				{smallTree} />
 		{/each}
 	</div>
 </div>
 
 <style>
-	/* nice */
 	.suggestion-item {
 		margin: 2px;
 		display: flex;
@@ -112,5 +121,18 @@
 
 	.indent {
 		margin-left: 24px;
+	}
+
+	/* SMALL VERSION */
+	.small .vertical {
+		width: 16px;
+	}
+
+	.horizontal.small {
+		height: 16px;
+	}
+
+	.indent.small {
+		margin-left: 16px;
 	}
 </style>
