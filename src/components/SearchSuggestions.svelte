@@ -65,17 +65,21 @@
 
 				ancestorTree = interestingNodes.ancestorTree;
 				ancestorTree = ancestorTree;
+
+				selectedSameName = selectedNodes.every(
+					(elem) => elem.name === selectedNodes[0].name
+				);
+				selectedSameType = selectedNodes.every(
+					(elem) => elem.type === selectedNodes[0].type
+				);
+
+				selectedNode = {
+					name: selectedNodes[0].name,
+					type: selectedNodes[0].type,
+				};
+
+				treeDepth = getDepth(ancestorTree);
 			}
-
-			selectedSameName = selectedNodes.every((elem) => elem.name === selectedNodes[0].name);
-			selectedSameType = selectedNodes.every((elem) => elem.type === selectedNodes[0].type);
-
-			selectedNode = {
-				name: selectedNodes[0].name,
-				type: selectedNodes[0].type,
-			};
-
-			treeDepth = getDepth(ancestorTree);
 		};
 	}, 50);
 	// For some reason the message event is not registered without a slight delay

@@ -34,6 +34,21 @@ if (filterDefinitions) {
 if (settings) {
 	settings = JSON.parse(settings);
 }
+getTutorial();
+
+async function getTutorial() {
+	let tutorial;
+	try {
+		tutorial = await figma.clientStorage.getAsync('tutorial');
+	} catch (e) {
+		console.log('Storage error:', e);
+	}
+
+	figma.ui.postMessage({
+		type: 'loaded-tutorial',
+		data: tutorial || undefined,
+	});
+}
 
 figma.ui.postMessage({ type: 'loaded-plugin-settings', data: settings });
 figma.ui.postMessage({
@@ -51,6 +66,18 @@ function sendPluginmessage(params) {
 }
 
 figma.ui.onmessage = (msg) => {
+	if (msg.type === 'get-tutorials') {
+		console.log('get-tutorials');
+		getTutorial();
+	}
+
+	if (msg.type === 'save-tutorials') {
+		console.log('save tutorial');
+		console.log(msg.data);
+
+		figma.clientStorage.setAsync('tutorial', msg.data);
+	}
+
 	if (msg.type === 'ui-loaded') {
 		handleSelectionChange();
 	}

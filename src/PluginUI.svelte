@@ -31,6 +31,7 @@
 	import RecentSearchList from './components/RecentSearchList.svelte';
 	import IconInfo from './assets/icons/information.svg';
 	import ResultsList from './components/ResultsList.svelte';
+	import Tutorial from './components/Tutorial.svelte';
 
 	// Markdown texts
 	import About from './assets/text/about.svx';
@@ -53,11 +54,22 @@
 	//the select menu, its value is bound to the primary buttons disabled prop
 
 	let filterList = $filterDefinitions;
-
+	let viewedTutorials = [];
+	let tutorialLoaded = false;
 	onMount(() => {
 		buildSearchQuery();
 
 		onmessage = (event) => {
+			if (event.data.pluginMessage.type == 'loaded-tutorial') {
+				tutorialLoaded = true;
+				if (event.data.pluginMessage.data) {
+					console.log('tutorial found... loading');
+					viewedTutorials = event.data.pluginMessage.data;
+				} else {
+					console.log('no tutorials viewed...');
+				}
+			}
+
 			if (event.data.pluginMessage.type == 'loaded-plugin-settings') {
 				if (event.data.pluginMessage.data) {
 					console.log('settings found... loading');
@@ -278,6 +290,18 @@
 		saveSettings($settings);
 	}
 
+	function resetTutorials() {
+		parent.postMessage(
+			{
+				pluginMessage: {
+					type: 'save-tutorials',
+					data: [],
+				},
+			},
+			'*'
+		);
+	}
+
 	// -------------------------
 	// RECENT SEARCHES
 	// -------------------------
@@ -371,6 +395,12 @@
 					<IconButton iconName={IconAdjust} color={'black3'} on:click={openSettings} />
 				</div>
 
+				{#if tutorialLoaded}
+					<div class="section--tutorial">
+						<Tutorial {viewedTutorials} />
+					</div>
+				{/if}
+
 				<!-- ------------------- -->
 				<!-- Display SEARCH RESULTS -->
 			{:else if $UIState.showSearchResults}
@@ -409,6 +439,8 @@
 						on:change={toggleFilterReordering}>Sort Filters by Usage</Switch>
 					<Button variant="secondary" destructive on:click={resetNodeTypeFilterCounts}
 						>Reset Filter Order</Button>
+					<Button variant="secondary" destructive on:click={resetTutorials}
+						>Reset Tutorials</Button>
 				</div>
 			</div>
 		</div>
