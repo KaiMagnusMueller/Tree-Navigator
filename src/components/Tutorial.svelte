@@ -1,6 +1,6 @@
 <script>
 	import { tutorials } from '../stores';
-	import { IconButton, IconClose, IconForward, IconBack } from 'figma-plugin-ds-svelte';
+	import { IconButton, IconClose, IconForward, IconBack, Icon } from 'figma-plugin-ds-svelte';
 
 	export let viewedTutorials = undefined;
 
@@ -28,9 +28,6 @@
 		);
 	}
 
-	let disableBack = true;
-	let disableForward = false;
-
 	let currentCard = 0;
 	function handleSwitchCard(direction) {
 		if (direction === 'next' && currentCard < visibleTutorials.length - 1) {
@@ -39,18 +36,6 @@
 			currentCard--;
 		}
 
-		// if (currentCard === 0) {
-		// 	disableBack = true;
-		// } else {
-		// 	disableBack = false;
-		// }
-
-		// if (currentCard >= visibleTutorials.length - 1) {
-		// 	disableForward = true;
-		// } else {
-		// 	disableForward = false;
-		// }
-
 		console.log(document.getElementById(`tc${currentCard}`));
 		document.getElementById(`tc${currentCard}`).scrollIntoView({ behavior: 'smooth' });
 	}
@@ -58,10 +43,10 @@
 
 {#if visibleTutorials.length > 0 && viewedTutorials}
 	<div class="tutorial--wrapper">
+		<div class="tutorial--header">
+			<IconButton iconName={IconClose} on:click={handleCloseTutorial} />
+		</div>
 		<div class="tutorial--section">
-			<div class="tutorial--header">
-				<IconButton iconName={IconClose} on:click={handleCloseTutorial} />
-			</div>
 			<div class="tutorial--scroller">
 				{#each visibleTutorials as tutorial, index}
 					<div class="tutorial--card--wrapper" id="tc{index.toString()}">
@@ -82,14 +67,21 @@
 				{/each}
 			</div>
 			<div class="tutorial--navigation">
-				<IconButton
-					iconName={IconBack}
-					on:click={() => handleSwitchCard('prev')}
-					disabled={currentCard === 0 ? true : false} />
-				<IconButton
-					iconName={IconForward}
-					on:click={() => handleSwitchCard('next')}
-					disabled={currentCard >= visibleTutorials.length - 1 ? true : false} />
+				<div class="tutorial--btn--wrapper">
+					<div class="btn--area">
+						<IconButton
+							iconName={IconBack}
+							on:click={() => handleSwitchCard('prev')}
+							disabled={currentCard === 0 ? true : false} />
+					</div>
+					<div class="btn--area">
+						<!-- <Icon iconName={IconForward} /> -->
+						<IconButton
+							iconName={IconForward}
+							on:click={() => handleSwitchCard('next')}
+							disabled={currentCard >= visibleTutorials.length - 1 ? true : false} />
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -114,13 +106,36 @@
 	}
 
 	.tutorial--navigation {
-		background-color: #0478b9;
 		position: absolute;
 		left: 0;
-		top: 50%;
+		top: 0;
+		height: 100%;
 		width: 100%;
+		padding: 0 8px;
 		display: flex;
 		justify-content: space-between;
+		align-items: center;
+		pointer-events: none;
+	}
+
+	.tutorial--btn--wrapper {
+		width: 100%;
+		padding: 0 8px;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.btn--area {
+		pointer-events: auto;
+		opacity: 0;
+		padding: 4px;
+		border-radius: 50%;
+		background: var(--figma-color-bg);
+	}
+
+	.btn--area:hover {
+		opacity: 1;
 	}
 
 	.tutorial--scroller {
@@ -196,28 +211,28 @@
 		pointer-events: none;
 	}
 
-	.tutorial--card:nth-of-type(3n + 1) {
+	.tutorial--card--wrapper:nth-of-type(3n + 1) .tutorial--card {
 		background: linear-gradient(80.04deg, hsl(202, 96%, 50%) 0%, hsl(220, 81%, 48%) 100%);
 	}
 
-	.tutorial--card:nth-of-type(3n + 2) {
+	.tutorial--card--wrapper:nth-of-type(3n + 2) .tutorial--card {
 		background: linear-gradient(80.04deg, hsl(173, 96%, 50%) 0%, hsl(212, 82%, 48%) 100%);
 	}
 
-	.tutorial--card:nth-of-type(3n + 3) {
+	.tutorial--card--wrapper:nth-of-type(3n + 3) .tutorial--card {
 		background: linear-gradient(80.04deg, hsl(162, 96%, 50%) 0%, hsl(202, 81%, 48%) 100%);
 	}
 
 	@media (prefers-color-scheme: dark) {
-		.tutorial--card:nth-of-type(3n + 1) {
+		.tutorial--card--wrapper:nth-of-type(3n + 1) .tutorial--card {
 			background: linear-gradient(80.04deg, #0478b9 0%, #0e3786 100%);
 		}
 
-		.tutorial--card:nth-of-type(3n + 2) {
+		.tutorial--card--wrapper:nth-of-type(3n + 2) .tutorial--card {
 			background: linear-gradient(80.04deg, #04bea8 0%, #0e488b 100%);
 		}
 
-		.tutorial--card:nth-of-type(3n + 3) {
+		.tutorial--card--wrapper:nth-of-type(3n + 3) .tutorial--card {
 			background: linear-gradient(80.04deg, #04b983 0%, #0e5b86 100%);
 		}
 	}
