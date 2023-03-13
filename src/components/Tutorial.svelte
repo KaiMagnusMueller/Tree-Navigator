@@ -73,13 +73,12 @@
 	}
 
 	.tutorial--card {
-		background: linear-gradient(80.04deg, #0478b9 0%, #0e3786 100%);
 		box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.35);
 		border-radius: 10px;
 		height: 120px;
 		font-size: var(--font-size-small);
 		font-weight: var(--font-weight-normal);
-		color: var(--figma-color-text-secondary);
+		color: var(--figma-color-text-onsuccess);
 		padding: 12px;
 		position: relative;
 		overflow: hidden;
@@ -89,7 +88,6 @@
 	.tutorial--card h3 {
 		font-size: var(--font-size-large);
 		font-weight: var(--font-weight-bold);
-		color: var(--figma-color-text);
 		margin: 0;
 	}
 
@@ -107,7 +105,7 @@
 
 	.tutorial--card a {
 		font-weight: var(--font-weight-bold);
-		color: var(--figma-color-text-secondary);
+		color: var(--figma-color-text-onsuccess);
 		margin: auto 0 0 0;
 	}
 	.tutorial--card a:hover {
@@ -122,5 +120,31 @@
 		height: auto;
 		filter: drop-shadow(0px 2.697px 7.192px rgba(0, 0, 0, 0.25));
 		transform: rotate(9.16deg) translate(15%, -50%);
+	}
+
+	.tutorial--card:nth-of-type(3n + 1) {
+		background: linear-gradient(80.04deg, hsl(202, 96%, 50%) 0%, hsl(220, 81%, 48%) 100%);
+	}
+
+	.tutorial--card:nth-of-type(3n + 2) {
+		background: linear-gradient(80.04deg, hsl(173, 96%, 50%) 0%, hsl(212, 82%, 48%) 100%);
+	}
+
+	.tutorial--card:nth-of-type(3n + 3) {
+		background: linear-gradient(80.04deg, hsl(162, 96%, 50%) 0%, hsl(202, 81%, 48%) 100%);
+	}
+
+	@media (prefers-color-scheme: dark) {
+		.tutorial--card:nth-of-type(3n + 1) {
+			background: linear-gradient(80.04deg, #0478b9 0%, #0e3786 100%);
+		}
+
+		.tutorial--card:nth-of-type(3n + 2) {
+			background: linear-gradient(80.04deg, #04bea8 0%, #0e488b 100%);
+		}
+
+		.tutorial--card:nth-of-type(3n + 3) {
+			background: linear-gradient(80.04deg, #04b983 0%, #0e5b86 100%);
+		}
 	}
 </style>
