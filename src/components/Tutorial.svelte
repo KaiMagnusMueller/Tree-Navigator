@@ -2,7 +2,7 @@
 	import { tutorials } from '../stores';
 	import { IconButton, IconClose } from 'figma-plugin-ds-svelte';
 	import { onMount } from 'svelte';
-	import { fade } from 'svelte/transition';
+	import { slide } from 'svelte/transition';
 
 	export let viewedTutorials = undefined;
 
@@ -41,7 +41,7 @@
 			{#each visibleTutorials as tutorial}
 				<div class="tutorial--card">
 					<div class="card--bg">
-						<img in:fade={{ duration: 0.2 }} src={tutorial.image} alt="" />
+						<img src={tutorial.image} alt="" />
 					</div>
 					<div class="card--text">
 						<h3>
@@ -72,6 +72,12 @@
 		justify-content: end;
 	}
 
+	.tutorial--scroller {
+		display: flex;
+		gap: 16px;
+		overflow-x: hidden;
+	}
+
 	.tutorial--card {
 		box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.35);
 		border-radius: 10px;
@@ -82,7 +88,7 @@
 		padding: 12px;
 		position: relative;
 		overflow: hidden;
-		border: 2px solid rgba(0, 0, 0, 0.2);
+		min-width: 100%;
 	}
 
 	.tutorial--card h3 {
@@ -92,7 +98,7 @@
 	}
 
 	.card--text {
-		width: 60%;
+		width: 55%;
 		display: flex;
 		flex-direction: column;
 		gap: 8px;
@@ -120,6 +126,19 @@
 		height: auto;
 		filter: drop-shadow(0px 2.697px 7.192px rgba(0, 0, 0, 0.25));
 		transform: rotate(9.16deg) translate(15%, -50%);
+	}
+
+	.tutorial--card::after {
+		border: 2px solid rgb(0 0 0 / 32%);
+		border-radius: 10px;
+		top: 0;
+		left: 0;
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		content: '';
+		box-sizing: border-box;
+		pointer-events: none;
 	}
 
 	.tutorial--card:nth-of-type(3n + 1) {
