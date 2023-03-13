@@ -1,8 +1,6 @@
-<script lang="ts">
+<script>
 	import { tutorials } from '../stores';
-	import { IconButton, IconClose } from 'figma-plugin-ds-svelte';
-	import { onMount } from 'svelte';
-	import { slide } from 'svelte/transition';
+	import { IconButton, IconClose, IconForward, IconBack } from 'figma-plugin-ds-svelte';
 
 	export let viewedTutorials = undefined;
 
@@ -29,41 +27,84 @@
 			'*'
 		);
 	}
+
+	let disableBack = true;
+	let disableForward = false;
+
+	let currentCard = 0;
+	function handleSwitchCard(direction) {
+		if (direction === 'next' && currentCard < visibleTutorials.length - 1) {
+			currentCard++;
+		} else if (direction === 'prev' && currentCard > 0) {
+			currentCard--;
+		}
+
+		// if (currentCard === 0) {
+		// 	disableBack = true;
+		// } else {
+		// 	disableBack = false;
+		// }
+
+		// if (currentCard >= visibleTutorials.length - 1) {
+		// 	disableForward = true;
+		// } else {
+		// 	disableForward = false;
+		// }
+
+		console.log(document.getElementById(`tc${currentCard}`));
+		document.getElementById(`tc${currentCard}`).scrollIntoView({ behavior: 'smooth' });
+	}
 </script>
 
 {#if visibleTutorials.length > 0 && viewedTutorials}
-	<div class="tutorial--section">
-		<div class="tutorial--header">
-			<IconButton iconName={IconClose} on:click={handleCloseTutorial} />
-		</div>
-
-		<div class="tutorial--scroller">
-			{#each visibleTutorials as tutorial}
-				<div class="tutorial--card">
-					<div class="card--bg">
-						<img src={tutorial.image} alt="" />
+	<div class="tutorial--wrapper">
+		<div class="tutorial--section">
+			<div class="tutorial--header">
+				<IconButton iconName={IconClose} on:click={handleCloseTutorial} />
+			</div>
+			<div class="tutorial--scroller">
+				{#each visibleTutorials as tutorial, index}
+					<div class="tutorial--card--wrapper" id="tc{index.toString()}">
+						<div class="tutorial--card">
+							<div class="card--bg">
+								<img src={tutorial.image} alt="" />
+							</div>
+							<div class="card--text">
+								<h3>
+									{tutorial.title}
+								</h3>
+								<p>{tutorial.body}</p>
+								<a target="_blank" href={tutorial.link.href}
+									>{tutorial.link.title} -></a>
+							</div>
+						</div>
 					</div>
-					<div class="card--text">
-						<h3>
-							{tutorial.title}
-						</h3>
-						<p>{tutorial.body}</p>
-						<a target="_blank" href={tutorial.link.href}>{tutorial.link.title} -></a>
-					</div>
-				</div>
-			{/each}
+				{/each}
+			</div>
+			<div class="tutorial--navigation">
+				<IconButton
+					iconName={IconBack}
+					on:click={() => handleSwitchCard('prev')}
+					disabled={currentCard === 0 ? true : false} />
+				<IconButton
+					iconName={IconForward}
+					on:click={() => handleSwitchCard('next')}
+					disabled={currentCard >= visibleTutorials.length - 1 ? true : false} />
+			</div>
 		</div>
 	</div>
 {/if}
 
 <style>
-	.tutorial--section {
+	.tutorial--wrapper {
 		position: absolute;
 		bottom: 0px;
 		width: 100%;
-
+		padding: 8px 0;
 		background: linear-gradient(transparent, var(--figma-color-bg) 30%);
-		padding: 8px;
+	}
+	.tutorial--section {
+		position: relative;
 	}
 
 	.tutorial--header {
@@ -72,10 +113,25 @@
 		justify-content: end;
 	}
 
+	.tutorial--navigation {
+		background-color: #0478b9;
+		position: absolute;
+		left: 0;
+		top: 50%;
+		width: 100%;
+		display: flex;
+		justify-content: space-between;
+	}
+
 	.tutorial--scroller {
 		display: flex;
 		gap: 16px;
 		overflow-x: hidden;
+	}
+
+	.tutorial--card--wrapper {
+		padding: 0 8px;
+		min-width: 100%;
 	}
 
 	.tutorial--card {
@@ -86,9 +142,8 @@
 		font-weight: var(--font-weight-normal);
 		color: var(--figma-color-text-onsuccess);
 		padding: 12px;
-		position: relative;
 		overflow: hidden;
-		min-width: 100%;
+		position: relative;
 	}
 
 	.tutorial--card h3 {
