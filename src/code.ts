@@ -35,11 +35,28 @@ if (settings) {
 	settings = JSON.parse(settings);
 }
 
+async function getTutorials() {
+	let tutorial;
+	try {
+		tutorial = await figma.clientStorage.getAsync('tutorial');
+	} catch (e) {
+		console.log('Storage error:', e);
+	}
+
+	figma.ui.postMessage({
+		type: 'loaded-tutorial',
+		data: tutorial || undefined,
+	});
+}
+
+getTutorials();
+
 figma.ui.postMessage({ type: 'loaded-plugin-settings', data: settings });
 figma.ui.postMessage({
 	type: 'loaded-plugin-recent-search-list',
 	data: recentSearchList,
 });
+
 figma.ui.postMessage({
 	type: 'loaded-plugin-filter-counts',
 	data: filterDefinitions,
@@ -51,6 +68,33 @@ function sendPluginmessage(params) {
 }
 
 figma.ui.onmessage = (msg) => {
+	// if (msg.type === 'get-data') {
+	// 	console.log('get-data received');
+
+	// 	setTimeout(() => {
+	// 		setInterval(() => {
+	// 			console.log('send: get-data-response');
+
+	// 			figma.ui.postMessage({
+	// 				type: 'get-data-response',
+	// 			});
+	// 		}, 1000);
+	// 	}, 1000);
+	// }
+
+	if (msg.type === 'get-tutorials') {
+		console.log('get-tutorials');
+		getTutorials();
+	}
+
+	if (msg.type === 'save-tutorials') {
+		// console.log('save tutorial');
+		// console.log(msg.data);
+
+		figma.clientStorage.setAsync('tutorial', msg.data);
+		getTutorials();
+	}
+
 	if (msg.type === 'ui-loaded') {
 		handleSelectionChange();
 	}
@@ -270,7 +314,15 @@ figma.on('selectionchange', handleSelectionChange);
 
 function handleSelectionChange() {
 	// @ts-ignore
-	const currentSelection: Array<SceneNode> = figma.currentPage.selection;
+	let currentSelection: Array<SceneNode>;
+
+	try {
+		// @ts-ignore
+		currentSelection = figma.currentPage.selection;
+	} catch (error) {
+		postMessageToast('Node is hidden and inacessible to the plugin');
+		return;
+	}
 
 	let nodesToSend = [];
 	currentSelection.forEach((element) => {
@@ -318,6 +370,7 @@ function handleSelectionChange() {
 			delete elem.parent;
 		}
 	});
+
 	ancestorNodeArray = uniqObjInArr(ancestorNodeArray, 'id');
 
 	let ancestorTree = createDataTree(ancestorNodeArray);

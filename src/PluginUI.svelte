@@ -31,6 +31,7 @@
 	import RecentSearchList from './components/RecentSearchList.svelte';
 	import IconInfo from './assets/icons/information.svg';
 	import ResultsList from './components/ResultsList.svelte';
+	import Tutorial from './components/Tutorial.svelte';
 
 	// Markdown texts
 	import About from './assets/text/about.svx';
@@ -53,89 +54,114 @@
 	//the select menu, its value is bound to the primary buttons disabled prop
 
 	let filterList = $filterDefinitions;
+	let viewedTutorials = [];
+	let tutorialLoaded = false;
 
-	onMount(() => {
-		buildSearchQuery();
+	window.addEventListener('message', (event) => {
+		if (event.data.pluginMessage.type == 'get-data-response') {
+			console.log('received get-data-response');
+		}
 
-		onmessage = (event) => {
-			if (event.data.pluginMessage.type == 'loaded-plugin-settings') {
-				if (event.data.pluginMessage.data) {
-					console.log('settings found... loading');
-					$settings = event.data.pluginMessage.data;
-				} else {
-					console.log('no settings... loading defaults');
-					$settings = $defaultSettings;
-					// TODO: when new settings are added, merge restored settings with new default settings
-				}
+		if (event.data.pluginMessage.type == 'loaded-tutorial') {
+			tutorialLoaded = true;
+			if (event.data.pluginMessage.data) {
+				console.log('tutorial data received...   loading');
+				viewedTutorials = event.data.pluginMessage.data;
+			} else {
+				console.log('no tutorials viewed...');
+			}
+		}
+
+		if (event.data.pluginMessage.type == 'loaded-plugin-settings') {
+			if (event.data.pluginMessage.data) {
+				console.log('settings data received...   loading');
+				$settings = event.data.pluginMessage.data;
+			} else {
+				console.log('no settings... loading defaults');
+				$settings = $defaultSettings;
+				// TODO: when new settings are added, merge restored settings with new default settings
+			}
+		}
+
+		if (event.data.pluginMessage.type == 'loaded-plugin-recent-search-list') {
+			let recentsArray = [];
+			const messageData = event.data.pluginMessage.data;
+
+			if (!messageData) {
+				console.log('no recent searches');
+				_recentSearches = [];
+				return;
 			}
 
-			if (event.data.pluginMessage.type == 'loaded-plugin-recent-search-list') {
-				let recentsArray = [];
-				const messageData = event.data.pluginMessage.data;
+			console.log('recent searches received... loading');
 
-				if (!messageData) {
-					console.log('no recent searches');
-					_recentSearches = [];
+			// Check if recent search object is empty (and would later cause errors in the recent search component)
+			event.data.pluginMessage.data.forEach((element) => {
+				if (Object.keys(element).length === 0) {
+					console.warn('Empty recent search object discarded');
 					return;
 				}
+				recentsArray.push(element);
+			});
 
-				console.log('recent searches found... loading');
+			_recentSearches = recentsArray;
 
-				// Check if recent search object is empty (and would later cause errors in the recent search component)
-				event.data.pluginMessage.data.forEach((element) => {
-					if (Object.keys(element).length === 0) {
-						console.warn('Empty recent search object discarded');
-						return;
-					}
-					recentsArray.push(element);
-				});
+			// console.log(_recentSearches);
+		}
 
-				_recentSearches = recentsArray;
+		if (event.data.pluginMessage.type == 'loaded-plugin-filter-counts') {
+			// filterList = $filterDefinitions;
+			// // TODO: build active filters from default filters here
+			// let _activeFilters = new Object();
+			// filterList.forEach((filter) => {
+			// 	const filterType = filter.filterData.filterType;
+			// 	const filterOptions = filter.filterOptions;
+			// 	let defaultOption = filterOptions.find((elem) => elem.default === true);
+			// 	if (filter.filterData.multiSelect === true) {
+			// 		$activeFilters[filterType] = [defaultOption.value];
+			// 	} else {
+			// 		$activeFilters[filterType] = defaultOption.value;
+			// 	}
+			// });
+			// console.log($activeFilters);
+			// if (event.data.pluginMessage.data.length == 0) {
+			// 	console.log('no filters used previously');
+			// 	return;
+			// }
+			// //update node type filter with counts
+			// // Sort by filter counts if rememberNodeFilterCounts is on
+			// if (
+			// 	$settings.rememberNodeFilterCounts &&
+			// 	filterList[0].filterData.filterType === 'node_type'
+			// ) {
+			// 	const index = filterList.findIndex((elem) => elem.filterType == 'node_type');
+			// 	console.log(index);
+			// 	filterList.forEach((filter) => {
+			// 		let loadedFilter = event.data.pluginMessage.data.find(
+			// 			(elem) => elem.node_type === filter.node_type
+			// 		);
+			// 		filter.count = loadedFilter.count;
+			// 	});
+			// 	// filterList.sort((a, b) => {
+			// 	// 	return b.count - a.count;
+			// 	// });
+			// 	// console.log('update node filter list');
+			// 	// console.log(filterList);
+			// }
+		}
+	});
 
-				// console.log(_recentSearches);
-			}
+	onMount(() => {
+		// parent.postMessage(
+		// 	{
+		// 		pluginMessage: {
+		// 			type: 'get-data',
+		// 		},
+		// 	},
+		// 	'*'
+		// );
 
-			if (event.data.pluginMessage.type == 'loaded-plugin-filter-counts') {
-				// filterList = $filterDefinitions;
-				// // TODO: build active filters from default filters here
-				// let _activeFilters = new Object();
-				// filterList.forEach((filter) => {
-				// 	const filterType = filter.filterData.filterType;
-				// 	const filterOptions = filter.filterOptions;
-				// 	let defaultOption = filterOptions.find((elem) => elem.default === true);
-				// 	if (filter.filterData.multiSelect === true) {
-				// 		$activeFilters[filterType] = [defaultOption.value];
-				// 	} else {
-				// 		$activeFilters[filterType] = defaultOption.value;
-				// 	}
-				// });
-				// console.log($activeFilters);
-				// if (event.data.pluginMessage.data.length == 0) {
-				// 	console.log('no filters used previously');
-				// 	return;
-				// }
-				// //update node type filter with counts
-				// // Sort by filter counts if rememberNodeFilterCounts is on
-				// if (
-				// 	$settings.rememberNodeFilterCounts &&
-				// 	filterList[0].filterData.filterType === 'node_type'
-				// ) {
-				// 	const index = filterList.findIndex((elem) => elem.filterType == 'node_type');
-				// 	console.log(index);
-				// 	filterList.forEach((filter) => {
-				// 		let loadedFilter = event.data.pluginMessage.data.find(
-				// 			(elem) => elem.node_type === filter.node_type
-				// 		);
-				// 		filter.count = loadedFilter.count;
-				// 	});
-				// 	// filterList.sort((a, b) => {
-				// 	// 	return b.count - a.count;
-				// 	// });
-				// 	// console.log('update node filter list');
-				// 	// console.log(filterList);
-				// }
-			}
-		};
+		buildSearchQuery();
 	});
 
 	function handleSubmitButton(event) {
@@ -278,6 +304,18 @@
 		saveSettings($settings);
 	}
 
+	function resetTutorials() {
+		parent.postMessage(
+			{
+				pluginMessage: {
+					type: 'save-tutorials',
+					data: [],
+				},
+			},
+			'*'
+		);
+	}
+
 	// -------------------------
 	// RECENT SEARCHES
 	// -------------------------
@@ -371,6 +409,12 @@
 					<IconButton iconName={IconAdjust} color={'black3'} on:click={openSettings} />
 				</div>
 
+				{#if tutorialLoaded}
+					<div class="section--tutorial">
+						<Tutorial {viewedTutorials} />
+					</div>
+				{/if}
+
 				<!-- ------------------- -->
 				<!-- Display SEARCH RESULTS -->
 			{:else if $UIState.showSearchResults}
@@ -409,6 +453,8 @@
 						on:change={toggleFilterReordering}>Sort Filters by Usage</Switch>
 					<Button variant="secondary" destructive on:click={resetNodeTypeFilterCounts}
 						>Reset Filter Order</Button>
+					<Button variant="secondary" destructive on:click={resetTutorials}
+						>Reset Tutorials</Button>
 				</div>
 			</div>
 		</div>

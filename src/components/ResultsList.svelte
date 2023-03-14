@@ -19,7 +19,7 @@
 	// Otherwise when parents and children are matched, the children would immediately get deselected
 	let ignoreSelection = true;
 
-	onmessage = (event) => {
+	window.addEventListener('message', (event) => {
 		if (event.data.pluginMessage.type == 'search-results') {
 			const unfilteredSearchResults = event.data.pluginMessage.data;
 			queryDuration = Date.now() - querySendTime;
@@ -54,7 +54,7 @@
 			});
 			updateSelection(newSelectionIDs, true);
 		}
-	};
+	});
 
 	// #####################################
 	// #####################################

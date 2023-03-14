@@ -53,19 +53,17 @@
 	let selectedSameType = true;
 	// The first node of the selection, type and name are guarranteed to be the same across the selection when we do a search, since the suggestions are hidden if there are different types and names in the selection
 	let selectedNode = {};
-	setTimeout(() => {
-		onmessage = (event) => {
-			if (event.data.pluginMessage.type == 'selection-changed') {
-				if (!event.data.pluginMessage.interestingNodes) {
-					interestingNodes = null;
-					return;
-				}
-				selectedNodes = event.data.pluginMessage.data;
-				interestingNodes = event.data.pluginMessage.interestingNodes;
-
-				ancestorTree = interestingNodes.ancestorTree;
-				ancestorTree = ancestorTree;
+	window.addEventListener('message', (event) => {
+		if (event.data.pluginMessage.type == 'selection-changed') {
+			if (!event.data.pluginMessage.interestingNodes) {
+				interestingNodes = null;
+				return;
 			}
+			selectedNodes = event.data.pluginMessage.data;
+			interestingNodes = event.data.pluginMessage.interestingNodes;
+
+			ancestorTree = interestingNodes.ancestorTree;
+			ancestorTree = ancestorTree;
 
 			selectedSameName = selectedNodes.every((elem) => elem.name === selectedNodes[0].name);
 			selectedSameType = selectedNodes.every((elem) => elem.type === selectedNodes[0].type);
@@ -76,15 +74,16 @@
 			};
 
 			treeDepth = getDepth(ancestorTree);
-		};
-	}, 50);
-	// For some reason the message event is not registered without a slight delay
+		}
+	});
 
 	let selectedNodes;
 	let interestingNodes;
 	// let ancestorNodes;
 	let treeDepth;
-	$: ancestorTree = [];
+
+	// $: ancestorTree = [];  --- changed because of https://github.com/sveltejs/svelte/issues/8374, maybe has some side effects, but seems to be working fine without
+	let ancestorTree = [];
 
 	function getDepth(array) {
 		return 1 + Math.max(0, ...array.map(({ childNodes = [] }) => getDepth(childNodes)));
@@ -94,7 +93,7 @@
 {#if interestingNodes}
 	<div class="search-suggestions flex column">
 		<div>
-			<h4 class="heading">Suggested Search</h4>
+			<!-- <h4 class="heading">Suggested Search</h4> -->
 			{#if selectedSameName && selectedSameType}
 				<p>
 					Search for all {$filterDefinitions[0].getTypeName(selectedNode.type)} nodes called
@@ -130,7 +129,7 @@
 	<div class="search-suggestions flex column">
 		<div>
 			<!-- <h4 class="heading">Layer Tree</h4> -->
-			<p>Select layers of the same type and name to display the layer tree.</p>
+			<p>Select a layer, or multiple of the same type and name, to display the layer tree.</p>
 		</div>
 	</div>
 {/if}
@@ -148,12 +147,12 @@
 		user-select: none;
 	}
 
-	.search-suggestions h4 {
+	/* .search-suggestions h4 {
 		color: var(--figma-color-text);
 		margin: 0;
 		font-size: var(--font-size-small);
 		font-weight: var(--font-weight-normal);
-	}
+	} */
 	.search-suggestions p {
 		margin: 6px 0 0 0;
 		font-size: var(--font-size-small);
