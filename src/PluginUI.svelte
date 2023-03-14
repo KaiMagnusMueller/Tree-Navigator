@@ -56,98 +56,112 @@
 	let filterList = $filterDefinitions;
 	let viewedTutorials = [];
 	let tutorialLoaded = false;
-	onMount(() => {
-		buildSearchQuery();
 
-		onmessage = (event) => {
-			if (event.data.pluginMessage.type == 'loaded-tutorial') {
-				tutorialLoaded = true;
-				if (event.data.pluginMessage.data) {
-					console.log('tutorial found... loading');
-					viewedTutorials = event.data.pluginMessage.data;
-				} else {
-					console.log('no tutorials viewed...');
-				}
+	window.addEventListener('message', (event) => {
+		if (event.data.pluginMessage.type == 'get-data-response') {
+			console.log('received get-data-response');
+		}
+
+		if (event.data.pluginMessage.type == 'loaded-tutorial') {
+			tutorialLoaded = true;
+			if (event.data.pluginMessage.data) {
+				console.log('tutorial found... loading');
+				viewedTutorials = event.data.pluginMessage.data;
+			} else {
+				console.log('no tutorials viewed...');
+			}
+		}
+
+		if (event.data.pluginMessage.type == 'loaded-plugin-settings') {
+			if (event.data.pluginMessage.data) {
+				console.log('settings found... loading');
+				$settings = event.data.pluginMessage.data;
+			} else {
+				console.log('no settings... loading defaults');
+				$settings = $defaultSettings;
+				// TODO: when new settings are added, merge restored settings with new default settings
+			}
+		}
+
+		if (event.data.pluginMessage.type == 'loaded-plugin-recent-search-list') {
+			let recentsArray = [];
+			const messageData = event.data.pluginMessage.data;
+
+			if (!messageData) {
+				console.log('no recent searches');
+				_recentSearches = [];
+				return;
 			}
 
-			if (event.data.pluginMessage.type == 'loaded-plugin-settings') {
-				if (event.data.pluginMessage.data) {
-					console.log('settings found... loading');
-					$settings = event.data.pluginMessage.data;
-				} else {
-					console.log('no settings... loading defaults');
-					$settings = $defaultSettings;
-					// TODO: when new settings are added, merge restored settings with new default settings
-				}
-			}
+			console.log('recent searches found... loading');
 
-			if (event.data.pluginMessage.type == 'loaded-plugin-recent-search-list') {
-				let recentsArray = [];
-				const messageData = event.data.pluginMessage.data;
-
-				if (!messageData) {
-					console.log('no recent searches');
-					_recentSearches = [];
+			// Check if recent search object is empty (and would later cause errors in the recent search component)
+			event.data.pluginMessage.data.forEach((element) => {
+				if (Object.keys(element).length === 0) {
+					console.warn('Empty recent search object discarded');
 					return;
 				}
+				recentsArray.push(element);
+			});
 
-				console.log('recent searches found... loading');
+			_recentSearches = recentsArray;
 
-				// Check if recent search object is empty (and would later cause errors in the recent search component)
-				event.data.pluginMessage.data.forEach((element) => {
-					if (Object.keys(element).length === 0) {
-						console.warn('Empty recent search object discarded');
-						return;
-					}
-					recentsArray.push(element);
-				});
+			// console.log(_recentSearches);
+		}
 
-				_recentSearches = recentsArray;
+		if (event.data.pluginMessage.type == 'loaded-plugin-filter-counts') {
+			// filterList = $filterDefinitions;
+			// // TODO: build active filters from default filters here
+			// let _activeFilters = new Object();
+			// filterList.forEach((filter) => {
+			// 	const filterType = filter.filterData.filterType;
+			// 	const filterOptions = filter.filterOptions;
+			// 	let defaultOption = filterOptions.find((elem) => elem.default === true);
+			// 	if (filter.filterData.multiSelect === true) {
+			// 		$activeFilters[filterType] = [defaultOption.value];
+			// 	} else {
+			// 		$activeFilters[filterType] = defaultOption.value;
+			// 	}
+			// });
+			// console.log($activeFilters);
+			// if (event.data.pluginMessage.data.length == 0) {
+			// 	console.log('no filters used previously');
+			// 	return;
+			// }
+			// //update node type filter with counts
+			// // Sort by filter counts if rememberNodeFilterCounts is on
+			// if (
+			// 	$settings.rememberNodeFilterCounts &&
+			// 	filterList[0].filterData.filterType === 'node_type'
+			// ) {
+			// 	const index = filterList.findIndex((elem) => elem.filterType == 'node_type');
+			// 	console.log(index);
+			// 	filterList.forEach((filter) => {
+			// 		let loadedFilter = event.data.pluginMessage.data.find(
+			// 			(elem) => elem.node_type === filter.node_type
+			// 		);
+			// 		filter.count = loadedFilter.count;
+			// 	});
+			// 	// filterList.sort((a, b) => {
+			// 	// 	return b.count - a.count;
+			// 	// });
+			// 	// console.log('update node filter list');
+			// 	// console.log(filterList);
+			// }
+		}
+	});
 
-				// console.log(_recentSearches);
-			}
+	onMount(() => {
+		// parent.postMessage(
+		// 	{
+		// 		pluginMessage: {
+		// 			type: 'get-data',
+		// 		},
+		// 	},
+		// 	'*'
+		// );
 
-			if (event.data.pluginMessage.type == 'loaded-plugin-filter-counts') {
-				// filterList = $filterDefinitions;
-				// // TODO: build active filters from default filters here
-				// let _activeFilters = new Object();
-				// filterList.forEach((filter) => {
-				// 	const filterType = filter.filterData.filterType;
-				// 	const filterOptions = filter.filterOptions;
-				// 	let defaultOption = filterOptions.find((elem) => elem.default === true);
-				// 	if (filter.filterData.multiSelect === true) {
-				// 		$activeFilters[filterType] = [defaultOption.value];
-				// 	} else {
-				// 		$activeFilters[filterType] = defaultOption.value;
-				// 	}
-				// });
-				// console.log($activeFilters);
-				// if (event.data.pluginMessage.data.length == 0) {
-				// 	console.log('no filters used previously');
-				// 	return;
-				// }
-				// //update node type filter with counts
-				// // Sort by filter counts if rememberNodeFilterCounts is on
-				// if (
-				// 	$settings.rememberNodeFilterCounts &&
-				// 	filterList[0].filterData.filterType === 'node_type'
-				// ) {
-				// 	const index = filterList.findIndex((elem) => elem.filterType == 'node_type');
-				// 	console.log(index);
-				// 	filterList.forEach((filter) => {
-				// 		let loadedFilter = event.data.pluginMessage.data.find(
-				// 			(elem) => elem.node_type === filter.node_type
-				// 		);
-				// 		filter.count = loadedFilter.count;
-				// 	});
-				// 	// filterList.sort((a, b) => {
-				// 	// 	return b.count - a.count;
-				// 	// });
-				// 	// console.log('update node filter list');
-				// 	// console.log(filterList);
-				// }
-			}
-		};
+		buildSearchQuery();
 	});
 
 	function handleSubmitButton(event) {

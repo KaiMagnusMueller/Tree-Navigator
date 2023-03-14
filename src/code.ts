@@ -34,7 +34,6 @@ if (filterDefinitions) {
 if (settings) {
 	settings = JSON.parse(settings);
 }
-getTutorial();
 
 async function getTutorial() {
 	let tutorial;
@@ -50,11 +49,14 @@ async function getTutorial() {
 	});
 }
 
+getTutorial();
+
 figma.ui.postMessage({ type: 'loaded-plugin-settings', data: settings });
 figma.ui.postMessage({
 	type: 'loaded-plugin-recent-search-list',
 	data: recentSearchList,
 });
+
 figma.ui.postMessage({
 	type: 'loaded-plugin-filter-counts',
 	data: filterDefinitions,
@@ -66,6 +68,20 @@ function sendPluginmessage(params) {
 }
 
 figma.ui.onmessage = (msg) => {
+	// if (msg.type === 'get-data') {
+	// 	console.log('get-data received');
+
+	// 	setTimeout(() => {
+	// 		setInterval(() => {
+	// 			console.log('send: get-data-response');
+
+	// 			figma.ui.postMessage({
+	// 				type: 'get-data-response',
+	// 			});
+	// 		}, 1000);
+	// 	}, 1000);
+	// }
+
 	if (msg.type === 'get-tutorials') {
 		console.log('get-tutorials');
 		getTutorial();
