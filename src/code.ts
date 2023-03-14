@@ -35,7 +35,7 @@ if (settings) {
 	settings = JSON.parse(settings);
 }
 
-async function getTutorial() {
+async function getTutorials() {
 	let tutorial;
 	try {
 		tutorial = await figma.clientStorage.getAsync('tutorial');
@@ -49,7 +49,7 @@ async function getTutorial() {
 	});
 }
 
-getTutorial();
+getTutorials();
 
 figma.ui.postMessage({ type: 'loaded-plugin-settings', data: settings });
 figma.ui.postMessage({
@@ -84,14 +84,15 @@ figma.ui.onmessage = (msg) => {
 
 	if (msg.type === 'get-tutorials') {
 		console.log('get-tutorials');
-		getTutorial();
+		getTutorials();
 	}
 
 	if (msg.type === 'save-tutorials') {
-		console.log('save tutorial');
-		console.log(msg.data);
+		// console.log('save tutorial');
+		// console.log(msg.data);
 
 		figma.clientStorage.setAsync('tutorial', msg.data);
+		getTutorials();
 	}
 
 	if (msg.type === 'ui-loaded') {

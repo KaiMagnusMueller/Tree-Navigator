@@ -4,7 +4,8 @@
 	import { fade } from 'svelte/transition';
 	export let viewedTutorials = undefined;
 
-	let visibleTutorials = $tutorials.filter((elem) => {
+	let visibleTutorials;
+	$: visibleTutorials = $tutorials.filter((elem) => {
 		return !viewedTutorials.includes(elem.id);
 	});
 

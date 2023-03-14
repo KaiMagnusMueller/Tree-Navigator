@@ -65,7 +65,7 @@
 		if (event.data.pluginMessage.type == 'loaded-tutorial') {
 			tutorialLoaded = true;
 			if (event.data.pluginMessage.data) {
-				console.log('tutorial found... loading');
+				console.log('tutorial data received...   loading');
 				viewedTutorials = event.data.pluginMessage.data;
 			} else {
 				console.log('no tutorials viewed...');
@@ -74,7 +74,7 @@
 
 		if (event.data.pluginMessage.type == 'loaded-plugin-settings') {
 			if (event.data.pluginMessage.data) {
-				console.log('settings found... loading');
+				console.log('settings data received...   loading');
 				$settings = event.data.pluginMessage.data;
 			} else {
 				console.log('no settings... loading defaults');
@@ -93,7 +93,7 @@
 				return;
 			}
 
-			console.log('recent searches found... loading');
+			console.log('recent searches received... loading');
 
 			// Check if recent search object is empty (and would later cause errors in the recent search component)
 			event.data.pluginMessage.data.forEach((element) => {
