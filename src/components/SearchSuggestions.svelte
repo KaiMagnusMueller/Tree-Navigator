@@ -53,42 +53,37 @@
 	let selectedSameType = true;
 	// The first node of the selection, type and name are guarranteed to be the same across the selection when we do a search, since the suggestions are hidden if there are different types and names in the selection
 	let selectedNode = {};
-	setTimeout(() => {
-		onmessage = (event) => {
-			if (event.data.pluginMessage.type == 'selection-changed') {
-				if (!event.data.pluginMessage.interestingNodes) {
-					interestingNodes = null;
-					return;
-				}
-				selectedNodes = event.data.pluginMessage.data;
-				interestingNodes = event.data.pluginMessage.interestingNodes;
-
-				ancestorTree = interestingNodes.ancestorTree;
-				ancestorTree = ancestorTree;
-
-				selectedSameName = selectedNodes.every(
-					(elem) => elem.name === selectedNodes[0].name
-				);
-				selectedSameType = selectedNodes.every(
-					(elem) => elem.type === selectedNodes[0].type
-				);
-
-				selectedNode = {
-					name: selectedNodes[0].name,
-					type: selectedNodes[0].type,
-				};
-
-				treeDepth = getDepth(ancestorTree);
+	window.addEventListener('message', (event) => {
+		if (event.data.pluginMessage.type == 'selection-changed') {
+			if (!event.data.pluginMessage.interestingNodes) {
+				interestingNodes = null;
+				return;
 			}
-		};
-	}, 50);
-	// For some reason the message event is not registered without a slight delay
+			selectedNodes = event.data.pluginMessage.data;
+			interestingNodes = event.data.pluginMessage.interestingNodes;
+
+			ancestorTree = interestingNodes.ancestorTree;
+			ancestorTree = ancestorTree;
+
+			selectedSameName = selectedNodes.every((elem) => elem.name === selectedNodes[0].name);
+			selectedSameType = selectedNodes.every((elem) => elem.type === selectedNodes[0].type);
+
+			selectedNode = {
+				name: selectedNodes[0].name,
+				type: selectedNodes[0].type,
+			};
+
+			treeDepth = getDepth(ancestorTree);
+		}
+	});
 
 	let selectedNodes;
 	let interestingNodes;
 	// let ancestorNodes;
 	let treeDepth;
-	$: ancestorTree = [];
+
+	// $: ancestorTree = [];  --- changed because of https://github.com/sveltejs/svelte/issues/8374, maybe has some side effects, but seems to be working fine without
+	let ancestorTree = [];
 
 	function getDepth(array) {
 		return 1 + Math.max(0, ...array.map(({ childNodes = [] }) => getDepth(childNodes)));
