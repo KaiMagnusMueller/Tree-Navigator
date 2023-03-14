@@ -10,7 +10,7 @@
 		"@figma/plugin-typings": "^1.49.0",
 		"@rollup/plugin-commonjs": "^22.0.0",
 		"@rollup/plugin-image": "^2.1.1",
-		"@rollup/plugin-node-resolve": "^13.3.0",
+		"@rollup/plugin-node-resolve": "^15.0.1",
 		"caniuse-lite": "^1.0.30001355",
 		"cssnano": "^5.1.11",
 		"figma-plugin-ds-svelte": "github:KaiMagnusMueller/figma-plugin-ds-svelte-improved",
