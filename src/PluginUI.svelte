@@ -424,7 +424,7 @@
 				<!-- ------------------- -->
 				<!-- Display SEARCH RESULTS -->
 			{:else if $UIState.showSearchResults}
-				<div class="section--results">
+				<div class="section--results flex column flex-grow">
 					<ResultsList
 						{querySendTime}
 						on:resetSearch={navBack}

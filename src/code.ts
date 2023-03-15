@@ -83,6 +83,10 @@ figma.ui.onmessage = (msg) => {
 	// 	}, 1000);
 	// }
 
+	if (msg.type === 'post-message-toast') {
+		postMessageToast(msg.data);
+	}
+
 	if (msg.type === 'get-tutorials') {
 		console.log('get-tutorials');
 		getTutorials();
@@ -394,8 +398,12 @@ function handleSelectionChange() {
 // HELPERS
 // ############################################################
 
-function postMessageToast(text: string) {
-	figma.notify(text);
+function postMessageToast(text: string, duration: number) {
+	const wordCount = text.split(' ').length;
+
+	console.log(wordCount, wordCount / (160 / 60));
+
+	figma.notify(text, { timeout: duration ? duration : (wordCount / (160 / 60)) * 1000 });
 }
 
 function getAncestorNode(currentNode: BaseNode) {

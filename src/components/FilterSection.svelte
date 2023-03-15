@@ -88,6 +88,18 @@
 
 		$activeFilters[filterType] = selection;
 		initScrollPosition();
+
+		if ($activeFilters.string_match === 'FUZZY' && $activeFilters.case_sensitive === true) {
+			parent.postMessage(
+				{
+					pluginMessage: {
+						type: 'post-message-toast',
+						data: `To search with case sensitivity, select 'Match exact name' instead of 'Match fuzzy'.`,
+					},
+				},
+				'*'
+			);
+		}
 	}
 
 	let filterDefinitionsElem;

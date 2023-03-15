@@ -208,8 +208,6 @@
 			});
 		}
 
-		// TODO: Add message back to figma to select the found nodes
-
 		sendSelection(resultList, true);
 		return resultList;
 	}
@@ -306,6 +304,7 @@
 		letter-spacing: var(--font-letter-spacing-neg-small);
 		line-height: var(--font-line-height);
 		position: relative;
+		height: 100%;
 	}
 
 	.text--results-info {
