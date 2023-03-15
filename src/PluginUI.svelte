@@ -45,7 +45,7 @@
 
 	let querySendTime;
 
-	$: $searchQuery.query_text = searchString;
+	// $: $searchQuery.query_text = searchString;
 	$: $activeFilters.query_text = searchString;
 	$: $activeFilters.selected_node_ids = [];
 
@@ -165,6 +165,12 @@
 	});
 
 	function handleSubmitButton(event) {
+		// Object.keys($activeFilters).forEach((key) => {
+		// 	console.log(key);
+
+		// 	$searchQuery[key] = $activeFilters[key];
+		// });
+
 		$searchQuery = $activeFilters;
 		handleQuerySubmit(event);
 	}

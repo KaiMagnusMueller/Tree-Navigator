@@ -80,7 +80,7 @@
 
 <style>
 	.suggestion-item {
-		margin: 2px;
+		margin: 2px 0;
 		display: flex;
 		align-items: center;
 		border: 1px solid var(--figma-color-border);
@@ -116,6 +116,7 @@
 		flex-shrink: 0;
 		border: 1px solid var(--figma-color-border);
 		background: var(--figma-color-bg-secondary);
+		margin-right: 4px;
 	}
 
 	.vertical:hover {

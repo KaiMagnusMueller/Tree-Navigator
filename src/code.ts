@@ -18,7 +18,8 @@ figma.skipInvisibleInstanceChildren = true;
 let documentNode = figma.root;
 
 //reset plugindata
-// documentNode.setPluginData("recentSearchList", "[]")
+// documentNode.setPluginData('recentSearchList', '[]');
+
 let filterDefinitions = documentNode.getPluginData('filterDefinitions');
 let recentSearchList = documentNode.getPluginData('recentSearchList');
 let settings = documentNode.getPluginData('settings');
