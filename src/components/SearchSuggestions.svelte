@@ -96,8 +96,13 @@
 			<!-- <h4 class="heading">Suggested Search</h4> -->
 			{#if selectedSameName && selectedSameType}
 				<p>
-					Search for all {$filterDefinitions[0].getTypeName(selectedNode.type)} nodes called
-					<i>'{selectedNode.name}'</i> in:
+					<span>
+						Search for all {$filterDefinitions[0].getTypeName(selectedNode.type)} nodes called
+						<i
+							>'{selectedNode.name.length > 54
+								? selectedNode.name.substring(0, 54) + '…'
+								: selectedNode.name}'</i>
+					</span> in:
 				</p>
 			{:else}
 				<p>Select nodes of the same type and name to display the layer tree.</p>
