@@ -1,26 +1,34 @@
-# Find Nodes
+# Tree Navigator
 
-A plugin to filter and find nodes.
+Quickly select similar elements in parent and sibling frames. Stop <kbd>⌘</kbd>+<kbd>⇧</kbd>-clicking through your designs to select similar layers in your lists, tables or other repeating patterns.
 
 <img alt="Start screen of the Find Nodes plugin showing search bar, filter pills and recent search list" src="https://user-images.githubusercontent.com/24393597/186773303-0f1f2740-6faf-4862-9a40-12a3449bd4d8.jpg" height="400px">
 
 ## Features
 
+### Layer Tree
+
+-   Displays the layer hierarchy from the selected layer up to the current page
+-   Search for layers with the same name and type, scoped by the selected parent
+-   Select layers in different screens to bring up a sibling selector
+
 ### Search
 
--   Leave the search field empty to find all nodes
+-   Leave the search field empty to find all layers that fit the current filters
 -   Match exact: All with the search string as name
--   Match fuzzy (Default): results according to search library
+-   Match case sensitive: Return only layers with the search string as name (case sensitive)
+-   Match fuzzy (Default): Return layers with partial matches, different spellings or typos
 -   Match fuzzy with search string in quotes: equals "Match exact" option
 
 ### Additional Filters
 
--   Node type: Filter by node type to speed up the search in large files and return only the selected types.
+-   Layer type: Filter by layer type to speed up the search in large files and return only the selected types.
 -   Current selection: Search only the currently selected nodes
+-   Top level frame: scope the search to the topmost parent. Layers in other frames are excluded from the search
 
 ### Recent Searches
 
-Rerun previous searches
+Rerun previous searches with the same parameters.
 
 ---
 

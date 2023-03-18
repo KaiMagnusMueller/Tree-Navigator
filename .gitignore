@@ -5,3 +5,4 @@ public/code.js
 src/build
 .DS_Store
 .vscode
+*.zip
