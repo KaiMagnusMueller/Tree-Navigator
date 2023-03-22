@@ -19,13 +19,48 @@ let documentNode = figma.root;
 
 //reset plugindata
 // documentNode.setPluginData('recentSearchList', '[]');
+// const dummyRecents = [
+// 	{
+// 		node_types: [],
+// 		area_type: '',
+// 		case_sensitive: false,
+// 		string_match: '',
+// 		query_text: '',
+// 		query_submit_time: 12345,
+// 	},
+// 	{},
+// 	{
+// 		case_sensitive: false,
+// 		string_match: '',
+// 		query_text: '',
+// 		query_submit_time: 12345,
+// 	},
+// ];
+
+// documentNode.setPluginData('recentSearchList', JSON.stringify(dummyRecents));
 
 let filterDefinitions = documentNode.getPluginData('filterDefinitions');
-let recentSearchList = documentNode.getPluginData('recentSearchList');
+let _recentSearchList = documentNode.getPluginData('recentSearchList');
 let settings = documentNode.getPluginData('settings');
 
-if (recentSearchList) {
-	recentSearchList = JSON.parse(recentSearchList);
+let recentSearchList = [];
+if (_recentSearchList) {
+	let parsedList = JSON.parse(_recentSearchList);
+
+	let errorHappened = false;
+	parsedList.forEach((element) => {
+		if (!validRecentSearchItem(element)) {
+			console.warn('Discarding invalid recent search object');
+			errorHappened = true;
+			return;
+		}
+		recentSearchList.push(element);
+	});
+
+	// If there was an error, reset recent searches with fixed array
+	errorHappened
+		? documentNode.setPluginData('recentSearchList', JSON.stringify(recentSearchList))
+		: null;
 }
 
 if (filterDefinitions) {
@@ -398,7 +433,7 @@ function handleSelectionChange() {
 // HELPERS
 // ############################################################
 
-function postMessageToast(text: string, duration: number) {
+function postMessageToast(text: string, duration: number = 3) {
 	const wordCount = text.split(' ').length;
 
 	console.log(wordCount, wordCount / (160 / 60));
@@ -449,4 +484,37 @@ function uniqObjInArr(array: Array<{}>, prop: string) {
 	}
 
 	return uniq;
+}
+
+function validRecentSearchItem(element) {
+	let vaildObject = true;
+	// Check if the element is not empty
+	if (Object.keys(element).length === 0) {
+		vaildObject = false;
+		console.warn('Empty recent search object');
+		return;
+	}
+
+	const templateRecentSearch = {
+		node_types: [],
+		area_type: '',
+		case_sensitive: false,
+		string_match: '',
+		query_text: '',
+		query_submit_time: 12345,
+	};
+
+	const currentObjKeys = Object.keys(element);
+	const templateObjKeys = Object.keys(templateRecentSearch);
+
+	// Check if all required keys are in the element
+	templateObjKeys.forEach((key) => {
+		let isInArray = currentObjKeys.includes(key);
+
+		if (!isInArray) {
+			vaildObject = false;
+		}
+	});
+
+	return vaildObject;
 }

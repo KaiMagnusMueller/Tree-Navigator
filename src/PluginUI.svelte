@@ -92,21 +92,8 @@
 				_recentSearches = [];
 				return;
 			}
-
 			console.log('recent searches received... loading');
-
-			// Check if recent search object is empty (and would later cause errors in the recent search component)
-			event.data.pluginMessage.data.forEach((element) => {
-				if (Object.keys(element).length === 0) {
-					console.warn('Empty recent search object discarded');
-					return;
-				}
-				recentsArray.push(element);
-			});
-
-			_recentSearches = recentsArray;
-
-			// console.log(_recentSearches);
+			_recentSearches = messageData;
 		}
 
 		if (event.data.pluginMessage.type == 'loaded-plugin-filter-counts') {
