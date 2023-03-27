@@ -109,6 +109,7 @@
 	.recent-search-list {
 		gap: 2px;
 		height: 100%;
+		position: relative;
 	}
 
 	.empty-state-container {
