@@ -1,4 +1,6 @@
 <script>
+	import FullscreenModal from './components/FullscreenModal.svelte';
+
 	import { onMount } from 'svelte/internal';
 
 	//import Global CSS from the svelte boilerplate
@@ -23,7 +25,6 @@
 		IconBack,
 		IconForward,
 		Section,
-		Switch,
 	} from 'figma-plugin-ds-svelte';
 
 	import InputFlexible from './components/InputFlexible';
@@ -424,49 +425,29 @@
 	<!-- ------------------- -->
 	<!-- Display SETTINGS SCREEN -->
 	{#if $UIState.showSettingsMenu}
-		<div class="menu--settings flex column">
-			<div class="settings--header flex p-xxxsmall">
-				<IconButton
-					on:click={() => {
-						$UIState.showSettingsMenu = false;
-					}}
-					iconName={IconBack} />
-				<Section class="">Settings</Section>
+		<FullscreenModal title="Settings" on:click={() => ($UIState.showSettingsMenu = false)}>
+			<div class="settings--section pb-xxsmall">
+				<Section class="">Recent Searches</Section>
+				<Button variant="secondary" destructive on:click={deleteRecentSearches}
+					>Delete Recent Searches</Button>
 			</div>
-			<div class="settings--content pt-xxsmall pr-xxsmall pl-xxsmall">
-				<div class="settings--section pb-xxsmall">
-					<Section class="">Recent Searches</Section>
-					<Button variant="secondary" destructive on:click={deleteRecentSearches}
-						>Delete Recent Searches</Button>
-				</div>
-				<div class="settings--section pb-xxsmall">
-					<Section class="settings--input">Tutorials</Section>
+			<div class="settings--section pb-xxsmall">
+				<Section class="settings--input">Tutorials</Section>
 
-					<Button variant="secondary" destructive on:click={resetTutorials}
-						>Reset Tutorials</Button>
-				</div>
+				<Button variant="secondary" destructive on:click={resetTutorials}
+					>Reset Tutorials</Button>
 			</div>
-		</div>
+		</FullscreenModal>
 	{/if}
 
 	<!-- ------------------- -->
 	<!-- Display ABOUT SCREEN -->
 	{#if $UIState.showAboutScreen}
-		<div class="menu--settings flex column">
-			<div class="settings--header flex p-xxxsmall">
-				<IconButton
-					on:click={() => {
-						$UIState.showAboutScreen = false;
-					}}
-					iconName={IconBack} />
-				<Section class="">About</Section>
+		<FullscreenModal title="About" on:click={() => ($UIState.showAboutScreen = false)}>
+			<div class="markdown pb-medium">
+				<About />
 			</div>
-			<div class="settings--content markdown pt-xxsmall pr-xxsmall pl-xxsmall">
-				<div class="pb-medium">
-					<About />
-				</div>
-			</div>
-		</div>
+		</FullscreenModal>
 	{/if}
 </div>
 
@@ -511,26 +492,6 @@
 		flex-grow: 1;
 		display: flex;
 		flex-direction: column;
-	}
-
-	/* ------------------------- */
-	/* FULLSCREEN VIEWS */
-	.menu--settings {
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		top: 0;
-		left: 0;
-		z-index: 1;
-		background-color: var(--figma-color-bg);
-	}
-
-	.settings--header {
-		border-bottom: 1px solid var(--figma-color-border);
-	}
-
-	.settings--content {
-		overflow: auto;
 	}
 
 	/* ------------------------- */
