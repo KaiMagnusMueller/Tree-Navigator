@@ -440,12 +440,8 @@
 						>Delete Recent Searches</Button>
 				</div>
 				<div class="settings--section pb-xxsmall">
-					<Section class="settings--input">Filters</Section>
-					<Switch
-						bind:checked={$settings.rememberNodeFilterCounts}
-						on:change={toggleFilterReordering}>Sort Filters by Usage</Switch>
-					<Button variant="secondary" destructive on:click={resetNodeTypeFilterCounts}
-						>Reset Filter Order</Button>
+					<Section class="settings--input">Tutorials</Section>
+
 					<Button variant="secondary" destructive on:click={resetTutorials}
 						>Reset Tutorials</Button>
 				</div>

@@ -1,40 +1,7 @@
 <script>
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import { filterDefinitions } from '../stores';
 	import SuggestionItem from './SuggestionItem.svelte';
-
-	// const searchSuggestions = [
-	// 	{
-	// 		type: 'ROOT_FRAME',
-	// 		search: {
-	// 			area_type: 'ROOT_FRAME',
-	// 			case_sensitive: true,
-	// 			node_types: [selectedNodes[0].type],
-	// 			string_match: 'FUZZY',
-	// 			query_text: selectedNodes[0].name,
-	// 		},
-	// 		suggestionLabel: `Search for all ${$filterDefinitions[0].getTypeName(
-	// 			selectedNodes[0].type
-	// 		)} nodes called ${selectedNodes[0].name} in top level ${
-	// 			ancestorNodes.length > 1 ? 'frames' : 'frame'
-	// 		}.`,
-	// 	},
-	// 	{
-	// 		type: 'ROOT_SECTION',
-	// 		search: {
-	// 			area_type: 'ROOT_SECTION',
-	// 			case_sensitive: true,
-	// 			node_types: [selectedNodes[0].type],
-	// 			string_match: 'FUZZY',
-	// 			query_text: selectedNodes[0].name,
-	// 		},
-	// 		suggestionLabel: `Search for all ${$filterDefinitions[0].getTypeName(
-	// 			selectedNodes[0].type
-	// 		)} nodes called ${selectedNodes[0].name} in top level ${
-	// 			ancestorNodes.length > 1 ? 'sections' : 'section'
-	// 		}.`,
-	// 	},
-	// ];
 
 	onMount(() => {
 		setTimeout(() => {
@@ -93,7 +60,6 @@
 {#if interestingNodes}
 	<div class="search-suggestions flex column">
 		<div>
-			<!-- <h4 class="heading">Suggested Search</h4> -->
 			{#if selectedSameName && selectedSameType}
 				<p>
 					<span>
@@ -117,23 +83,12 @@
 						{selectedNode}
 						smallTree={treeDepth >= 8} />
 				{/each}
-
-				<!-- <div class="suggestion-item flex align-items-center pr-xxsmall">
-					<Icon iconName={ArrowUpLeftCurved} />
-					<div on:click={handleClick}>
-						Search for all {$filterDefinitions[0].getTypeName(selectedNodes[0].type)} nodes
-						called '{selectedNodes[0].name}' in top level {ancestorNodes.length > 1
-							? 'frames'
-							: 'frame'}.
-					</div>
-				</div> -->
 			</div>
 		{/if}
 	</div>
 {:else}
 	<div class="search-suggestions flex column">
 		<div>
-			<!-- <h4 class="heading">Layer Tree</h4> -->
 			<p>Select a layer, or multiple of the same type and name, to display the layer tree.</p>
 		</div>
 	</div>
@@ -152,12 +107,6 @@
 		user-select: none;
 	}
 
-	/* .search-suggestions h4 {
-		color: var(--figma-color-text);
-		margin: 0;
-		font-size: var(--font-size-small);
-		font-weight: var(--font-weight-normal);
-	} */
 	.search-suggestions p {
 		margin: 6px 0 0 0;
 		font-size: var(--font-size-small);
