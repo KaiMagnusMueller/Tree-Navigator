@@ -42,11 +42,8 @@
 		<p>
 			{#each node_types as type}
 				{type}
-			{:else}
-				All Types
 			{/each} · {$filterDefinitions[1].getTypeName(search.area_type)}
 		</p>
-		<!-- TODO: Remove all types else, not needed since it is now part of the filters -->
 	</div>
 	<div class="search-button">
 		<IconButton iconName={IconClose} on:click={handleRemove} />

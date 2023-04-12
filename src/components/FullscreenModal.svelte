@@ -1,6 +1,4 @@
 <script>
-	import { UIState } from '../stores';
-
 	//import some Svelte Figma UI components
 	import { IconButton, IconBack, Section } from 'figma-plugin-ds-svelte';
 
