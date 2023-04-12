@@ -14,7 +14,7 @@
 		settings,
 		defaultSettings,
 	} from './stores';
-	import { saveRecentSearches, saveSettings } from './lib/helper-functions';
+	import { saveRecentSearches } from './lib/helper-functions';
 
 	//import some Svelte Figma UI components
 	import {
@@ -59,10 +59,6 @@
 	let tutorialLoaded = false;
 
 	window.addEventListener('message', (event) => {
-		if (event.data.pluginMessage.type == 'get-data-response') {
-			console.log('received get-data-response');
-		}
-
 		if (event.data.pluginMessage.type == 'loaded-tutorial') {
 			tutorialLoaded = true;
 			if (event.data.pluginMessage.data) {
@@ -85,7 +81,6 @@
 		}
 
 		if (event.data.pluginMessage.type == 'loaded-plugin-recent-search-list') {
-			let recentsArray = [];
 			const messageData = event.data.pluginMessage.data;
 
 			if (!messageData) {
@@ -96,59 +91,9 @@
 			console.log('recent searches received... loading');
 			_recentSearches = messageData;
 		}
-
-		if (event.data.pluginMessage.type == 'loaded-plugin-filter-counts') {
-			// filterList = $filterDefinitions;
-			// // TODO: build active filters from default filters here
-			// let _activeFilters = new Object();
-			// filterList.forEach((filter) => {
-			// 	const filterType = filter.filterData.filterType;
-			// 	const filterOptions = filter.filterOptions;
-			// 	let defaultOption = filterOptions.find((elem) => elem.default === true);
-			// 	if (filter.filterData.multiSelect === true) {
-			// 		$activeFilters[filterType] = [defaultOption.value];
-			// 	} else {
-			// 		$activeFilters[filterType] = defaultOption.value;
-			// 	}
-			// });
-			// console.log($activeFilters);
-			// if (event.data.pluginMessage.data.length == 0) {
-			// 	console.log('no filters used previously');
-			// 	return;
-			// }
-			// //update node type filter with counts
-			// // Sort by filter counts if rememberNodeFilterCounts is on
-			// if (
-			// 	$settings.rememberNodeFilterCounts &&
-			// 	filterList[0].filterData.filterType === 'node_type'
-			// ) {
-			// 	const index = filterList.findIndex((elem) => elem.filterType == 'node_type');
-			// 	console.log(index);
-			// 	filterList.forEach((filter) => {
-			// 		let loadedFilter = event.data.pluginMessage.data.find(
-			// 			(elem) => elem.node_type === filter.node_type
-			// 		);
-			// 		filter.count = loadedFilter.count;
-			// 	});
-			// 	// filterList.sort((a, b) => {
-			// 	// 	return b.count - a.count;
-			// 	// });
-			// 	// console.log('update node filter list');
-			// 	// console.log(filterList);
-			// }
-		}
 	});
 
 	onMount(() => {
-		// parent.postMessage(
-		// 	{
-		// 		pluginMessage: {
-		// 			type: 'get-data',
-		// 		},
-		// 	},
-		// 	'*'
-		// );
-
 		buildSearchQuery();
 	});
 
@@ -190,10 +135,6 @@
 			//prevent the postMessage function from locking up the main plugin by delaying it a few milliseconds
 		}, 50);
 
-		// console.log(queryToSend);
-
-		// updateNodeTypeFilterCounts($searchQuery.node_types);
-
 		//only add to recentlist if the item is not already on the list
 		if (addToRecents == true) {
 			// for some reason we have to clone the $searchQuery object, otherwise if we would do this:
@@ -216,7 +157,6 @@
 			_recentSearches = _recentSearches.slice(0, $settings.recentSearchLength);
 
 			saveRecentSearches(_recentSearches);
-			// saveFilterRanking($filterDefinitions);
 		} else {
 		}
 	}
@@ -271,31 +211,6 @@
 
 	function cancel() {
 		parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*');
-	}
-
-	function updateNodeTypeFilterCounts(types) {
-		types.forEach((type) => {
-			let index = $filterDefinitions.findIndex((elem) => elem.node_type == type);
-
-			if (index >= 0) {
-				console.log('Update at ' + index);
-				$filterDefinitions[index].count++;
-			}
-		});
-
-		// TODO: sort filterDefinitions by count value (possibly in filter component)
-	}
-
-	function resetNodeTypeFilterCounts() {
-		$filterDefinitions.forEach((elem) => {
-			elem.count = 0;
-		});
-		// saveFilterRanking($filterDefinitions);
-	}
-
-	function toggleFilterReordering() {
-		// resetNodeTypeFilterCounts();
-		saveSettings($settings);
 	}
 
 	function resetTutorials() {

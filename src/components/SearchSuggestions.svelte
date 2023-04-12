@@ -1,20 +1,15 @@
 <script>
-	import { onMount } from 'svelte';
 	import { filterDefinitions } from '../stores';
 	import SuggestionItem from './SuggestionItem.svelte';
 
-	onMount(() => {
-		setTimeout(() => {
-			parent.postMessage(
-				{
-					pluginMessage: {
-						type: 'ui-loaded',
-					},
-				},
-				'*'
-			);
-		}, 50);
-	});
+	parent.postMessage(
+		{
+			pluginMessage: {
+				type: 'ui-loaded',
+			},
+		},
+		'*'
+	);
 
 	let selectedSameName = true;
 	let selectedSameType = true;
