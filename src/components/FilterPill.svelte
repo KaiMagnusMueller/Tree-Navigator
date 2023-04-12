@@ -2,7 +2,6 @@
 	import { GlobalCSS, Icon } from 'figma-plugin-ds-svelte';
 	import { createEventDispatcher } from 'svelte';
 
-	import IconFlexible from './IconFlexible';
 	import DropdownMenu from './DropdownMenu';
 
 	export let variant = 'primary';
@@ -77,7 +76,7 @@
 		tabindex="0"
 		bind:this={pillElem}>
 		{#if iconName}
-			<IconFlexible iconName={SVGComponent} {iconText} {size} color="transparent" />
+			<Icon iconName={SVGComponent} {iconText} {size} color="transparent" />
 		{/if}
 
 		<slot>{value?.label}</slot>
