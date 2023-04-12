@@ -19,13 +19,48 @@ let documentNode = figma.root;
 
 //reset plugindata
 // documentNode.setPluginData('recentSearchList', '[]');
+// const dummyRecents = [
+// 	{
+// 		node_types: [],
+// 		area_type: '',
+// 		case_sensitive: false,
+// 		string_match: '',
+// 		query_text: '',
+// 		query_submit_time: 12345,
+// 	},
+// 	{},
+// 	{
+// 		case_sensitive: false,
+// 		string_match: '',
+// 		query_text: '',
+// 		query_submit_time: 12345,
+// 	},
+// ];
+
+// documentNode.setPluginData('recentSearchList', JSON.stringify(dummyRecents));
 
 let filterDefinitions = documentNode.getPluginData('filterDefinitions');
-let recentSearchList = documentNode.getPluginData('recentSearchList');
+let _recentSearchList = documentNode.getPluginData('recentSearchList');
 let settings = documentNode.getPluginData('settings');
 
-if (recentSearchList) {
-	recentSearchList = JSON.parse(recentSearchList);
+let recentSearchList = [];
+if (_recentSearchList) {
+	let parsedList = JSON.parse(_recentSearchList);
+
+	let errorHappened = false;
+	parsedList.forEach((element) => {
+		if (!validRecentSearchItem(element)) {
+			console.warn('Discarding invalid recent search object');
+			errorHappened = true;
+			return;
+		}
+		recentSearchList.push(element);
+	});
+
+	// If there was an error, reset recent searches with fixed array
+	errorHappened
+		? documentNode.setPluginData('recentSearchList', JSON.stringify(recentSearchList))
+		: null;
 }
 
 if (filterDefinitions) {
@@ -58,31 +93,12 @@ figma.ui.postMessage({
 	data: recentSearchList,
 });
 
-figma.ui.postMessage({
-	type: 'loaded-plugin-filter-counts',
-	data: filterDefinitions,
-});
-
 function sendPluginmessage(params) {
 	figma.ui.postMessage({ type: 'plugin', data: params });
 	console.log('message sent to plugin');
 }
 
 figma.ui.onmessage = (msg) => {
-	// if (msg.type === 'get-data') {
-	// 	console.log('get-data received');
-
-	// 	setTimeout(() => {
-	// 		setInterval(() => {
-	// 			console.log('send: get-data-response');
-
-	// 			figma.ui.postMessage({
-	// 				type: 'get-data-response',
-	// 			});
-	// 		}, 1000);
-	// 	}, 1000);
-	// }
-
 	if (msg.type === 'post-message-toast') {
 		postMessageToast(msg.data);
 	}
@@ -93,40 +109,12 @@ figma.ui.onmessage = (msg) => {
 	}
 
 	if (msg.type === 'save-tutorials') {
-		// console.log('save tutorial');
-		// console.log(msg.data);
-
 		figma.clientStorage.setAsync('tutorial', msg.data);
 		getTutorials();
 	}
 
 	if (msg.type === 'ui-loaded') {
 		handleSelectionChange();
-	}
-	// One way of distinguishing between different types of messages sent from
-	// your HTML page is to use an object with a "type" property like this.
-	if (msg.type === 'create-shapes') {
-		const nodes: SceneNode[] = [];
-
-		for (let i = 0; i < msg.count; i++) {
-			var shape;
-
-			if (msg.shape === 'rectangle') {
-				shape = figma.createRectangle();
-			} else if (msg.shape === 'triangle') {
-				shape = figma.createPolygon();
-			} else {
-				shape = figma.createEllipse();
-			}
-
-			shape.x = i * 150;
-			shape.fills = [{ type: 'SOLID', color: { r: 1, g: 0.5, b: 0 } }];
-			figma.currentPage.appendChild(shape);
-			nodes.push(shape);
-		}
-
-		figma.currentPage.selection = nodes;
-		figma.viewport.scrollAndZoomIntoView(nodes);
 	}
 
 	if (msg.type === 'search-layers') {
@@ -243,10 +231,6 @@ figma.ui.onmessage = (msg) => {
 		sendResultsList(nodesToSend);
 	}
 
-	// Make sure to close the plugin when you're done. Otherwise the plugin will
-	// keep running, which shows the cancel button at the bottom of the screen.
-	// figma.closePlugin();
-
 	if (msg.type === 'select-layers') {
 		let nodesToSelect = [];
 		msg.parameters.nodes.forEach((element) => {
@@ -276,17 +260,6 @@ figma.ui.onmessage = (msg) => {
 
 		const string = JSON.stringify(msg.parameters);
 		documentNode.setPluginData('recentSearchList', string);
-	}
-
-	if (msg.type === 'update-filter-ranking') {
-		if (msg.parameters.constructor !== Array) {
-			console.error('Wrong data type' + msg.parameters.constructor);
-			console.log(msg.parameters);
-			return;
-		}
-
-		const string = JSON.stringify(msg.parameters);
-		documentNode.setPluginData('filterDefinitions', string);
 	}
 
 	if (msg.type === 'focus-selection') {
@@ -398,7 +371,7 @@ function handleSelectionChange() {
 // HELPERS
 // ############################################################
 
-function postMessageToast(text: string, duration: number) {
+function postMessageToast(text: string, duration: number = 3) {
 	const wordCount = text.split(' ').length;
 
 	console.log(wordCount, wordCount / (160 / 60));
@@ -449,4 +422,37 @@ function uniqObjInArr(array: Array<{}>, prop: string) {
 	}
 
 	return uniq;
+}
+
+function validRecentSearchItem(element) {
+	let vaildObject = true;
+	// Check if the element is not empty
+	if (Object.keys(element).length === 0) {
+		vaildObject = false;
+		console.warn('Empty recent search object');
+		return;
+	}
+
+	const templateRecentSearch = {
+		node_types: [],
+		area_type: '',
+		case_sensitive: false,
+		string_match: '',
+		query_text: '',
+		query_submit_time: 12345,
+	};
+
+	const currentObjKeys = Object.keys(element);
+	const templateObjKeys = Object.keys(templateRecentSearch);
+
+	// Check if all required keys are in the element
+	templateObjKeys.forEach((key) => {
+		let isInArray = currentObjKeys.includes(key);
+
+		if (!isInArray) {
+			vaildObject = false;
+		}
+	});
+
+	return vaildObject;
 }

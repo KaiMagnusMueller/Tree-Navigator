@@ -1,18 +1,14 @@
 <script>
 	import { afterUpdate, onMount, createEventDispatcher } from 'svelte';
 
-	import { activeFilters, searchQuery, settings } from '../stores';
+	import { activeFilters, searchQuery } from '../stores';
 	import FilterPill from './FilterPill.svelte';
-	import FilterScrollButton from './FilterScrollButton.svelte';
-	import { Checkbox } from 'figma-plugin-ds-svelte';
 
 	export { className as class };
 	let className = '';
 
 	let filterListArray = [];
 	export { filterListArray as filterList };
-
-	// $: console.log($activeFilters);
 
 	let filterArray = [];
 
@@ -21,23 +17,12 @@
 	function sortAndBuildFilter(array) {
 		let _filterArray;
 		array.forEach((el) => {
-			const filterType = el.filterType;
 			const filters = el.filterOptions;
 
 			let stickyTypes = filters.filter((elem) => elem.sticky == true);
 			let regularTypes = filters.filter(
 				(elem) => elem.sticky === false || elem.sticky === undefined
 			);
-
-			// Sort by filter counts if rememberNodeFilterCounts is on
-			if ($settings.rememberNodeFilterCounts && filterType === 'node_type') {
-				stickyTypes.sort((a, b) => {
-					return b.count - a.count;
-				});
-				regularTypes.sort((a, b) => {
-					return b.count - a.count;
-				});
-			}
 
 			let _filterOptions = stickyTypes.concat(regularTypes);
 
@@ -193,7 +178,6 @@
 		// console.log('update selected');
 		filterArray.forEach((filter) => {
 			const filterType = filter.filterData.filterType;
-			const options = filter.filterOptions;
 
 			filter.filterOptions.forEach((option) => {
 				option.selected = false;
@@ -212,26 +196,12 @@
 				}
 			});
 		});
-
-		// console.log('-------------');
-		// console.log(filterListArray);
-		// filterArray = sortAndBuildFilter(filterListArray);
-		// console.log(_externalSearchQuery);
-		// console.log(filterArray);
 	}
 </script>
 
 <svelte:window on:resize={initScrollPosition} />
 <div class="filter-wrapper">
 	<div class="scroll-wrapper {className}">
-		<!-- {#if scrollPos != scrollMinMax[0]}
-        <FilterScrollButton
-            on:scrollButton={() => handleManualScroll(-180)}
-            left
-            class="button--left">←</FilterScrollButton
-        >
-    {/if} -->
-
 		<div
 			id="filterDefinitions"
 			bind:this={filterDefinitionsElem}
@@ -246,13 +216,6 @@
 					bind:currentQuery={_externalSearchQuery} />
 			{/each}
 		</div>
-		<!-- {#if scrollPos != scrollMinMax[1]}
-        <FilterScrollButton
-            on:scrollButton={() => handleManualScroll(180)}
-            right
-            class="button--right">→</FilterScrollButton
-        >
-    {/if} -->
 	</div>
 </div>
 

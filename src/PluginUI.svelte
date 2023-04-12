@@ -1,4 +1,6 @@
 <script>
+	import FullscreenModal from './components/FullscreenModal.svelte';
+
 	import { onMount } from 'svelte/internal';
 
 	//import Global CSS from the svelte boilerplate
@@ -12,7 +14,7 @@
 		settings,
 		defaultSettings,
 	} from './stores';
-	import { saveRecentSearches, saveSettings } from './lib/helper-functions';
+	import { saveRecentSearches } from './lib/helper-functions';
 
 	//import some Svelte Figma UI components
 	import {
@@ -23,7 +25,6 @@
 		IconBack,
 		IconForward,
 		Section,
-		Switch,
 	} from 'figma-plugin-ds-svelte';
 
 	import InputFlexible from './components/InputFlexible';
@@ -58,10 +59,6 @@
 	let tutorialLoaded = false;
 
 	window.addEventListener('message', (event) => {
-		if (event.data.pluginMessage.type == 'get-data-response') {
-			console.log('received get-data-response');
-		}
-
 		if (event.data.pluginMessage.type == 'loaded-tutorial') {
 			tutorialLoaded = true;
 			if (event.data.pluginMessage.data) {
@@ -84,7 +81,6 @@
 		}
 
 		if (event.data.pluginMessage.type == 'loaded-plugin-recent-search-list') {
-			let recentsArray = [];
 			const messageData = event.data.pluginMessage.data;
 
 			if (!messageData) {
@@ -92,75 +88,12 @@
 				_recentSearches = [];
 				return;
 			}
-
 			console.log('recent searches received... loading');
-
-			// Check if recent search object is empty (and would later cause errors in the recent search component)
-			event.data.pluginMessage.data.forEach((element) => {
-				if (Object.keys(element).length === 0) {
-					console.warn('Empty recent search object discarded');
-					return;
-				}
-				recentsArray.push(element);
-			});
-
-			_recentSearches = recentsArray;
-
-			// console.log(_recentSearches);
-		}
-
-		if (event.data.pluginMessage.type == 'loaded-plugin-filter-counts') {
-			// filterList = $filterDefinitions;
-			// // TODO: build active filters from default filters here
-			// let _activeFilters = new Object();
-			// filterList.forEach((filter) => {
-			// 	const filterType = filter.filterData.filterType;
-			// 	const filterOptions = filter.filterOptions;
-			// 	let defaultOption = filterOptions.find((elem) => elem.default === true);
-			// 	if (filter.filterData.multiSelect === true) {
-			// 		$activeFilters[filterType] = [defaultOption.value];
-			// 	} else {
-			// 		$activeFilters[filterType] = defaultOption.value;
-			// 	}
-			// });
-			// console.log($activeFilters);
-			// if (event.data.pluginMessage.data.length == 0) {
-			// 	console.log('no filters used previously');
-			// 	return;
-			// }
-			// //update node type filter with counts
-			// // Sort by filter counts if rememberNodeFilterCounts is on
-			// if (
-			// 	$settings.rememberNodeFilterCounts &&
-			// 	filterList[0].filterData.filterType === 'node_type'
-			// ) {
-			// 	const index = filterList.findIndex((elem) => elem.filterType == 'node_type');
-			// 	console.log(index);
-			// 	filterList.forEach((filter) => {
-			// 		let loadedFilter = event.data.pluginMessage.data.find(
-			// 			(elem) => elem.node_type === filter.node_type
-			// 		);
-			// 		filter.count = loadedFilter.count;
-			// 	});
-			// 	// filterList.sort((a, b) => {
-			// 	// 	return b.count - a.count;
-			// 	// });
-			// 	// console.log('update node filter list');
-			// 	// console.log(filterList);
-			// }
+			_recentSearches = messageData;
 		}
 	});
 
 	onMount(() => {
-		// parent.postMessage(
-		// 	{
-		// 		pluginMessage: {
-		// 			type: 'get-data',
-		// 		},
-		// 	},
-		// 	'*'
-		// );
-
 		buildSearchQuery();
 	});
 
@@ -202,10 +135,6 @@
 			//prevent the postMessage function from locking up the main plugin by delaying it a few milliseconds
 		}, 50);
 
-		// console.log(queryToSend);
-
-		// updateNodeTypeFilterCounts($searchQuery.node_types);
-
 		//only add to recentlist if the item is not already on the list
 		if (addToRecents == true) {
 			// for some reason we have to clone the $searchQuery object, otherwise if we would do this:
@@ -228,7 +157,6 @@
 			_recentSearches = _recentSearches.slice(0, $settings.recentSearchLength);
 
 			saveRecentSearches(_recentSearches);
-			// saveFilterRanking($filterDefinitions);
 		} else {
 		}
 	}
@@ -283,31 +211,6 @@
 
 	function cancel() {
 		parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*');
-	}
-
-	function updateNodeTypeFilterCounts(types) {
-		types.forEach((type) => {
-			let index = $filterDefinitions.findIndex((elem) => elem.node_type == type);
-
-			if (index >= 0) {
-				console.log('Update at ' + index);
-				$filterDefinitions[index].count++;
-			}
-		});
-
-		// TODO: sort filterDefinitions by count value (possibly in filter component)
-	}
-
-	function resetNodeTypeFilterCounts() {
-		$filterDefinitions.forEach((elem) => {
-			elem.count = 0;
-		});
-		// saveFilterRanking($filterDefinitions);
-	}
-
-	function toggleFilterReordering() {
-		// resetNodeTypeFilterCounts();
-		saveSettings($settings);
 	}
 
 	function resetTutorials() {
@@ -437,53 +340,29 @@
 	<!-- ------------------- -->
 	<!-- Display SETTINGS SCREEN -->
 	{#if $UIState.showSettingsMenu}
-		<div class="menu--settings flex column">
-			<div class="settings--header flex p-xxxsmall">
-				<IconButton
-					on:click={() => {
-						$UIState.showSettingsMenu = false;
-					}}
-					iconName={IconBack} />
-				<Section class="">Settings</Section>
+		<FullscreenModal title="Settings" on:click={() => ($UIState.showSettingsMenu = false)}>
+			<div class="settings--section pb-xxsmall">
+				<Section class="">Recent Searches</Section>
+				<Button variant="secondary" destructive on:click={deleteRecentSearches}
+					>Delete Recent Searches</Button>
 			</div>
-			<div class="settings--content pt-xxsmall pr-xxsmall pl-xxsmall">
-				<div class="settings--section pb-xxsmall">
-					<Section class="">Recent Searches</Section>
-					<Button variant="secondary" destructive on:click={deleteRecentSearches}
-						>Delete Recent Searches</Button>
-				</div>
-				<div class="settings--section pb-xxsmall">
-					<Section class="settings--input">Filters</Section>
-					<Switch
-						bind:checked={$settings.rememberNodeFilterCounts}
-						on:change={toggleFilterReordering}>Sort Filters by Usage</Switch>
-					<Button variant="secondary" destructive on:click={resetNodeTypeFilterCounts}
-						>Reset Filter Order</Button>
-					<Button variant="secondary" destructive on:click={resetTutorials}
-						>Reset Tutorials</Button>
-				</div>
+			<div class="settings--section pb-xxsmall">
+				<Section class="settings--input">Tutorials</Section>
+
+				<Button variant="secondary" destructive on:click={resetTutorials}
+					>Reset Tutorials</Button>
 			</div>
-		</div>
+		</FullscreenModal>
 	{/if}
 
 	<!-- ------------------- -->
 	<!-- Display ABOUT SCREEN -->
 	{#if $UIState.showAboutScreen}
-		<div class="menu--settings flex column">
-			<div class="settings--header flex p-xxxsmall">
-				<IconButton
-					on:click={() => {
-						$UIState.showAboutScreen = false;
-					}}
-					iconName={IconBack} />
-				<Section class="">About</Section>
+		<FullscreenModal title="About" on:click={() => ($UIState.showAboutScreen = false)}>
+			<div class="markdown pb-medium">
+				<About />
 			</div>
-			<div class="settings--content markdown pt-xxsmall pr-xxsmall pl-xxsmall">
-				<div class="pb-medium">
-					<About />
-				</div>
-			</div>
-		</div>
+		</FullscreenModal>
 	{/if}
 </div>
 
@@ -528,26 +407,6 @@
 		flex-grow: 1;
 		display: flex;
 		flex-direction: column;
-	}
-
-	/* ------------------------- */
-	/* FULLSCREEN VIEWS */
-	.menu--settings {
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		top: 0;
-		left: 0;
-		z-index: 1;
-		background-color: var(--figma-color-bg);
-	}
-
-	.settings--header {
-		border-bottom: 1px solid var(--figma-color-border);
-	}
-
-	.settings--content {
-		overflow: auto;
 	}
 
 	/* ------------------------- */

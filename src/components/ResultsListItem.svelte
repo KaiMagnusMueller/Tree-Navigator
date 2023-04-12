@@ -1,8 +1,7 @@
 <script>
 	import { createEventDispatcher } from 'svelte';
 
-	import IconFlexible from './IconFlexible';
-	import { IconButton, IconResizeToFit } from 'figma-plugin-ds-svelte';
+	import { IconButton, IconResizeToFit, Icon } from 'figma-plugin-ds-svelte';
 
 	// Component Icons
 	import AppIcon from '../assets/icons/AppIcon.svg';
@@ -54,12 +53,13 @@
 
 <!-- The |self modifier prevents the selection from being updated before the handleFoClick() event is fired. -->
 <!-- This makes it possible to zoom to unselected elements, if that is neccessary -->
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <div
 	class="result-list-elem flex row pl-xxsmall"
 	class:selected={result.selected}
 	on:click|self={handleResClick}>
 	<div class="result-content flex row">
-		<IconFlexible iconName={returnIcon()} />
+		<Icon iconName={returnIcon()} />
 		<span class="text--results-title">{result.name}</span>
 	</div>
 	<div class="result-buttons">

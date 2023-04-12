@@ -32,7 +32,7 @@
 			area_type: 'SELECTION_PRESET',
 			case_sensitive: true,
 			node_types: [selectedNode.type],
-			string_match: 'FUZZY',
+			string_match: 'EXACT',
 			query_text: selectedNode.name,
 			selected_nodes: nodes,
 		};

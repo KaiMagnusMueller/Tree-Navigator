@@ -134,8 +134,6 @@
 	function filterNodes(results) {
 		let resultList = [];
 
-		// console.table(results[0]);
-
 		let queryText = $searchQuery.query_text;
 
 		const isInQuotes = checkQuotes(queryText);
@@ -152,8 +150,6 @@
 			// Match exact
 
 			queryText = queryText.trimQuotes();
-
-			// console.log('Find exact string');
 
 			resultList = results.filter((elem) => {
 				let elemName = elem.name;

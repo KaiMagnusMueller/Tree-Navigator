@@ -48,11 +48,6 @@
 		const index = event.detail;
 		const cutArray = recentSearches.splice(index, 1);
 
-		// console.log('--------move to top');
-		// console.log(recentSearches);
-		// console.log(cutArray);
-		// console.log(recentSearches);
-
 		recentSearches = [...cutArray, ...recentSearches];
 		saveRecentSearches(recentSearches);
 	}
@@ -109,6 +104,7 @@
 	.recent-search-list {
 		gap: 2px;
 		height: 100%;
+		position: relative;
 	}
 
 	.empty-state-container {

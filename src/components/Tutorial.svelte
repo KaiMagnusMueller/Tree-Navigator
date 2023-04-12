@@ -59,8 +59,11 @@
 									{tutorial.title}
 								</h3>
 								<p>{tutorial.body}</p>
-								<a target="_blank" href={tutorial.link.href}
-									>{tutorial.link.title} -></a>
+
+								{#if tutorial.link}
+									<a target="_blank" href={tutorial.link.href}
+										>{tutorial.link.title} -></a>
+								{/if}
 							</div>
 						</div>
 					</div>
@@ -149,6 +152,7 @@
 		flex-direction: column;
 		gap: 8px;
 		height: 100%;
+		/* justify-content: space-between; */
 	}
 
 	.tutorial--card p {
