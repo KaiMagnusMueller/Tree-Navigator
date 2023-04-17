@@ -226,7 +226,7 @@ export let tutorials = writable([
 		body: 'Quickly select elements with the same name or type in your designs',
 		link: {
 			title: 'Learn more',
-			href: 'https://www.kaimagnus.de/articles/using-the-node-tree-search-plugin',
+			href: 'https://www.kaimagnus.de/articles/using-the-tree-navigator-plugin',
 		},
 		image: 'https://res.cloudinary.com/dm3a0qioc/image/upload/v1678665215/Layer%20Tree%20Search%20Plugin/LayerTree_mdly1q.png',
 		viewed: false,
@@ -237,7 +237,7 @@ export let tutorials = writable([
 		body: 'Rerun a search to go back to a previous selection',
 		link: {
 			title: 'Learn more',
-			href: 'https://www.kaimagnus.de/articles/using-the-node-tree-search-plugin#layer-search',
+			href: 'https://www.kaimagnus.de/articles/using-the-tree-navigator-plugin#recent-searches',
 		},
 		image: 'https://res.cloudinary.com/dm3a0qioc/image/upload/v1678738209/Layer%20Tree%20Search%20Plugin/RecentSearches_eprbxa.png',
 		viewed: false,

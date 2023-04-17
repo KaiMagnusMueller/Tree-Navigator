@@ -166,7 +166,6 @@
 		// Update search field value when a recent search is selected
 
 		const search = event.detail.search;
-		console.log(search);
 
 		$searchQuery = search;
 
@@ -203,7 +202,6 @@
 	}
 
 	function resetSearchQuery() {
-		console.log('reset');
 		searchString = '';
 		buildSearchQuery();
 		_externalSearchQuery = $searchQuery;

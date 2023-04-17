@@ -2,7 +2,7 @@
 
 Quickly select similar elements in parent and sibling frames. Stop <kbd>⌘</kbd>+<kbd>⇧</kbd>-clicking through your designs to select layers in lists, tables or other repeating patterns.
 
-<img alt="Start screen of the Find Nodes plugin showing search bar, filter pills and recent search list" src="https://user-images.githubusercontent.com/24393597/231573595-e4642d9f-fea4-46fd-b3a5-22b8705316c8.jpg" height="400px">
+<img alt="Start screen of the Find Nodes plugin showing search bar, filter pills and recent search list" src="https://user-images.githubusercontent.com/24393597/231573595-e4642d9f-fea4-46fd-b3a5-22b8705316c8.jpg" width="800px">
 
 ## Features
 

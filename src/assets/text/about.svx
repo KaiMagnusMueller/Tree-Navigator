@@ -3,7 +3,7 @@
 </script>
 
 
-## Find Nodes 
+## Tree Navigator 
 
 Developed with ♥️ by <a href="https://www.kaimagnus.de" target="_blank">Kai Magnus Müller</a>.
 

@@ -105,6 +105,7 @@
 		gap: 2px;
 		height: 100%;
 		position: relative;
+		min-height: 100px;
 	}
 
 	.empty-state-container {
