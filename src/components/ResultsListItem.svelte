@@ -78,6 +78,7 @@
 	}
 
 	.result-content {
+		width: 100%;
 		align-items: center;
 		gap: var(--size-xxsmall);
 		pointer-events: none;
@@ -104,5 +105,13 @@
 
 	.result-list-elem.selected {
 		background-color: var(--figma-color-bg-selected, #daebf7);
+	}
+
+	.text--results-title {
+		text-overflow: ellipsis;
+		overflow: hidden;
+		white-space: nowrap;
+		/* -webkit-line-clamp: 2; */
+		width: 100%;
 	}
 </style>
