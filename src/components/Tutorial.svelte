@@ -100,8 +100,18 @@
 		position: absolute;
 		bottom: 0px;
 		width: 100%;
+	}
+
+	.tutorial--wrapper::before {
+		content: '';
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+		height: 120%;
 		background: linear-gradient(transparent, var(--figma-color-bg) 30%);
 	}
+
 	.tutorial--section {
 		position: relative;
 	}
@@ -115,6 +125,7 @@
 		display: flex;
 		flex-direction: row;
 		justify-content: end;
+		position: relative;
 	}
 
 	.tutorial--scroller {

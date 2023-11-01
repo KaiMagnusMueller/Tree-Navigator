@@ -1,5 +1,7 @@
 <script>
 	import { createEventDispatcher } from 'svelte';
+	import { Icon } from 'figma-plugin-ds-svelte';
+	import { returnIcon } from '../lib/helper-functions';
 	let dispatch = createEventDispatcher();
 
 	export let parent = null;
@@ -50,6 +52,7 @@
 	on:click={() => handleClick([parent.id])}
 	on:keydown={(e) => (e.key === 'Enter' ? handleClick([parent.id]) : null)}
 	tabindex="">
+	<Icon iconName={returnIcon(parent.type)} size={smallTree ? '12' : '16'} />
 	<p class="" title={'Search in: ' + parent.name}>
 		{parent.name}
 	</p>
@@ -90,6 +93,7 @@
 		font-size: var(--font-size-small);
 		width: 100%;
 		text-align: unset;
+		gap: 4px;
 	}
 	.suggestion-item:hover {
 		background-color: var(--figma-color-bg-selected-hover);
@@ -135,14 +139,14 @@
 
 	/* SMALL VERSION */
 	.small .vertical {
-		width: 16px;
+		width: 20px;
 	}
 
 	.horizontal.small {
-		height: 16px;
+		height: 20px;
 	}
 
 	.indent.small {
-		margin-left: 16px;
+		margin-left: 20px;
 	}
 </style>

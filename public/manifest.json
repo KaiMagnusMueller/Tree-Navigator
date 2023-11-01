@@ -6,7 +6,7 @@
 	"ui": "index.html",
 	"editorType": ["figma"],
 	"networkAccess": {
-		"allowedDomains": ["*.cloudinary.com"],
+		"allowedDomains": ["https://*.cloudinary.com"],
 		"reasoning": "Tree Navigator loads tutorial images from Cloudinary"
 	}
 }
