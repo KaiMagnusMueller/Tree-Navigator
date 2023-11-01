@@ -1,7 +1,7 @@
 <script>
 	import FullscreenModal from './components/FullscreenModal.svelte';
 
-	import { onMount } from 'svelte/internal';
+	import { onMount } from 'svelte';
 
 	//import Global CSS from the svelte boilerplate
 	//contains Figma color vars, spacing vars, utility classes and more
