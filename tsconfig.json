@@ -1,7 +1,8 @@
 {
 	"compilerOptions": {
-		"target": "es6",
+		"target": "ES2017",
 		"lib": ["es6"],
+		"moduleResolution": "bundler",
 		"typeRoots": ["./node_modules/@types", "./node_modules/@figma"]
 	}
 }
