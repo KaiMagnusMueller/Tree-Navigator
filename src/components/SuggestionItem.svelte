@@ -97,6 +97,7 @@
 	}
 	.suggestion-item:hover {
 		background-color: var(--figma-color-bg-selected-hover);
+		border-color: var(--figma-color-border-selected);
 	}
 
 	.suggestion-item p {
