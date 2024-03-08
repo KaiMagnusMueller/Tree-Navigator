@@ -31,7 +31,8 @@
 				return undefined;
 			}
 			nodes.push(
-				filterList.find((element) => element.value.toLowerCase() == type.toLowerCase()).name
+				filterList.find((element) => element.value.toLowerCase() == type.toLowerCase())
+					.name,
 			);
 		});
 		return nodes;
@@ -66,7 +67,7 @@
 				>{search.query_text}
 			</RecentSearchItem>
 		{/each}
-		<div class="empty-state-container">
+		<!-- <div class="empty-state-container">
 			{#if recentSearches.length == 0}
 				<div class="empty-state" transition:fade={{ duration: 100, delay: 100 }}>
 					<svg
@@ -96,7 +97,7 @@
 					<LoadingSpinner />
 				</div>
 			{/if}
-		</div>
+		</div> -->
 	</div>
 </div>
 

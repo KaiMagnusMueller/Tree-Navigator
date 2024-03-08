@@ -25,7 +25,7 @@
 					data: viewedTutorials,
 				},
 			},
-			'*'
+			'*',
 		);
 	}
 
@@ -163,6 +163,7 @@
 		flex-direction: column;
 		gap: 8px;
 		height: 100%;
+		justify-content: center;
 		/* justify-content: space-between; */
 	}
 
@@ -242,24 +243,24 @@
 	}
 
 	.tutorial--card--wrapper:nth-of-type(3n + 2) .tutorial--card {
-		background: linear-gradient(80.04deg, hsl(173, 96%, 40%) 0%, hsl(212, 82%, 48%) 100%);
+		background: linear-gradient(80.04deg, hsl(173, 96%, 35%) 0%, hsl(212, 82%, 44%) 100%);
 	}
 
 	.tutorial--card--wrapper:nth-of-type(3n + 3) .tutorial--card {
-		background: linear-gradient(80.04deg, hsl(162, 96%, 50%) 0%, hsl(202, 81%, 48%) 100%);
+		background: linear-gradient(80deg, #04b983 0%, #0e5b86 100%);
 	}
 
 	@media (prefers-color-scheme: dark) {
 		.tutorial--card--wrapper:nth-of-type(3n + 1) .tutorial--card {
-			background: linear-gradient(80.04deg, #0478b9 0%, #0e3786 100%);
+			background: linear-gradient(80deg, #0478b9 0%, #0e3786 100%);
 		}
 
 		.tutorial--card--wrapper:nth-of-type(3n + 2) .tutorial--card {
-			background: linear-gradient(80.04deg, #04bea8 0%, #0e488b 100%);
+			background: linear-gradient(80deg, hsl(173, 96%, 35%) 0%, hsl(212, 82%, 44%) 100%);
 		}
 
 		.tutorial--card--wrapper:nth-of-type(3n + 3) .tutorial--card {
-			background: linear-gradient(80.04deg, #04b983 0%, #0e5b86 100%);
+			background: linear-gradient(80deg, #04b983 0%, #0e5b86 100%);
 		}
 	}
 </style>

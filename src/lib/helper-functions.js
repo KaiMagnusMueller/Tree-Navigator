@@ -50,7 +50,7 @@ export function saveSettings(settings) {
 		},
 		'*'
 	);
-	console.log('save settings');
+	console.log('save settings...');
 }
 
 // Component Icons

@@ -8,7 +8,7 @@
 				type: 'ui-loaded',
 			},
 		},
-		'*'
+		'*',
 	);
 
 	let selectedSameName = true;
@@ -66,7 +66,7 @@
 					</span> in:
 				</p>
 			{:else}
-				<p>Select nodes of the same type and name to display the layer tree.</p>
+				<p>Select nodes of the same type and name to display the layer tree</p>
 			{/if}
 		</div>
 		{#if selectedSameName && selectedSameType}
@@ -82,9 +82,10 @@
 		{/if}
 	</div>
 {:else}
+	<!-- EMPTY STATE -->
 	<div class="search-suggestions flex column">
 		<div>
-			<p>Select a layer, or multiple of the same type and name, to display the layer tree.</p>
+			<p>Select a layer, or multiple of the same type and name, to display the layer tree</p>
 		</div>
 	</div>
 {/if}

@@ -14,7 +14,7 @@
 		settings,
 		defaultSettings,
 	} from './stores';
-	import { saveRecentSearches } from './lib/helper-functions';
+	import { saveRecentSearches, saveSettings } from './lib/helper-functions';
 
 	//import some Svelte Figma UI components
 	import {
@@ -25,6 +25,8 @@
 		IconBack,
 		IconForward,
 		Section,
+		Switch,
+		Label,
 	} from 'figma-plugin-ds-svelte';
 
 	import InputFlexible from './components/InputFlexible';
@@ -77,6 +79,8 @@
 				console.log('no settings... loading defaults');
 				$settings = $defaultSettings;
 				// TODO: when new settings are added, merge restored settings with new default settings
+
+				saveSettings($settings);
 			}
 		}
 
@@ -130,7 +134,7 @@
 						parameters: queryToSend,
 					},
 				},
-				'*'
+				'*',
 			);
 			//prevent the postMessage function from locking up the main plugin by delaying it a few milliseconds
 		}, 50);
@@ -219,7 +223,7 @@
 					data: [],
 				},
 			},
-			'*'
+			'*',
 		);
 	}
 
@@ -264,16 +268,42 @@
 
 <div class="wrapper">
 	<div class="main-section">
-		<!-- <TestComponent /> -->
-		<div class="section--header flex column pt-xxsmall pb-xxsmall">
-			<InputFlexible
-				iconName={IconSearch}
-				placeholder="Search"
-				bind:value={searchString}
-				class="flex-grow mr-xxsmall ml-xxsmall"
-				autofocus
-				navBackPossible={$UIState.showSearchResults}>
-				<!-- Slots for buttons to prevent "Error: Function called outside component initialization"  -->
+		{#if !$settings.compactMode}
+			<div class="section--header flex column pt-xxsmall pb-xxsmall">
+				<InputFlexible
+					iconName={IconSearch}
+					placeholder="Search"
+					bind:value={searchString}
+					class="flex-grow mr-xxsmall ml-xxsmall"
+					autofocus
+					navBackPossible={$UIState.showSearchResults}>
+					<!-- Slots for buttons to prevent "Error: Function called outside component initialization"  -->
+					<IconButton
+						slot="back-button"
+						on:click={() => {
+							navBack();
+							resetSearchQuery();
+						}}
+						iconName={IconBack}
+						rounded={true} />
+					<IconButton
+						slot="submit-button"
+						on:click={handleSubmitButton}
+						iconName={IconForward}
+						bind:disabled={disabledSubmit}
+						rounded={true} />
+				</InputFlexible>
+
+				{#if filterList.length > 0}
+					<FilterSection
+						class="flex-no-shrink"
+						on:filterChanged={(event) => (filterChanged = event.detail)}
+						{filterList}
+						bind:_externalSearchQuery />
+				{/if}
+			</div>
+		{:else if $UIState.showSearchResults}
+			<div class="compact-mode-header">
 				<IconButton
 					slot="back-button"
 					on:click={() => {
@@ -282,22 +312,10 @@
 					}}
 					iconName={IconBack}
 					rounded={true} />
-				<IconButton
-					slot="submit-button"
-					on:click={handleSubmitButton}
-					iconName={IconForward}
-					bind:disabled={disabledSubmit}
-					rounded={true} />
-			</InputFlexible>
+				<Section class="">Search Results</Section>
+			</div>
+		{/if}
 
-			{#if filterList.length > 0}
-				<FilterSection
-					class="flex-no-shrink"
-					on:filterChanged={(event) => (filterChanged = event.detail)}
-					{filterList}
-					bind:_externalSearchQuery />
-			{/if}
-		</div>
 		<div class="section--bottom" bind:this={sectionBottomElem}>
 			<!-- ------------------- -->
 			<!-- Display RECENT SEARCHES -->
@@ -340,15 +358,26 @@
 	{#if $UIState.showSettingsMenu}
 		<FullscreenModal title="Settings" on:click={() => ($UIState.showSettingsMenu = false)}>
 			<div class="settings--section pb-xxsmall">
+				<Section class="settings--input">Experimental Focus Mode</Section>
+				<Label>Hide search, filters and history on the main page</Label>
+				<!-- <span>It allows more fine grained
+                        filtering compared to Figma's built-in search and works within a layer tree
+                        selection.</span> -->
+				<Switch
+					value={$settings.compactMode}
+					bind:checked={$settings.compactMode}
+					on:change={saveSettings($settings)}>Compact Mode</Switch>
+			</div>
+			<div class="settings--section pb-xxsmall">
 				<Section class="">Recent Searches</Section>
 				<Button variant="secondary" destructive on:click={deleteRecentSearches}
-					>Delete Recent Searches</Button>
+					>Delete recent searches</Button>
 			</div>
 			<div class="settings--section pb-xxsmall">
 				<Section class="settings--input">Tutorials</Section>
 
 				<Button variant="secondary" destructive on:click={resetTutorials}
-					>Reset Tutorials</Button>
+					>Reset tutorials</Button>
 			</div>
 		</FullscreenModal>
 	{/if}
@@ -405,6 +434,14 @@
 		flex-grow: 1;
 		display: flex;
 		flex-direction: column;
+	}
+
+	/* COMPACT MODE */
+	.compact-mode-header {
+		display: flex;
+		border-bottom: 1px solid var(--figma-color-border);
+		padding: 4px;
+		align-items: center;
 	}
 
 	/* ------------------------- */

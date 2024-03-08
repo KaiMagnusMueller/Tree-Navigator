@@ -215,6 +215,7 @@ export let UIState = writable({
 export let defaultSettings = readable({
 	recentSearchLength: 20,
 	rememberNodeFilterCounts: true,
+	compactMode: false,
 });
 
 export let settings = writable({});
@@ -242,15 +243,26 @@ export let tutorials = writable([
 		image: 'https://res.cloudinary.com/dm3a0qioc/image/upload/v1678738209/Layer%20Tree%20Search%20Plugin/RecentSearches_eprbxa.png',
 		viewed: false,
 	},
-	// {
-	// 	id: 3,
-	// 	title: 'New Layer Tree Icons',
-	// 	body: 'Choosing the correct layer in the tree is now easier thanks to node type icons.',
-	// 	// link: {
-	// 	// 	title: 'Learn more',
-	// 	// 	href: 'https://www.kaimagnus.de/articles/using-the-tree-navigator-plugin#recent-searches',
-	// 	// },
-	// 	image: 'https://res.cloudinary.com/dm3a0qioc/image/upload/v1678665215/Layer%20Tree%20Search%20Plugin/LayerTree_mdly1q.png',
-	// 	viewed: false,
-	// },
+	{
+		id: 3,
+		title: 'Tip: Narrow down your selection',
+		body: "You can search inside your layer tree selection with the 'Current selection' filter",
+		// link: {
+		// 	title: 'Learn more',
+		// 	href: 'https://www.kaimagnus.de/articles/using-the-tree-navigator-plugin#recent-searches',
+		// },
+		image: 'https://res.cloudinary.com/dm3a0qioc/image/upload/v1709913838/Layer%20Tree%20Search%20Plugin/NarrowSearch_axkfrv.png',
+		viewed: false,
+	},
+	{
+		id: 4,
+		title: 'New Layer Type Icons',
+		body: 'Not sure which layer to select? Each parent now displays its type to help you choose the right one.',
+		// link: {
+		// 	title: 'Learn more',
+		// 	href: 'https://www.kaimagnus.de/articles/using-the-tree-navigator-plugin#recent-searches',
+		// },
+		image: 'https://res.cloudinary.com/dm3a0qioc/image/upload/v1709916526/Layer%20Tree%20Search%20Plugin/TreeIcons_v1ipto.png',
+		viewed: false,
+	},
 ]);

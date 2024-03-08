@@ -2,6 +2,8 @@
 	import { createEventDispatcher } from 'svelte';
 	import { Icon } from 'figma-plugin-ds-svelte';
 	import { returnIcon } from '../lib/helper-functions';
+	import ChevronRight from '../assets/icons/ChevronRight.svg';
+
 	let dispatch = createEventDispatcher();
 
 	export let parent = null;
@@ -56,6 +58,9 @@
 	<p class="" title={'Search in: ' + parent.name}>
 		{parent.name}
 	</p>
+	<div class="search-button">
+		<Icon iconName={ChevronRight} size={smallTree ? '12' : '16'} />
+	</div>
 </button>
 
 <div
@@ -67,7 +72,7 @@
 			class="suggestion-item vertical"
 			title={'Search in: ' + childNodeNames.join(', ')}
 			on:click={() => handleClick(childNodeIDs)}
-			on:keydown={(e) => (e.key === 'Enter' ? handleClick(childNodeIDs) : null)} />
+			on:keydown={(e) => (e.key === 'Enter' ? handleClick(childNodeIDs) : null)}></button>
 	{/if}
 	<div class="child-container flex-grow">
 		{#each nodes as node (node.id)}
@@ -105,6 +110,7 @@
 		text-overflow: ellipsis;
 		white-space: nowrap;
 		overflow: hidden;
+		flex-grow: 1;
 	}
 
 	.horizontal {
@@ -149,5 +155,12 @@
 
 	.indent.small {
 		margin-left: 20px;
+	}
+
+	.search-button {
+		display: none;
+	}
+	.suggestion-item:hover .search-button {
+		display: block;
 	}
 </style>
