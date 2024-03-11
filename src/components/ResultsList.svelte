@@ -102,7 +102,7 @@
 					parameters: [e.detail.resultID],
 				},
 			},
-			'*'
+			'*',
 		);
 	}
 
@@ -117,7 +117,7 @@
 					parameters: { nodes: nodes, zoomIntoView: zoomIntoView },
 				},
 			},
-			'*'
+			'*',
 		);
 
 		// Ignore the next selectionchange event, which is fired directly after the postmessage above
@@ -230,87 +230,85 @@
 	};
 </script>
 
-<div class="results-container">
-	<!-- --------------------------------- -->
-	<!-- Display RESULTS LIST and METADATA -->
-	<!-- Results exist (.length > 0) and the query was returned (duration != undefined) -->
-	{#if searchResults.length > 0 && queryDuration != undefined}
-		<!-- RESULTS LIST -->
-		<div class="results-list flex column" bind:this={resultsListElem}>
-			{#each searchResults as result (result.id)}
-				<ResultsListItem
-					{result}
-					on:result-clicked={handleClick}
-					on:focus-selection={handleFocSelection} />
-			{/each}
-		</div>
-		<!-- METADATA -->
-		<p class="text--results-info">
-			Found {searchResults.length} node{#if searchResults.length > 1}s{/if}
-			in {Math.round(queryDuration / 100) / 10} seconds.
-		</p>
+<!-- --------------------------------- -->
+<!-- Display RESULTS LIST and METADATA -->
+<!-- Results exist (.length > 0) and the query was returned (duration != undefined) -->
+{#if searchResults.length > 0 && queryDuration != undefined}
+	<!-- RESULTS LIST -->
+	<div class="results-list flex column" bind:this={resultsListElem}>
+		{#each searchResults as result (result.id)}
+			<ResultsListItem
+				{result}
+				on:result-clicked={handleClick}
+				on:focus-selection={handleFocSelection} />
+		{/each}
+	</div>
+	<!-- METADATA -->
+	<p class="text--results-info">
+		Found {searchResults.length} node{#if searchResults.length > 1}s{/if}
+		in {Math.round(queryDuration / 100) / 10} seconds.
+	</p>
 
-		<!-- ------------------- -->
-		<!-- Display EMPTY STATE -->
-		<!-- No results (.length == 0) and the query was returned (duration != undefined) -->
-	{:else if searchResults.length === 0 && queryDuration != undefined}
-		<div class="empty-state-container">
-			<svg
-				id="icon"
-				xmlns="http://www.w3.org/2000/svg"
+	<!-- ------------------- -->
+	<!-- Display EMPTY STATE -->
+	<!-- No results (.length == 0) and the query was returned (duration != undefined) -->
+{:else if searchResults.length === 0 && queryDuration != undefined}
+	<div class="empty-state-container">
+		<svg
+			id="icon"
+			xmlns="http://www.w3.org/2000/svg"
+			width="32"
+			height="32"
+			viewBox="0 0 32 32">
+			<defs>
+				<style>
+					.cls-1 {
+						fill: none;
+					}
+				</style>
+			</defs>
+			<path
+				d="M30,28.5859l-4.6885-4.6884a8.028,8.028,0,1,0-1.414,1.414L28.5859,30ZM19,25a6,6,0,1,1,6-6A6.0066,6.0066,0,0,1,19,25Z" />
+			<rect x="2" y="12" width="8" height="2" />
+			<rect x="2" y="2" width="16" height="2" />
+			<rect x="2" y="7" width="16" height="2" />
+			<rect
+				id="_Transparent_Rectangle_"
+				data-name="&lt;Transparent Rectangle&gt;"
+				class="cls-1"
 				width="32"
-				height="32"
-				viewBox="0 0 32 32">
-				<defs>
-					<style>
-						.cls-1 {
-							fill: none;
-						}
-					</style>
-				</defs>
-				<path
-					d="M30,28.5859l-4.6885-4.6884a8.028,8.028,0,1,0-1.414,1.414L28.5859,30ZM19,25a6,6,0,1,1,6-6A6.0066,6.0066,0,0,1,19,25Z" />
-				<rect x="2" y="12" width="8" height="2" />
-				<rect x="2" y="2" width="16" height="2" />
-				<rect x="2" y="7" width="16" height="2" />
-				<rect
-					id="_Transparent_Rectangle_"
-					data-name="&lt;Transparent Rectangle&gt;"
-					class="cls-1"
-					width="32"
-					height="32" />
-			</svg>
-			<p class="text--results-info">No matching elements found.</p>
-			<Button variant="primary" on:click={resetSearch}>Clear search</Button>
-			<!-- ----------------------- -->
-			<!-- Display LOADING SPINNER -->
-			<!-- No results (.length == 0) and the query not returned (duration = undefined) -->
-		</div>
-	{:else if searchResults.length === 0}
-		<div class="empty-state-container">
-			<LoadingSpinner />
-		</div>
-	{/if}
-</div>
+				height="32" />
+		</svg>
+		<p class="text--results-info">No matching elements found.</p>
+		<Button variant="primary" on:click={resetSearch}>Clear search</Button>
+		<!-- ----------------------- -->
+		<!-- Display LOADING SPINNER -->
+		<!-- No results (.length == 0) and the query not returned (duration = undefined) -->
+	</div>
+{:else if searchResults.length === 0}
+	<div class="empty-state-container">
+		<LoadingSpinner />
+	</div>
+{/if}
 
 <style>
-	.results-container {
+	.text--results-info {
+		color: var(--figma-color-text-disabled);
+		text-align: center;
 		font-size: var(--font-size-xsmall);
 		font-weight: var(--font-weight-normal);
 		letter-spacing: var(--font-letter-spacing-neg-small);
 		line-height: var(--font-line-height);
-		position: relative;
-		height: 100%;
-	}
-
-	.text--results-info {
-		color: var(--figma-color-text-disabled);
-		text-align: center;
 	}
 
 	.results-list {
 		display: flex;
 		flex-direction: column;
+		flex-grow: 1;
+		font-size: var(--font-size-xsmall);
+		font-weight: var(--font-weight-normal);
+		letter-spacing: var(--font-letter-spacing-neg-small);
+		line-height: var(--font-line-height);
 	}
 
 	.empty-state-container {

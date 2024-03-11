@@ -5,11 +5,7 @@
 	import LoadingSpinner from './LoadingSpinner.svelte';
 	import { fade } from 'svelte/transition';
 
-	export { classList as class };
-
 	export let recentSearches;
-
-	let classList = '';
 
 	//node types are in the first array (might be necessary to make this dynamic in the future)
 	let filterList = $filterDefinitions[0].filterOptions;
