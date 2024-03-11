@@ -322,10 +322,12 @@
 			{#if $UIState.showMainMenu}
 				<div class="section--recent flex column flex-grow">
 					<SearchSuggestions on:clickTree={handleExternallyChangedFilters} />
-					<RecentSearchList
-						class="flex-grow"
-						on:recentSearch={handleExternallyChangedFilters}
-						bind:recentSearches={_recentSearches} />
+					{#if !$settings.compactMode}
+						<RecentSearchList
+							class="flex-grow"
+							on:recentSearch={handleExternallyChangedFilters}
+							bind:recentSearches={_recentSearches} />
+					{/if}
 				</div>
 				<div
 					class="section--footer flex row justify-content-end pr-xxsmall pl-xxsmall pb-xxsmall">
@@ -359,7 +361,9 @@
 		<FullscreenModal title="Settings" on:click={() => ($UIState.showSettingsMenu = false)}>
 			<div class="settings--section pb-xxsmall">
 				<Section class="settings--input">Experimental Focus Mode</Section>
-				<Label>Hide search, filters and history on the main page</Label>
+				<Label
+					>Hide search, filters and history on the main page. Provides a more focused
+					experience.</Label>
 				<!-- <span>It allows more fine grained
                         filtering compared to Figma's built-in search and works within a layer tree
                         selection.</span> -->

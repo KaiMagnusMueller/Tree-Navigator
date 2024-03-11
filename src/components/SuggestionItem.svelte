@@ -55,7 +55,7 @@
 	on:keydown={(e) => (e.key === 'Enter' ? handleClick([parent.id]) : null)}
 	tabindex="">
 	<Icon iconName={returnIcon(parent.type)} size={smallTree ? '12' : '16'} />
-	<p class="" title={'Search in: ' + parent.name}>
+	<p class="" title={'Search in parent: ' + parent.name}>
 		{parent.name}
 	</p>
 	<div class="search-button">
@@ -70,7 +70,7 @@
 	{#if nodes.length > 1}
 		<button
 			class="suggestion-item vertical"
-			title={'Search in: ' + childNodeNames.join(', ')}
+			title={'Search in parents: ' + childNodeNames.join(', ')}
 			on:click={() => handleClick(childNodeIDs)}
 			on:keydown={(e) => (e.key === 'Enter' ? handleClick(childNodeIDs) : null)}></button>
 	{/if}
