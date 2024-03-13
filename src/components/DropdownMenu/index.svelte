@@ -141,9 +141,12 @@
 					}, i * interval);
 				}
 				//delay closing the menu
-				setTimeout(function () {
-					menuList.classList.add('hidden'); //hide the menu
-				}, interval * x + 40);
+				setTimeout(
+					function () {
+						menuList.classList.add('hidden'); //hide the menu
+					},
+					interval * x + 40,
+				);
 			} else {
 				menuList.classList.add('hidden'); //hide the menu
 				// menuButton.classList.remove('selected'); //remove selected state from button

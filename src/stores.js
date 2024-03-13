@@ -5,13 +5,16 @@ export let filterDefinitionsDefault = writable([]);
 export let filterDefinitions = writable([
 	{
 		getTypeName(value) {
-			let filterOption = this.filterOptions.find(
-				(element) => element.value.toLowerCase() == value.toLowerCase()
-			);
+			let filterOption = this.filterOptions.find((element) => {
+				element.value.toLowerCase() === value.toLowerCase();
+			});
 
 			if (!filterOption) {
 				console.warn('unknown node type ' + value);
-				return;
+				filterOption = {
+					value: value,
+					name: value,
+				};
 			}
 
 			return filterOption.name;

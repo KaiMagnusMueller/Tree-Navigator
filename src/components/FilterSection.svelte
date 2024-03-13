@@ -21,7 +21,7 @@
 
 			let stickyTypes = filters.filter((elem) => elem.sticky == true);
 			let regularTypes = filters.filter(
-				(elem) => elem.sticky === false || elem.sticky === undefined
+				(elem) => elem.sticky === false || elem.sticky === undefined,
 			);
 
 			let _filterOptions = stickyTypes.concat(regularTypes);
@@ -82,7 +82,7 @@
 						data: `To search with case sensitivity, select 'Match exact name' instead of 'Match fuzzy'.`,
 					},
 				},
-				'*'
+				'*',
 			);
 		}
 	}
@@ -173,6 +173,24 @@
 
 		if (_externalSearchQuery == undefined) {
 			return;
+		}
+
+		// Manual fix for unknown node types
+		// Search if the node type exists in the current filter option array and of not insert it
+		// Right now only works for node type, only if node type is first in the filter array and only if the search yuery has only one type
+		if (
+			filterArray[0].filterOptions.findIndex(
+				(elem) => elem.value === _externalSearchQuery.node_types[0],
+			) < 0
+		) {
+			filterArray[0].filterOptions.push({
+				value: _externalSearchQuery.node_types[0],
+				name: _externalSearchQuery.node_types[0],
+				label: _externalSearchQuery.node_types[0],
+			});
+			console.warn(
+				`Add menu option for unknown node type ${_externalSearchQuery.node_types[0]}.`,
+			);
 		}
 
 		// console.log('update selected');
