@@ -310,7 +310,7 @@ function handleSelectionChange() {
 // HELPERS
 // ############################################################
 
-function postMessageToast(text: string, duration: number) {
+function postMessageToast(text: string, duration: number = undefined) {
 	// Calculate toast duration based on number of words in message
 	const wordCount = text.split(' ').length;
 	const dynamicDuration = Math.max(2000, Math.min((wordCount / (160 / 60)) * 1000, 8000));
