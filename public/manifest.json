@@ -5,6 +5,7 @@
 	"main": "code.js",
 	"ui": "index.html",
 	"editorType": ["figma"],
+	"documentAccess": "dynamic-page",
 	"networkAccess": {
 		"allowedDomains": ["https://*.cloudinary.com"],
 		"reasoning": "Tree Navigator loads tutorial images from Cloudinary"

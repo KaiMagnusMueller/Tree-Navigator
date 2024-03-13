@@ -98,6 +98,8 @@ function sendPluginmessage(params) {
 	console.log('message sent to plugin');
 }
 
+let query;
+
 figma.ui.onmessage = (msg) => {
 	if (msg.type === 'post-message-toast') {
 		postMessageToast(msg.data);
@@ -121,7 +123,7 @@ figma.ui.onmessage = (msg) => {
 		console.log('got message, searching');
 		console.log(msg.parameters);
 
-		const query = msg.parameters;
+		query = msg.parameters;
 
 		//nodes to search
 		let nodeSearchSet = [];
@@ -133,6 +135,8 @@ figma.ui.onmessage = (msg) => {
 
 			//Filter and remove non iterable nodes from search set
 			nodeSearchSet = _nodeSelectionSet.filter(checkTypes);
+
+			findNodes(nodeSearchSet);
 
 			function checkTypes(node) {
 				const searchable = node.findAllWithCriteria ? true : false;
@@ -169,86 +173,24 @@ figma.ui.onmessage = (msg) => {
 				// TODO: if multiple elements with the same ancestor are selected, are they all added to the search set?
 			});
 			nodeSearchSet = ancestorNodes;
+			findNodes(nodeSearchSet);
 		} else if (query.area_type === 'SELECTION_PRESET') {
-			query.selected_nodes.forEach((elem) => {
-				let node = figma.getNodeById(elem);
-				if (node) {
-					nodeSearchSet.push(node);
-				}
+			getSearchSet(query.selected_nodes).then((result) => {
+				findNodes(result);
 			});
 		} else {
 			nodeSearchSet.push(figma.currentPage);
+			findNodes(nodeSearchSet);
 		}
 
 		// console.log('---------------');
 		// console.log(nodeSearchSet);
 		// console.log(figma.currentPage.selection);
 		// console.log('---------------');
-
-		nodeSearchSet.forEach((node) => {
-			if (query.node_types.length > 0 && query.node_types[0] != 'ALL') {
-				nodes = nodes.concat(
-					node.findAllWithCriteria({
-						types: query.node_types,
-					})
-				);
-			} else {
-				nodes = nodes.concat(node.findAll());
-			}
-		});
-
-		nodes.reverse();
-
-		// console.log('Found ' + nodes.length + ' nodes');
-		// console.log(nodes);
-		// // console.log('Found ' + filteredNodes.length + ' nodes after filtering names');
-		// // console.log(filteredNodes);
-		// for (let index = 0; index < nodes.length; index++) {
-		// 	const element = nodes[index];
-
-		// 	console.log(nodes[index].name);
-		// 	console.log(nodes[index]);
-		// }
-
-		let nodesToSend = [];
-		nodes.forEach((element) => {
-			nodesToSend.push({
-				id: element.id,
-				name: element.name,
-				parent: element.parent,
-				children: element.children,
-				type: element.type,
-				selected: true,
-			});
-		});
-
-		// // If no nodes found (length === 0), don't change the selection
-		// if (filteredNodes.length > 0) {
-		// 	figma.currentPage.selection = filteredNodes
-		// 	figma.viewport.scrollAndZoomIntoView(filteredNodes);
-		// }
-
-		sendResultsList(nodesToSend);
 	}
 
 	if (msg.type === 'select-layers') {
-		let nodesToSelect = [];
-		msg.parameters.nodes.forEach((element) => {
-			const node = figma.getNodeById(element.id);
-
-			if (!node) {
-				console.warn("Node doesn't exist");
-				postMessageToast("Element doesn't exist");
-				return;
-			}
-
-			nodesToSelect.push(node);
-		});
-		figma.currentPage.selection = nodesToSelect;
-
-		if (msg.parameters.zoomIntoView) {
-			figma.viewport.scrollAndZoomIntoView(figma.currentPage.selection);
-		}
+		selectNodes(msg.parameters.nodes, msg.parameters.zoomIntoView);
 	}
 
 	if (msg.type === 'update-recent-searches') {
@@ -271,7 +213,6 @@ figma.ui.onmessage = (msg) => {
 	// ############################################################
 	if (msg.type === 'figma') {
 		console.log('got message');
-
 		console.log(msg.parameters);
 		let message = ['sent from figma'];
 		sendPluginmessage(message);
@@ -350,9 +291,7 @@ function handleSelectionChange() {
 	});
 
 	ancestorNodeArray = uniqObjInArr(ancestorNodeArray, 'id');
-
 	let ancestorTree = createDataTree(ancestorNodeArray);
-
 	ancestorNodes = uniqObjInArr(ancestorNodes, 'id');
 
 	let interestingNodes = {
@@ -371,12 +310,11 @@ function handleSelectionChange() {
 // HELPERS
 // ############################################################
 
-function postMessageToast(text: string, duration: number = 3) {
+function postMessageToast(text: string, duration: number = undefined) {
+	// Calculate toast duration based on number of words in message
 	const wordCount = text.split(' ').length;
-
-	console.log(wordCount, wordCount / (160 / 60));
-
-	figma.notify(text, { timeout: duration ? duration : (wordCount / (160 / 60)) * 1000 });
+	const dynamicDuration = Math.max(2000, Math.min((wordCount / (160 / 60)) * 1000, 8000));
+	figma.notify(text, { timeout: duration ? duration : dynamicDuration });
 }
 
 function getAncestorNode(currentNode: BaseNode) {
@@ -420,7 +358,6 @@ function uniqObjInArr(array: Array<{}>, prop: string) {
 			uniq.push(array[i]);
 		}
 	}
-
 	return uniq;
 }
 
@@ -433,7 +370,7 @@ function validRecentSearchItem(element) {
 		return;
 	}
 
-	const templateRecentSearch = {
+	const templateRecentSearch: Search = {
 		node_types: [],
 		area_type: '',
 		case_sensitive: false,
@@ -455,4 +392,85 @@ function validRecentSearchItem(element) {
 	});
 
 	return vaildObject;
+}
+
+async function getSearchSet(_selectedNodes) {
+	let _nodeSearchSet = [];
+
+	for (let i = 0; i < _selectedNodes.length; i++) {
+		const node = await figma.getNodeByIdAsync(_selectedNodes[i]);
+		if (node) {
+			_nodeSearchSet.push(node);
+		}
+	}
+	return _nodeSearchSet;
+}
+
+function findNodes(_nodeSearchSet) {
+	let nodes = [];
+
+	_nodeSearchSet.forEach((node) => {
+		if (query.node_types.length > 0 && query.node_types[0] != 'ALL') {
+			nodes = nodes.concat(
+				node.findAllWithCriteria({
+					types: query.node_types,
+				})
+			);
+		} else {
+			nodes = nodes.concat(node.findAll());
+		}
+	});
+
+	nodes.reverse();
+
+	// console.log('Found ' + nodes.length + ' nodes');
+	// console.log(nodes);
+	// // console.log('Found ' + filteredNodes.length + ' nodes after filtering names');
+	// // console.log(filteredNodes);
+	// for (let index = 0; index < nodes.length; index++) {
+	// 	const element = nodes[index];
+
+	// 	console.log(nodes[index].name);
+	// 	console.log(nodes[index]);
+	// }
+
+	let nodesToSend = [];
+	nodes.forEach((element) => {
+		nodesToSend.push({
+			id: element.id,
+			name: element.name,
+			parent: element.parent,
+			children: element.children,
+			type: element.type,
+			selected: true,
+		});
+	});
+
+	// // If no nodes found (length === 0), don't change the selection
+	// if (filteredNodes.length > 0) {
+	// 	figma.currentPage.selection = filteredNodes
+	// 	figma.viewport.scrollAndZoomIntoView(filteredNodes);
+	// }
+
+	sendResultsList(nodesToSend);
+}
+
+async function selectNodes(nodes: [BaseNode], zoomIntoView = true) {
+	let nodesToSelect = [];
+	for (let i = 0; i < nodes.length; i++) {
+		const node = await figma.getNodeByIdAsync(nodes[i].id);
+
+		if (!node) {
+			console.warn("Node doesn't exist");
+			postMessageToast("Element doesn't exist");
+			return;
+		}
+		nodesToSelect.push(node);
+	}
+
+	figma.currentPage.selection = nodesToSelect;
+
+	if (zoomIntoView) {
+		figma.viewport.scrollAndZoomIntoView(figma.currentPage.selection);
+	}
 }
