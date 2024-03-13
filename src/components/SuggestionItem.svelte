@@ -1,5 +1,9 @@
 <script>
 	import { createEventDispatcher } from 'svelte';
+	import { Icon } from 'figma-plugin-ds-svelte';
+	import { returnIcon } from '../lib/helper-functions';
+	import ChevronRight from '../assets/icons/ChevronRight.svg';
+
 	let dispatch = createEventDispatcher();
 
 	export let parent = null;
@@ -50,9 +54,13 @@
 	on:click={() => handleClick([parent.id])}
 	on:keydown={(e) => (e.key === 'Enter' ? handleClick([parent.id]) : null)}
 	tabindex="">
-	<p class="" title={'Search in: ' + parent.name}>
+	<Icon iconName={returnIcon(parent.type)} size={smallTree ? '12' : '16'} />
+	<p class="" title={'Search in parent: ' + parent.name}>
 		{parent.name}
 	</p>
+	<div class="search-button">
+		<Icon iconName={ChevronRight} size={smallTree ? '12' : '16'} />
+	</div>
 </button>
 
 <div
@@ -62,9 +70,9 @@
 	{#if nodes.length > 1}
 		<button
 			class="suggestion-item vertical"
-			title={'Search in: ' + childNodeNames.join(', ')}
+			title={'Search in parents: ' + childNodeNames.join(', ')}
 			on:click={() => handleClick(childNodeIDs)}
-			on:keydown={(e) => (e.key === 'Enter' ? handleClick(childNodeIDs) : null)} />
+			on:keydown={(e) => (e.key === 'Enter' ? handleClick(childNodeIDs) : null)}></button>
 	{/if}
 	<div class="child-container flex-grow">
 		{#each nodes as node (node.id)}
@@ -90,9 +98,11 @@
 		font-size: var(--font-size-small);
 		width: 100%;
 		text-align: unset;
+		gap: 4px;
 	}
 	.suggestion-item:hover {
 		background-color: var(--figma-color-bg-selected-hover);
+		border-color: var(--figma-color-border-selected);
 	}
 
 	.suggestion-item p {
@@ -100,6 +110,7 @@
 		text-overflow: ellipsis;
 		white-space: nowrap;
 		overflow: hidden;
+		flex-grow: 1;
 	}
 
 	.horizontal {
@@ -135,14 +146,21 @@
 
 	/* SMALL VERSION */
 	.small .vertical {
-		width: 16px;
+		width: 20px;
 	}
 
 	.horizontal.small {
-		height: 16px;
+		height: 20px;
 	}
 
 	.indent.small {
-		margin-left: 16px;
+		margin-left: 20px;
+	}
+
+	.search-button {
+		display: none;
+	}
+	.suggestion-item:hover .search-button {
+		display: block;
 	}
 </style>

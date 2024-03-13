@@ -1,8 +1,10 @@
 {
 	"compilerOptions": {
+		// ES2017 because the spread operator is not supported inside code.js in Figma
 		"target": "ES2017",
-		"lib": ["es6"],
+		"lib": ["ES2017"],
 		"moduleResolution": "bundler",
 		"typeRoots": ["./node_modules/@types", "./node_modules/@figma"]
-	}
+	},
+	"exclude": ["node_modules", "public"]
 }

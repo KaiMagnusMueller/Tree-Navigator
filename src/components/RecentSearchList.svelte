@@ -31,7 +31,8 @@
 				return undefined;
 			}
 			nodes.push(
-				filterList.find((element) => element.value.toLowerCase() == type.toLowerCase()).name
+				filterList.find((element) => element.value.toLowerCase() == type.toLowerCase())
+					.name,
 			);
 		});
 		return nodes;
@@ -53,7 +54,7 @@
 	}
 </script>
 
-<div class="recent-search-wrapper {classList}">
+{#if recentSearches.length > 0}
 	<div class="recent-search-list flex column flex-grow">
 		{#each recentSearches as search, i (search.query_submit_time)}
 			<RecentSearchItem
@@ -66,39 +67,39 @@
 				>{search.query_text}
 			</RecentSearchItem>
 		{/each}
-		<div class="empty-state-container">
-			{#if recentSearches.length == 0}
-				<div class="empty-state" transition:fade={{ duration: 100, delay: 100 }}>
-					<svg
-						id="icon"
-						xmlns="http://www.w3.org/2000/svg"
-						width="32"
-						height="32"
-						viewBox="0 0 32 32"
-						><defs
-							><style>
-								.cls-1 {
-									fill: none;
-								}
-							</style></defs
-						><title>recently-viewed</title><polygon
-							points="20.59 22 15 16.41 15 7 17 7 17 15.58 22 20.59 20.59 22" /><path
-							d="M16,2A13.94,13.94,0,0,0,6,6.23V2H4v8h8V8H7.08A12,12,0,1,1,4,16H2A14,14,0,1,0,16,2Z" /><rect
-							id="_Transparent_Rectangle_"
-							data-name="&lt;Transparent Rectangle&gt;"
-							class="cls-1"
-							width="32"
-							height="32" /></svg>
-					<p class="text--results-info">No recent searches</p>
-				</div>
-			{:else if !recentSearches}
-				<div class="empty-state">
-					<LoadingSpinner />
-				</div>
-			{/if}
-		</div>
 	</div>
-</div>
+{:else if recentSearches.length === 0}
+	<div class="empty-state-container">
+		<div class="empty-state" transition:fade={{ duration: 100, delay: 100 }}>
+			<svg
+				id="icon"
+				xmlns="http://www.w3.org/2000/svg"
+				width="32"
+				height="32"
+				viewBox="0 0 32 32"
+				><defs
+					><style>
+						.cls-1 {
+							fill: none;
+						}
+					</style></defs
+				><title>recently-viewed</title><polygon
+					points="20.59 22 15 16.41 15 7 17 7 17 15.58 22 20.59 20.59 22" /><path
+					d="M16,2A13.94,13.94,0,0,0,6,6.23V2H4v8h8V8H7.08A12,12,0,1,1,4,16H2A14,14,0,1,0,16,2Z" /><rect
+					id="_Transparent_Rectangle_"
+					data-name="&lt;Transparent Rectangle&gt;"
+					class="cls-1"
+					width="32"
+					height="32" /></svg>
+			<p class="text--results-info">Manual searches are saved here</p>
+		</div>
+		{#if !recentSearches}
+			<div class="empty-state">
+				<LoadingSpinner />
+			</div>
+		{/if}
+	</div>
+{/if}
 
 <style>
 	.recent-search-list {
@@ -106,6 +107,7 @@
 		height: 100%;
 		position: relative;
 		min-height: 100px;
+		border-top: 1px solid var(--figma-color-border);
 	}
 
 	.empty-state-container {
@@ -118,10 +120,8 @@
 	}
 
 	.empty-state {
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
+		max-width: 140px;
+		margin-inline: auto;
 		display: flex;
 		flex-direction: column;
 		align-items: center;

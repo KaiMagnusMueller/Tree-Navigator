@@ -1,41 +1,10 @@
 <script>
 	import { createEventDispatcher } from 'svelte';
-
 	import { IconButton, IconResizeToFit, Icon } from 'figma-plugin-ds-svelte';
-
-	// Component Icons
-	import AppIcon from '../assets/icons/AppIcon.svg';
-	import Component from '../assets/icons/NodeTypes/Component.svg';
-	import ComponentSet from '../assets/icons/NodeTypes/Component.svg';
-	import BooleanOperation from '../assets/icons/NodeTypes/BooleanOperation.svg';
-	import Frame from '../assets/icons/NodeTypes/Frame.svg';
-	import Group from '../assets/icons/NodeTypes/Group.svg';
-	import Instance from '../assets/icons/NodeTypes/Instance.svg';
-	import Text from '../assets/icons/NodeTypes/Text.svg';
+	import { returnIcon } from '../lib/helper-functions';
 
 	const dispatch = createEventDispatcher();
 	export let result;
-
-	function returnIcon() {
-		switch (result.type) {
-			case 'INSTANCE':
-				return Instance;
-			case 'COMPONENT':
-				return Component;
-			case 'COMPONENT_SET':
-				return ComponentSet;
-			case 'BOOLEAN_OPERATION':
-				return BooleanOperation;
-			case 'FRAME':
-				return Frame;
-			case 'GROUP':
-				return Group;
-			case 'TEXT':
-				return Text;
-			default:
-				return AppIcon;
-		}
-	}
 
 	function handleResClick(e) {
 		dispatch('result-clicked', {
@@ -54,12 +23,14 @@
 <!-- The |self modifier prevents the selection from being updated before the handleFoClick() event is fired. -->
 <!-- This makes it possible to zoom to unselected elements, if that is neccessary -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <div
 	class="result-list-elem flex row pl-xxsmall"
 	class:selected={result.selected}
-	on:click|self={handleResClick}>
+	on:click|self={handleResClick}
+	role="listitem">
 	<div class="result-content flex row">
-		<Icon iconName={returnIcon()} />
+		<Icon iconName={returnIcon(result.type)} />
 		<span class="text--results-title">{result.name}</span>
 	</div>
 	<div class="result-buttons">

@@ -1,14 +1,14 @@
 <script>
 	import { filterDefinitions } from '../stores';
 	import SuggestionItem from './SuggestionItem.svelte';
-
+	import FigmaSelection from '../assets/icons/FigmaSelectionEmptyState.svg';
 	parent.postMessage(
 		{
 			pluginMessage: {
 				type: 'ui-loaded',
 			},
 		},
-		'*'
+		'*',
 	);
 
 	let selectedSameName = true;
@@ -66,7 +66,7 @@
 					</span> in:
 				</p>
 			{:else}
-				<p>Select nodes of the same type and name to display the layer tree.</p>
+				<p>Select nodes of the same type and name to display the layer tree</p>
 			{/if}
 		</div>
 		{#if selectedSameName && selectedSameType}
@@ -82,10 +82,13 @@
 		{/if}
 	</div>
 {:else}
+	<!-- EMPTY STATE -->
 	<div class="search-suggestions flex column">
-		<div>
-			<p>Select a layer, or multiple of the same type and name, to display the layer tree.</p>
-		</div>
+		<p>
+			Select an element to display the layer tree. Select layers in different frames for even
+			more control.
+		</p>
+		{@html FigmaSelection}
 	</div>
 {/if}
 
@@ -94,7 +97,7 @@
 		padding: 8px;
 		/* margin: 8px; */
 		/* background: var(--figma-color-bg-secondary); */
-		border-bottom: 1px solid var(--figma-color-border);
+		/* border-bottom: 1px solid var(--figma-color-border); */
 		/* border-radius: 6px; */
 		color: var(--figma-color-text);
 		font-size: var(--font-size-small);
