@@ -213,7 +213,6 @@ figma.ui.onmessage = (msg) => {
 	// ############################################################
 	if (msg.type === 'figma') {
 		console.log('got message');
-
 		console.log(msg.parameters);
 		let message = ['sent from figma'];
 		sendPluginmessage(message);
@@ -292,9 +291,7 @@ function handleSelectionChange() {
 	});
 
 	ancestorNodeArray = uniqObjInArr(ancestorNodeArray, 'id');
-
 	let ancestorTree = createDataTree(ancestorNodeArray);
-
 	ancestorNodes = uniqObjInArr(ancestorNodes, 'id');
 
 	let interestingNodes = {
@@ -313,12 +310,11 @@ function handleSelectionChange() {
 // HELPERS
 // ############################################################
 
-function postMessageToast(text: string, duration: number = 3) {
+function postMessageToast(text: string, duration: number) {
+	// Calculate toast duration based on number of words in message
 	const wordCount = text.split(' ').length;
-
-	console.log(wordCount, wordCount / (160 / 60));
-
-	figma.notify(text, { timeout: duration ? duration : (wordCount / (160 / 60)) * 1000 });
+	const dynamicDuration = Math.max(2000, Math.min((wordCount / (160 / 60)) * 1000, 8000));
+	figma.notify(text, { timeout: duration ? duration : dynamicDuration });
 }
 
 function getAncestorNode(currentNode: BaseNode) {
@@ -362,7 +358,6 @@ function uniqObjInArr(array: Array<{}>, prop: string) {
 			uniq.push(array[i]);
 		}
 	}
-
 	return uniq;
 }
 
@@ -375,7 +370,7 @@ function validRecentSearchItem(element) {
 		return;
 	}
 
-	const templateRecentSearch = {
+	const templateRecentSearch: Search = {
 		node_types: [],
 		area_type: '',
 		case_sensitive: false,
