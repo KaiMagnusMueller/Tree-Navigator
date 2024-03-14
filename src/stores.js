@@ -250,21 +250,13 @@ export let tutorials = writable([
 		id: 3,
 		title: 'Tip: Narrow down your selection',
 		body: "You can search inside your layer tree selection with the 'Current selection' filter",
-		// link: {
-		// 	title: 'Learn more',
-		// 	href: 'https://www.kaimagnus.de/articles/using-the-tree-navigator-plugin#recent-searches',
-		// },
 		image: 'https://res.cloudinary.com/dm3a0qioc/image/upload/v1709913838/Layer%20Tree%20Search%20Plugin/NarrowSearch_axkfrv.png',
 		viewed: false,
 	},
 	{
 		id: 4,
 		title: 'New Layer Type Icons',
-		body: 'Not sure which layer to select? Each parent now displays its type to help you choose the right one.',
-		// link: {
-		// 	title: 'Learn more',
-		// 	href: 'https://www.kaimagnus.de/articles/using-the-tree-navigator-plugin#recent-searches',
-		// },
+		body: 'Not sure which layer to select? Layer type icons now help you choose the right one.',
 		image: 'https://res.cloudinary.com/dm3a0qioc/image/upload/v1709916526/Layer%20Tree%20Search%20Plugin/TreeIcons_v1ipto.png',
 		viewed: false,
 	},
