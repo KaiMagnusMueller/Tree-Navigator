@@ -6,7 +6,7 @@ export let filterDefinitions = writable([
 	{
 		getTypeName(value) {
 			let filterOption = this.filterOptions.find((element) => {
-				element.value.toLowerCase() === value.toLowerCase();
+				return element.value.toLowerCase() === value.toLowerCase();
 			});
 
 			if (!filterOption) {
