@@ -5,13 +5,16 @@ export let filterDefinitionsDefault = writable([]);
 export let filterDefinitions = writable([
 	{
 		getTypeName(value) {
-			let filterOption = this.filterOptions.find(
-				(element) => element.value.toLowerCase() == value.toLowerCase()
-			);
+			let filterOption = this.filterOptions.find((element) => {
+				return element.value.toLowerCase() === value.toLowerCase();
+			});
 
 			if (!filterOption) {
 				console.warn('unknown node type ' + value);
-				return;
+				filterOption = {
+					value: value,
+					name: value,
+				};
 			}
 
 			return filterOption.name;
@@ -215,6 +218,7 @@ export let UIState = writable({
 export let defaultSettings = readable({
 	recentSearchLength: 20,
 	rememberNodeFilterCounts: true,
+	compactMode: false,
 });
 
 export let settings = writable({});
@@ -240,6 +244,20 @@ export let tutorials = writable([
 			href: 'https://www.kaimagnus.de/articles/using-the-tree-navigator-plugin#recent-searches',
 		},
 		image: 'https://res.cloudinary.com/dm3a0qioc/image/upload/v1678738209/Layer%20Tree%20Search%20Plugin/RecentSearches_eprbxa.png',
+		viewed: false,
+	},
+	{
+		id: 3,
+		title: 'Tip: Narrow down your selection',
+		body: "You can search inside your layer tree selection with the 'Current selection' filter",
+		image: 'https://res.cloudinary.com/dm3a0qioc/image/upload/v1709913838/Layer%20Tree%20Search%20Plugin/NarrowSearch_axkfrv.png',
+		viewed: false,
+	},
+	{
+		id: 4,
+		title: 'New Layer Type Icons',
+		body: 'Not sure which layer to select? Layer type icons now help you choose the right one.',
+		image: 'https://res.cloudinary.com/dm3a0qioc/image/upload/v1709916526/Layer%20Tree%20Search%20Plugin/TreeIcons_v1ipto.png',
 		viewed: false,
 	},
 ]);
