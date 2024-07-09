@@ -1,7 +1,7 @@
 <script>
 	import { filterDefinitions } from '../stores';
 	import SuggestionItem from './SuggestionItem.svelte';
-	import FigmaSelection from '../assets/icons/FigmaSelectionEmptyState.svg';
+	import SelectionEmptyArt from '../assets/icons/SelectionEmptyArt.svg';
 	parent.postMessage(
 		{
 			pluginMessage: {
@@ -88,7 +88,7 @@
 			Select an element to display the layer tree. Select layers in different frames for even
 			more control.
 		</p>
-		{@html FigmaSelection}
+		{@html SelectionEmptyArt}
 	</div>
 {/if}
 
