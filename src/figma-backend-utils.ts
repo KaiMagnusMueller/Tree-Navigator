@@ -41,10 +41,10 @@ export function validRecentSearchItem(element: {}): boolean {
     }
 
     const templateRecentSearch: Search = {
-        node_types: [],
-        area_type: '',
+        node_types: ["ALL"],
+        area_type: 'PAGE',
         case_sensitive: false,
-        string_match: '',
+        string_match: 'EXACT',
         query_text: '',
         query_submit_time: 12345,
     };
@@ -100,10 +100,10 @@ export function postMessageToast(text: string, duration: number = undefined): vo
 /**
  * Retrieves the ultimate ancestor node of the given current node.
  * 
- * @param currentNode - The current node to find the ultimate ancestor for.
- * @returns The ultimate ancestor node of the current node.
+ * @param {BaseNode} currentNode - The current node to find the ultimate ancestor for.
+ * @returns {BaseNode} The ultimate ancestor node of the current node.
  */
-export function getUltimateAncestorNode(currentNode: BaseNode): BaseNode {
+export function getUltimateAncestorNode(currentNode: BaseNode) {
     let ultimateAncestor = currentNode;
     while (ultimateAncestor.parent.type !== 'PAGE') {
         ultimateAncestor = ultimateAncestor.parent;

@@ -4,7 +4,7 @@ export function searchNodes(query: Search) {
     console.log('got message, searching');
     console.log(query);
 
-    let nodeSearchSet = [];
+    let nodeSearchSet: BaseNode[] = [];
 
     switch (query.area_type) {
         case 'SELECTION':
@@ -18,6 +18,7 @@ export function searchNodes(query: Search) {
             findNodes(nodeSearchSet, query.node_types);
             break;
         case 'SELECTION_PRESET':
+            // Get the nodes from the selected nodes
             getSearchSet(query.selected_nodes).then((result) => {
                 findNodes(result, query.node_types);
             });
@@ -33,11 +34,11 @@ export function searchNodes(query: Search) {
  * Filters an array of nodes based on the specified query node types.
  *
  * @param {SceneNode[]} nodes - The array of nodes to filter.
- * @param {[NodeType, "ALL"]} queryNodeTypes - The query node types to filter by.
+ * @param {} queryNodeTypes - The query node types to filter by.
  * @returns {SceneNode[]} - The filtered array of nodes.
  */
-function filterNodesByType(nodes, queryNodeTypes: [NodeType, "ALL"]) {
-    let filteredNodes = [];
+function filterNodesByType(nodes, queryNodeTypes) {
+    let filteredNodes: SceneNode[] = [];
     nodes.forEach(node => {
         if (isSearchable(node) || queryNodeTypes.includes(node.type) || queryNodeTypes.includes('ALL')) {
             filteredNodes.push(node);
@@ -59,15 +60,21 @@ function isSearchable(node: SceneNode & ChildrenMixin) {
 /**
  * Retrieves the ultimate ancestor nodes for the given selection.
  * 
- * @param {Array<any>} selection - The selection of nodes.
- * @returns {Array<any>} - The ultimate ancestor nodes.
+ * @param {SceneNode[]} selection - The selection of nodes.
+ * @returns {SceneNode[]} - The ultimate ancestor nodes.
  */
 function getUltimateAncestorNodes(selection: SceneNode[]) {
     return selection.map(elem => getUltimateAncestorNode(elem));
 }
 
-async function getSearchSet(selectedNodes) {
-    let nodeSearchSet = [];
+/**
+ * Get all searchable nodes from the selected nodes. Usually from the tree view.
+ * 
+ * @param {string[]} - Selected nodes.
+ * @returns {SceneNode[]} - The array of nodes that can be searched.
+ */
+async function getSearchSet(selectedNodes: string[]) {
+    let nodeSearchSet: BaseNode[] = [];
     for (let nodeId of selectedNodes) {
         const node = await figma.getNodeByIdAsync(nodeId);
         if (node) {
