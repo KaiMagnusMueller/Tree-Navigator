@@ -13,39 +13,55 @@
 
 	let selectedSameName = true;
 	let selectedSameType = true;
-	// The first node of the selection, type and name are guarranteed to be the same across the selection when we do a search, since the suggestions are hidden if there are different types and names in the selection
 	let selectedNode = {};
+	let selectedNodes;
+	let interestingNodes;
+	let treeDepth;
+	let ancestorTree = [];
+
 	window.addEventListener('message', (event) => {
 		if (event.data.pluginMessage.type == 'selection-changed') {
-			if (!event.data.pluginMessage.interestingNodes) {
-				interestingNodes = null;
-				return;
-			}
-			selectedNodes = event.data.pluginMessage.data;
-			interestingNodes = event.data.pluginMessage.interestingNodes;
-
-			ancestorTree = interestingNodes.ancestorTree;
-			ancestorTree = ancestorTree;
-
-			selectedSameName = selectedNodes.every((elem) => elem.name === selectedNodes[0].name);
-			selectedSameType = selectedNodes.every((elem) => elem.type === selectedNodes[0].type);
-
-			selectedNode = {
-				name: selectedNodes[0].name,
-				type: selectedNodes[0].type,
-			};
-
-			treeDepth = getDepth(ancestorTree);
+			handleSelectionChanged(event.data.pluginMessage);
 		}
 	});
 
-	let selectedNodes;
-	let interestingNodes;
-	// let ancestorNodes;
-	let treeDepth;
+	function handleSelectionChanged(pluginMessage) {
+		if (!pluginMessage.interestingNodes) {
+			interestingNodes = null;
+			return;
+		}
+		updateSelectedNodes(pluginMessage.data);
+		updateInterestingNodes(pluginMessage.interestingNodes);
+		updateAncestorTree(pluginMessage.interestingNodes.ancestorTree);
+		updateSelectedNode();
+		updateTreeDepth();
+	}
 
-	// $: ancestorTree = [];  --- changed because of https://github.com/sveltejs/svelte/issues/8374, maybe has some side effects, but seems to be working fine without
-	let ancestorTree = [];
+	function updateSelectedNodes(data) {
+		selectedNodes = data;
+	}
+
+	function updateInterestingNodes(nodes) {
+		interestingNodes = nodes;
+	}
+
+	function updateAncestorTree(tree) {
+		ancestorTree = tree;
+	}
+
+	function updateSelectedNode() {
+		selectedSameName = selectedNodes.every((elem) => elem.name === selectedNodes[0].name);
+		selectedSameType = selectedNodes.every((elem) => elem.type === selectedNodes[0].type);
+
+		selectedNode = {
+			name: selectedNodes[0].name,
+			type: selectedNodes[0].type,
+		};
+	}
+
+	function updateTreeDepth() {
+		treeDepth = getDepth(ancestorTree);
+	}
 
 	function getDepth(array) {
 		return 1 + Math.max(0, ...array.map(({ childNodes = [] }) => getDepth(childNodes)));
@@ -95,10 +111,6 @@
 <style>
 	.search-suggestions {
 		padding: 8px;
-		/* margin: 8px; */
-		/* background: var(--figma-color-bg-secondary); */
-		/* border-bottom: 1px solid var(--figma-color-border); */
-		/* border-radius: 6px; */
 		color: var(--figma-color-text);
 		font-size: var(--font-size-small);
 		gap: 8px;
