@@ -1,72 +1,55 @@
 <script>
 	import { GlobalCSS, Icon } from 'figma-plugin-ds-svelte';
 	import { createEventDispatcher } from 'svelte';
-
 	import DropdownMenu from './DropdownMenu';
+	import SVGComponent from '../assets/icons/SVGComponent.svg';
 
 	export let variant = 'primary';
 	export let disabled = false;
 	export let destructive = false;
-	export { className as class };
-
 	export let iconName = '';
 	export let iconText = null;
-
-	let size = 16;
-	import SVGComponent from '../assets/icons/SVGComponent.svg';
-
-	// Menu item test
 	export let optionList = [];
 	export let filterData;
+	export let currentQuery;
 
-	const filterType = filterData.filterType;
+	let size = 16;
+	let className = '';
+	let active = false;
+	let pillElem;
+	let value;
+	const dispatch = createEventDispatcher();
 
-	if (optionList.length == 1) {
-		disabled = true;
+	$: currentQuery, updateValue();
+
+	function updateValue() {
+		value = optionList.find((elem) => elem.selected);
 	}
 
-	let className = '';
-
-	let dispatch = createEventDispatcher();
-
 	function handleClick() {
-		//TODO: disabled state, event stoppen
-		active = !active;
+		if (!disabled) {
+			active = !active;
+		}
 	}
 
 	function dispatchEvent(event) {
 		const selection = [...event.detail];
-
 		dispatch('selectFilter', {
-			filterType: filterType,
+			filterType: filterData.filterType,
 			multiSelect: filterData.multiSelect,
-			selection: selection,
+			selection,
 		});
 	}
-	export let currentQuery;
 
-	let active = false;
-	let pillElem;
-	let value;
-	$: currentQuery, updateValue();
-
-	function updateValue() {
-		value = optionList.find((elem) => elem.selected == true);
+	if (optionList.length === 1) {
+		disabled = true;
 	}
 </script>
 
 <div class="wrapper" class:disabled title={filterData.filterTooltip}>
-	<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-	<div
-		on:click={() => {
-			handleClick();
-		}}
-		on:submit|preventDefault
-		on:keydown={(event) => {
-			if (event.key == 'Enter') {
-				handleClick();
-			}
-		}}
+	<button
+		on:click={handleClick}
+		on:keydown={(event) => event.key === 'Enter' && handleClick()}
 		onclick="this.blur();"
 		{variant}
 		{disabled}
@@ -78,9 +61,7 @@
 		{#if iconName}
 			<Icon iconName={SVGComponent} {iconText} {size} color="transparent" />
 		{/if}
-
 		<slot>{value?.label}</slot>
-
 		<svg width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
 			<path
 				fill-rule="evenodd"
@@ -88,7 +69,7 @@
 				d="M3.646 5.854L0.645996 2.854L1.354 2.146L4 4.793L6.646 2.146L7.354 2.854L4.354 5.854L4 6.207L3.646 5.854Z"
 				fill="var(--figma-color-text)" />
 		</svg>
-	</div>
+	</button>
 	{#if active}
 		<div class="arrow">
 			<svg
@@ -112,15 +93,12 @@
 				</defs>
 			</svg>
 		</div>
-
 		<DropdownMenu
 			bind:menuItems={optionList}
 			bind:active
 			bind:pillElem
 			bind:value
-			on:change={(event) => {
-				dispatchEvent(event);
-			}}
+			on:change={dispatchEvent}
 			rounded />
 	{/if}
 </div>
@@ -157,21 +135,8 @@
 		box-shadow: 0 1px 6px rgba(194, 194, 194, 0.51);
 	}
 
-	.bt-dropdown:focus {
-		background: var(--figma-color-bg-hover);
-		outline: 2px solid var(--figma-color-bg-brand);
-		outline-offset: -2px;
-	}
-
-	:global(html.figma-dark) .bt-dropdown:focus,
-	:global(html.figma-dark) .bt-dropdown:hover {
-		box-shadow: 0 1px 6px rgba(75, 75, 75, 0.51);
-	}
-
-	.bt-dropdown:active {
-		background: var(--figma-color-bg-hover);
-	}
-
+	.bt-dropdown:focus,
+	.bt-dropdown:active,
 	.bt-dropdown.checked {
 		background: var(--figma-color-bg-hover);
 		outline: 2px solid var(--figma-color-bg-brand);
@@ -182,6 +147,7 @@
 	.bt-dropdown.checked svg {
 		transform: rotate(180deg);
 	}
+
 	.wrapper.disabled {
 		cursor: help;
 	}
@@ -201,7 +167,6 @@
 		left: 50%;
 		transform: translateX(-50%);
 		bottom: -9px;
-		/* On top of flyout, with z-index: 50 */
 		z-index: 51;
 	}
 </style>

@@ -71,7 +71,7 @@ export function validRecentSearchItem(element: {}): boolean {
  * @param array - The array where duplicates should be removed from
  * @param prop - The object property that should be checked
  */
-export function uniqObjInArr(array: Array<{}>, prop: string): any[] {
+export function uniqObjInArr(array: Object[], prop: string): any[] {
     let distinct = [];
     let uniq = [];
     for (let i = 0; i < array.length; i++) {
