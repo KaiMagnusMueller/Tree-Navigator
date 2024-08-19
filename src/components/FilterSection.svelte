@@ -1,21 +1,32 @@
 <script>
-	import { afterUpdate, onMount, createEventDispatcher } from 'svelte';
-
-	import { activeFilters, searchQuery } from '../stores';
+	import { onMount, createEventDispatcher } from 'svelte';
+	import { activeFilters } from '../stores';
 	import FilterPill from './FilterPill.svelte';
 
-	export { className as class };
+	// Exported variables
+	export let layerTreeSearchQuery;
 	let className = '';
-
+	export { className as class };
 	let filterListArray = [];
 	export { filterListArray as filterList };
 
+	// Local variables
+	let scrollPos = 0;
 	let filterArray = [];
+	let filterDefinitionsElem;
+	let scrollMinMax = [];
 
+	// Event dispatcher
+	const dispatch = createEventDispatcher();
+
+	// Initialize filter array
 	filterArray = sortAndBuildFilter(filterListArray);
 
+	onMount(() => {
+		initScrollPosition();
+	});
+
 	function sortAndBuildFilter(array) {
-		let _filterArray;
 		array.forEach((el) => {
 			const filters = el.filterOptions;
 
@@ -40,40 +51,27 @@
 
 			el.filterOptions = _filterOptions;
 		});
-
 		return array;
 	}
 
-	let _activeFilters = [];
-
-	// array with checked filters excluding ALL
-	let checkedLayerFilters;
-
-	const dispatch = createEventDispatcher();
-
+	/**
+	 * Handles the filter event.
+	 *
+	 * @param {Event} event - The filter event.
+	 */
 	function handleFilter(event) {
-		const filterType = event.detail.filterType;
-		const evtSelection = event.detail.selection;
+		// Destructure properties from the event detail
+		const { filterType, selection, multiSelect } = event.detail;
 
-		let selection = [];
+		// Create an array of selected values based on the multiSelect flag, otherwise simply select the first value
+		let selectedValues = multiSelect ? selection.map((elem) => elem.value) : selection[0].value;
 
-		if (event.detail.multiSelect) {
-			evtSelection.forEach((elem) => {
-				selection.push(elem.value);
-			});
+		// Update the activeFilters state with the selected values
+		$activeFilters[filterType] = selectedValues;
 
-			if (selection.find((element) => element.value !== 'ALL')) {
-				dispatch('filterChanged', true);
-			} else {
-				dispatch('filterChanged', false);
-			}
-		} else {
-			selection = evtSelection[0].value;
-		}
-
-		$activeFilters[filterType] = selection;
 		initScrollPosition();
 
+		// Display message if the filter options are set to fuzzy and case sensitive
 		if ($activeFilters.string_match === 'FUZZY' && $activeFilters.case_sensitive === true) {
 			parent.postMessage(
 				{
@@ -85,17 +83,11 @@
 				'*',
 			);
 		}
+
+		// Dispatch filterChanged event, return  if selectedValues is not 'ALL'
+		dispatch('filterChanged', selectedValues !== 'ALL');
 	}
 
-	let filterDefinitionsElem;
-	let scrollMinMax = [];
-
-	onMount(() => {
-		// console.log(filterDefinitionsElem);
-		initScrollPosition();
-	});
-
-	// TODO: 20.07. fix being able to scroll even when the filter is smaller than the plugin window
 	function initScrollPosition() {
 		scrollMinMax = [
 			0,
@@ -116,11 +108,7 @@
 		// console.log(scrollMinMax);
 	}
 
-	let scrollPos = 0;
-
-	afterUpdate(() => {});
-
-	function handleScroll(event) {
+	function handleScrollEvt(event) {
 		// TODO: there has to be a better way than recalculating the scroll bounds on every scroll
 		initScrollPosition();
 
@@ -131,28 +119,14 @@
 			delta = event.deltaY;
 		}
 
-		if (delta >= 5 || delta <= -5) {
+		if (Math.abs(delta) >= 5) {
 			moveFilterList(delta);
 		}
 	}
 
 	function moveFilterList(delta) {
-		// multiply by -1 to reverse scroll direction (to make it conform to standard mouse wheel behavior)
-		let targetPos = (scrollPos += delta * -1);
-
-		// scrollMinMax[0] is 0
-		if (targetPos >= scrollMinMax[0]) {
-			targetPos = Math.min(0, targetPos);
-		}
-
-		//scrollMinMax[1] is the negative width of the scroll wrapper
-		if (targetPos <= scrollMinMax[1]) {
-			// +8 is a hack to simulate a padding right of 8 pixels for the filter list
-			targetPos = Math.max(scrollMinMax[1], targetPos);
-		}
-
-		scrollPos = targetPos;
-
+		scrollPos -= delta;
+		scrollPos = Math.max(scrollMinMax[1], Math.min(scrollMinMax[0], scrollPos));
 		// console.log(scrollPos, scrollMinMax);
 	}
 
@@ -160,58 +134,31 @@
 		moveFilterList(value);
 	}
 
-	let _searchQuery = $searchQuery;
+	$: layerTreeSearchQuery, updateSelectedFilters();
 
-	$: _searchQuery.node_types = _activeFilters;
-
-	export let _externalSearchQuery;
-
-	$: _externalSearchQuery, updateSelectedFilters();
-
-	function updateSelectedFilters(params) {
-		// console.log('external search query changed');
-
-		if (_externalSearchQuery == undefined) {
-			return;
-		}
+	/**
+	 * When the layer tree search query changes, update the selected filters.
+	 */
+	function updateSelectedFilters() {
+		if (!layerTreeSearchQuery) return;
 
 		// Manual fix for unknown node types
 		// Search if the node type exists in the current filter option array and of not insert it
-		// Right now only works for node type, only if node type is first in the filter array and only if the search yuery has only one type
-		if (
-			filterArray[0].filterOptions.findIndex(
-				(elem) => elem.value === _externalSearchQuery.node_types[0],
-			) < 0
-		) {
-			filterArray[0].filterOptions.push({
-				value: _externalSearchQuery.node_types[0],
-				name: _externalSearchQuery.node_types[0],
-				label: _externalSearchQuery.node_types[0],
-			});
-			console.warn(
-				`Add menu option for unknown node type ${_externalSearchQuery.node_types[0]}.`,
-			);
+		// Right now only works for node type, only if node type is first in the filter array and only if the search query has only one type
+		// Since this is only triggered from the layer tree, there is only one node type from the selection anyways
+		const nodeType = layerTreeSearchQuery.node_types?.[0];
+		if (nodeType && !filterArray[0].filterOptions.some((elem) => elem.value === nodeType)) {
+			filterArray[0].filterOptions.push({ value: nodeType, name: nodeType, label: nodeType });
+			console.warn(`Add menu option for unknown node type ${nodeType}.`);
 		}
 
-		// console.log('update selected');
+		// Mark the filter options from the layer tree query as selected
 		filterArray.forEach((filter) => {
 			const filterType = filter.filterData.filterType;
-
 			filter.filterOptions.forEach((option) => {
-				option.selected = false;
-
-				if (_externalSearchQuery[filterType]?.constructor === Array) {
-					let selectedOption = _externalSearchQuery[filterType].includes(option.value);
-
-					option.selected = selectedOption;
-				}
-
-				// _externalSearchQuery[filterType] could be "EXACT", true, false and option.value as well
-				// so if _externalSearchQuery[filterType] is equal to the value, that means the value
-				// is/should be selected
-				if (_externalSearchQuery[filterType] == option.value) {
-					option.selected = true;
-				}
+				option.selected = Array.isArray(layerTreeSearchQuery[filterType])
+					? layerTreeSearchQuery[filterType].includes(option.value)
+					: layerTreeSearchQuery[filterType] == option.value;
 			});
 		});
 	}
@@ -224,14 +171,14 @@
 			id="filterDefinitions"
 			bind:this={filterDefinitionsElem}
 			class="filter-pill-group flex pl-xxsmall"
-			on:wheel|preventDefault|stopPropagation={handleScroll}
+			on:wheel|preventDefault|stopPropagation={handleScrollEvt}
 			style="left: {scrollPos}px;">
 			{#each filterArray as filter}
 				<FilterPill
 					on:selectFilter={handleFilter}
 					optionList={filter.filterOptions}
 					filterData={filter.filterData}
-					bind:currentQuery={_externalSearchQuery} />
+					bind:currentQuery={layerTreeSearchQuery} />
 			{/each}
 		</div>
 	</div>
@@ -240,7 +187,6 @@
 <style>
 	.filter-pill-group {
 		gap: 8px;
-		/* overflow-x: hidden; */
 		position: absolute;
 		transition: left 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
 	}

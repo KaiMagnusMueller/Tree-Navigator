@@ -114,16 +114,12 @@
 
 	function handleQuerySubmit(event) {
 		//true if event comes from recent list item
-		// console.log(event.detail);
 		const addToRecents = event.detail;
 
 		querySendTime = Date.now();
 		$searchQuery.query_submit_time = querySendTime;
 
-		// console.log($searchQuery);
-
 		const queryToSend = $searchQuery;
-		// console.log('loading');
 		displayResults();
 
 		setTimeout(() => {
@@ -165,8 +161,8 @@
 		}
 	}
 
-	let _externalSearchQuery;
-	function handleExternallyChangedFilters(event) {
+	let layerTreeSearchQuery;
+	function runLayerTreeSearch(event) {
 		// Update search field value when a recent search is selected
 
 		const search = event.detail.search;
@@ -175,7 +171,7 @@
 
 		searchString = search.query_text;
 
-		_externalSearchQuery = search;
+		layerTreeSearchQuery = search;
 		handleQuerySubmit(event.detail.addToRecents);
 	}
 
@@ -208,7 +204,7 @@
 	function resetSearchQuery() {
 		searchString = '';
 		buildSearchQuery();
-		_externalSearchQuery = $searchQuery;
+		layerTreeSearchQuery = $searchQuery;
 	}
 
 	function cancel() {
@@ -299,7 +295,7 @@
 						class="flex-no-shrink"
 						on:filterChanged={(event) => (filterChanged = event.detail)}
 						{filterList}
-						bind:_externalSearchQuery />
+						bind:layerTreeSearchQuery />
 				{/if}
 			</div>
 		{:else if $UIState.showSearchResults}
@@ -321,11 +317,11 @@
 			<!-- Display RECENT SEARCHES -->
 			{#if $UIState.showMainMenu}
 				<div class="section--recent flex column flex-grow">
-					<SearchSuggestions on:clickTree={handleExternallyChangedFilters} />
+					<SearchSuggestions on:clickTree={runLayerTreeSearch} />
 					{#if !$settings.compactMode}
 						<RecentSearchList
 							class="flex-grow"
-							on:recentSearch={handleExternallyChangedFilters}
+							on:recentSearch={runLayerTreeSearch}
 							bind:recentSearches={_recentSearches} />
 					{/if}
 				</div>
