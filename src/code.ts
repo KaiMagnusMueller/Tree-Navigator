@@ -1,5 +1,5 @@
-import { getUltimateAncestorNode, getLineageNodeArray, uniqObjInArr, copyNode, validRecentSearchItem, postMessageToast, getTutorials, selectNodes, copyNodesToSend, createDataTree, getAncestorNodes, getAncestorNodeArray } from './figma-backend-utils';
-import { searchNodes } from './search-nodes';
+import { uniqObjInArr, validRecentSearchItem, postMessageToast, getTutorials, selectNodes, copyNodesToSend, createDataTree, getAncestorNodes, getAncestorNodeArray } from './backend/figma-backend-utils';
+import { searchNodes } from './backend/search-nodes';
 
 console.clear();
 // This shows the HTML page in "ui.html".
